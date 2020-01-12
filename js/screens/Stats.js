@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 //import component
-import Block from '../components/multipleChoice/Block'
+import Block from '../components/Games/Block'
 
 const data = [
   {
@@ -53,7 +53,7 @@ export default function App() {
 
       <Block text={text} ></Block>
 
-      <Button title="Clixk me" onPress={() => setCount(count + 1)}></Button>
+      <Button title="Click me" onPress={() => setCount(count + 1)}></Button>
       <Button title="Delete" onPress={() => setCount(0)}></Button>
       <Text>You clicked {count} times</Text>
     </View>

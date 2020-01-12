@@ -47,6 +47,9 @@ const HomeStack = createStackNavigator(
     {
         Home: {
             screen: Home,
+            navigationOptions: {
+                headerShown: false,
+            },
         },
         NewGame: {
             screen: NewGame,
@@ -57,8 +60,13 @@ const HomeStack = createStackNavigator(
         Settings: {
             screen: Settings,
         }, 
+    }, {
+    defaultNavigationOptions: {
+        headerStyle: {
+            backgroundColor: "aliceblue"
+        }
     }
-)
+})
 
 const AppStackModal = createStackNavigator(
     {

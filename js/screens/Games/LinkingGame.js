@@ -11,6 +11,8 @@ import {
 import {SettingsScreen} from "react-native-settings-screen"
 import {StackActions} from 'react-navigation';
 import HomeButton from '../../components/HomeButton';
+import BackgroundContainer from "../../components/BackgroundContainer";
+import HeaderText from '../../components/HeaderText';
 //import component
 
 export default function App(props) {
@@ -27,34 +29,39 @@ export default function App(props) {
     }
 
     const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
-    const showHomeButton = props.navigation.getParam('playStyle', 'competitive') === "training" ? true : false; //Show Home button in traing view
+    const showHomeButton = props
+        .navigation
+        .getParam('playStyle', 'competitive') === "training"
+        ? true
+        : false; //Show Home button in traing view
     const homeButtonStyle = "";
 
     return (
-        <View style={styles.container}>
-            <SafeAreaView style={styles.friendsList}>
-                <ScrollView>
-                    <Text>{text}</Text>
-                    <Text>round: {JSON.stringify(props.navigation.getParam('round', ''))}</Text>
-                    <Text>playStyle: {JSON.stringify(props.navigation.getParam('playStyle', ''))}</Text>
-                </ScrollView>
-            </SafeAreaView>
-            <HomeButton visible={showHomeButton} style={homeButtonStyle}></HomeButton>
-            <View style={styles.nextContainer}>
-                <Button
-                    title="Next"
-                    onPress={() => props.navigation.dispatch(pushSolutionScreen)}/>
+        <BackgroundContainer>
+            <View style={styles.container}>
+                <SafeAreaView style={styles.friendsList}>
+                    <ScrollView>
+                        <Text>{text}</Text>
+                        <Text>round: {JSON.stringify(props.navigation.getParam('round', ''))}</Text>
+                        <Text>playStyle: {JSON.stringify(props.navigation.getParam('playStyle', ''))}</Text>
+                    </ScrollView>
+                </SafeAreaView>
+                <HomeButton visible={showHomeButton} style={homeButtonStyle}></HomeButton>
+                <View style={styles.nextContainer}>
+                    <Button
+                        title="Next"
+                        onPress={() => props.navigation.dispatch(pushSolutionScreen)}/>
+                </View>
             </View>
-        </View>
+        </BackgroundContainer>
     );
 }
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1,
-        backgroundColor: 'lightgrey',
         alignItems: 'center',
-        justifyContent: 'center'
+        paddingTop: 45,
+        flex: 1
     },
     backContainer: {
         position: "absolute",

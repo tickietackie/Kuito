@@ -34,7 +34,7 @@ const styles = StyleSheet.create({
         padding: 5,
         margin: 10,
         position: 'absolute',
-        top: 0,
+        top: 30,
         right: 3,
     },
     startButton: {

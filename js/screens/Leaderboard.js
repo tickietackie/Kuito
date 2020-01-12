@@ -7,24 +7,41 @@ import {
     TouchableOpacity,
     TouchableNativeFeedback,
     TouchableWithoutFeedback,
+    Button,
     View
 } from 'react-native';
 
-export default class Touchables extends Component {
+import BackgroundContainer from '../components/BackgroundContainer';
+import HeaderText from '../components/HeaderText';
 
-    render() {
+import GameHistory from '../components/GameHistory'
+
+export default function Leaderboard(props) {
+
         return (
-            <View style={styles.container}>
-                <Text>Leaderboard</Text>
+          <BackgroundContainer>
+              <View style={styles.container}>
+                <HeaderText text="Leaderboard"></HeaderText>
+                <Button
+                    title="Linking"
+                    onPress={() => props.navigation.navigate("LinkingGame")}/>
+                <Button
+                    title="Guess"
+                    onPress={() => props.navigation.navigate("GuessPicture")}/>
+                <Button
+                    title="Multiple"
+                    onPress={() => props.navigation.navigate("MultipleChoice")}/>
             </View>
+            <GameHistory></GameHistory>
+          </BackgroundContainer>
+
         );
-    }
+    
 }
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 60,
-        alignItems: 'center'
+        paddingTop: 45,
     },
     button: {
         marginBottom: 30,
@@ -36,5 +53,18 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         padding: 20,
         color: 'white'
+    },
+    container2: {
+        flex: 1,
+        backgroundColor: '#EFFBEF',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    text: {
+        fontSize: 42,
+        color: "black",
+        padding: 5,
+        margin: 10,
+        backgroundColor: "red",
     }
 });

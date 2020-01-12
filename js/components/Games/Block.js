@@ -89,9 +89,6 @@ export default function block(props) {
     //const opacity = {opacity: 0.7}; setButtonOpacity(opacity);
     return (
         <View style={styles.container}>
-            <View style={styles.questionContainer}>
-                <Text style={styles.question}>{props.text.question}</Text>
-            </View>
             <View style={styles.answerContainer}>
                 <TouchableWithoutFeedback
                     onPress={() => ToggleButtonOpacity(0)}
@@ -144,9 +141,9 @@ export default function block(props) {
 const styles = StyleSheet.create({
     container: {
         margin: 5,
-        flex: 1
+        flex: 3,
     },
-    questionContainer: {
+    /*questionContainer: {
         flex: 2,
         justifyContent: "center",
         alignItems: "center",
@@ -154,17 +151,10 @@ const styles = StyleSheet.create({
         marginBottom: 40,
         margin: 5,
         borderRadius: 5,
-        //shadowOpacity: 0.75, shadowRadius: 2,
-        shadowColor: 'black',
-        /*shadowOffset: {
-            width: 0.2,
-            height: 0.2,
-        },
-        elevation: 2,*/
     },
     question: {
         alignItems: 'center'
-    },
+    },*/
     answerContainer: {
         flex: 3,
         width: 320,

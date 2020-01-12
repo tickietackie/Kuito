@@ -13,6 +13,7 @@ import HomeButton from '../../components/HomeButton';
 import NextButton from '../../components/NextButton';
 import HeaderText from '../../components/HeaderText';
 import Block from '../../components/Games/Block';
+import QuestionCard from '../../components/Games/QuestionCard';
 import BackgroundContainer from "../../components/BackgroundContainer"
 //import component safe data : 2 * 3 * 4 * 5, standing for the 4 fields
 
@@ -121,7 +122,7 @@ export default function App(props) {
         : false; //Show Home button in traing view
     const homeButtonStyle = "";
 
-    let blockData = data[0];
+    let Data = data[0];
     const headerColor = {
         color: 'green'
     }
@@ -147,7 +148,8 @@ export default function App(props) {
         <BackgroundContainer >
             <View style={styles.container}>
                 <HeaderText style={headerColor} text="Multiple Choice"></HeaderText>
-                <Block parentCallback={callbackFunction} text={blockData}></Block>
+                <QuestionCard text={Data} ></QuestionCard>
+                <Block parentCallback={callbackFunction} text={Data}></Block>
                 <HomeButton visible={showHomeButton} style={homeButtonStyle}></HomeButton>
                 <NextButton
                     navigateFunction={evaluateAnswer}

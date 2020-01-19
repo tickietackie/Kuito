@@ -28,6 +28,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         shadowColor: 'black',
         padding:30,
+        minWidth : 300,
     },
     question: {
         alignItems: 'center'

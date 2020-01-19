@@ -97,7 +97,7 @@ export default function block(props) {
                         <Text
                             adjustsFontSizeToFit={true}
                             numberOfLines={2}
-                            style={[material.buttonWhite, styles.answer]}>{props.text.answer1}</Text>
+                            style={[material.buttonWhite, styles.answer]}>{props.text.answer_1}</Text>
                     </View>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback
@@ -107,7 +107,7 @@ export default function block(props) {
                         <Text
                             adjustsFontSizeToFit={true}
                             numberOfLines={2}
-                            style={[material.buttonWhite, styles.answer]}>{props.text.answer2}</Text>
+                            style={[material.buttonWhite, styles.answer]}>{props.text.answer_2}</Text>
                     </View>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback
@@ -117,7 +117,7 @@ export default function block(props) {
                         <Text
                             adjustsFontSizeToFit={true}
                             numberOfLines={2}
-                            style={[material.buttonWhite, styles.answer]}>{props.text.answer3}</Text>
+                            style={[material.buttonWhite, styles.answer]}>{props.text.answer_3}</Text>
                     </View>
                 </TouchableWithoutFeedback>
                 <TouchableWithoutFeedback
@@ -127,7 +127,7 @@ export default function block(props) {
                         <Text
                             adjustsFontSizeToFit={true}
                             numberOfLines={2}
-                            style={[material.buttonWhite, styles.answer]}>{props.text.answer4}</Text>
+                            style={[material.buttonWhite, styles.answer]}>{props.text.answer_4}</Text>
                     </View>
                 </TouchableWithoutFeedback>
 

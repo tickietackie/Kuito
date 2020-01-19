@@ -28,7 +28,7 @@ const styles = StyleSheet.create({
         marginBottom: 40,
         borderRadius: 5,
         shadowColor: 'black',
-        width :300,
+        width : 300,
         height : 50,
     },
     question: {

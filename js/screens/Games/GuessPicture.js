@@ -1,10 +1,7 @@
-import React, {useState, useRef} from 'react';
-import {
-    StyleSheet,
-    View,
-    Image
-} from 'react-native';
+import React, {useState, useRef, useEffect} from 'react';
+import {StyleSheet, View, Image, ActivityIndicator} from 'react-native';
 
+import firebase from "../../../config/firebase";
 import {StackActions} from 'react-navigation';
 import HomeButton from '../../components/HomeButton';
 import NextButton from '../../components/NextButton';
@@ -17,27 +14,121 @@ import BackgroundContainer from "../../components/BackgroundContainer"
 const data = [
     {
         question: "How high is mount everest in meters?",
-        answer1: "K2",
-        answer2: "Cho Oyu",
-        answer3: "Mount Everest",
-        answer4: "Kangchendzönga",
+        answer_1: "K2",
+        answer_2: "Cho Oyu",
+        answer_3: "Mount Everest",
+        answer_4: "Kangchendzönga",
         solution: 4,
         explanation: "There are at least 109 mountains on Earth with elevations greater than 7,200 met" +
-                "res (23,622 ft) above sea level. The vast majority of these mountains are locate" +
-                "d on the edge of the Indian and Eurasian continental plates. Only those summits " +
-                "are included that, by an objective measure, may be considered individual mountai" +
-                "ns as opposed to subsidiary peaks.",
+            "res (23,622 ft) above sea level. The vast majority of these mountains are locate" +
+            "d on the edge of the Indian and Eurasian continental plates. Only those summits " +
+            "are included that, by an objective measure, may be considered individual mountai" +
+            "ns as opposed to subsidiary peaks.",
         info: "Mount Everest (Nepali: Sagarmatha सगरमाथा; Tibetan: Chomolungma ཇོ་མོ་གླང་མ; Chi" +
-                "nese: Zhumulangma 珠穆朗玛) is Earth's highest mountain above sea level, located in " +
-                "the Mahalangur Himal sub-range of the Himalayas. The international border betwee" +
-                "n Nepal (Province No. 1) and China (Tibet Autonomous Region) runs across its sum" +
-                "mit point.The current official elevation of 8,848 m (29,029 ft), recognised by C" +
-                "hina and Nepal, was established by a 1955 Indian survey and subsequently confirm" +
-                "ed by a Chinese survey in 1975."
+            "nese: Zhumulangma 珠穆朗玛) is Earth's highest mountain above sea level, located in " +
+            "the Mahalangur Himal sub-range of the Himalayas. The international border betwee" +
+            "n Nepal (Province No. 1) and China (Tibet Autonomous Region) runs across its sum" +
+            "mit point.The current official elevation of 8,848 m (29,029 ft), recognised by C" +
+            "hina and Nepal, was established by a 1955 Indian survey and subsequently confirm" +
+            "ed by a Chinese survey in 1975."
     }
 ];
 
 export default function App(props) {
+
+    const [isLoading,
+        setIsLoading] = useState(true);
+
+    const _fetchData = async() => {
+
+        var storage = firebase.storage();
+
+        // Create a reference to the file we want to download
+        var starsRef = storageRef.child('Games/GuessThePicture/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg');
+
+        // Get the download URL
+        starsRef
+            .getDownloadURL()
+            .then(function (url) {
+                // Insert url into an <img> tag to "download"
+                var imageUrl = url;
+            })
+            .catch(function (error) {
+
+                // A full list of error codes is available at
+                // https://firebase.google.com/docs/storage/web/handle-errors
+                switch (error.code) {
+                    case 'storage/object-not-found':
+                        // File doesn't exist
+                        break;
+
+                    case 'storage/unauthorized':
+                        // User doesn't have permission to access the object
+                        break;
+
+                    case 'storage/canceled':
+                        // User canceled the upload
+                        break;
+
+                    case 'storage/unknown':
+                        // Unknown error occurred, inspect the server response
+                        break;
+                }
+            });
+
+        //fetch()
+        const db = await firebase.firestore()
+
+        var random = Math.floor(Math.random() * 100000) + 1;
+        //const ref = db.collection('MultipleChoiceSets')
+        console.log(random)
+
+        const GetData = async(qData) => {
+            qData
+                .get()
+                .then(async function (querySnapshot) {
+                    await querySnapshot
+                        .forEach(function (doc) {
+                            console.log(doc.id, ' => ', doc.data());
+                            data = doc.data()
+                        });
+
+                })
+                .catch(function (error) {
+                    console.log("Error getting documents: ", error);
+                    setIsLoading(false);
+                });
+        }
+
+        async function process_tasks(db) {
+            let campaignsRef = db.collection('MultipleChoiceSets')
+            let activeRef = await campaignsRef
+                .where('random', '>=', random)
+                .orderBy('random')
+                .limit(1)
+                .get();
+            for (doc of activeRef.docs) {
+                return doc.data();
+            }
+        }
+        try {
+            data1 = await process_tasks(db);
+            //setData(data1);
+            setIsLoading(false);
+
+        } catch (err) {
+            console.log('Error getting documents', err)
+            setIsLoading(false);
+        }
+        //}
+
+    }
+
+    useEffect(() => { // code to run on component mount
+
+        _fetchData()
+
+    }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
 
     const evaluateAnswer = () => {
         const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
@@ -76,13 +167,14 @@ export default function App(props) {
             pushSolutionScreen.params.userWins = 1;
         }
 
+        setIsLoading(true)
+
         props
             .navigation
             .dispatch(pushSolutionScreen);
     }
 
-    const text = "One question for answers!";
-    const navigationParams = {
+    const navigationParams = { //init navigation params for the next screen
         round: props
             .navigation
             .getParam('round', ''),
@@ -121,6 +213,16 @@ export default function App(props) {
         setShowNextButton(childData.length >= 1
             ? true
             : false);
+    }
+
+    if (isLoading === true) { //return loading screen, if data is loading
+        return (
+            <BackgroundContainer>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="darkorange"></ActivityIndicator>
+                </View>
+            </BackgroundContainer>
+        )
     }
 
     return (

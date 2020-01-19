@@ -1,12 +1,15 @@
-import React, {useState, useRef} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
     Button,
     StyleSheet,
     Text,
     View,
     ScrollView,
-    SafeAreaView
+    SafeAreaView,
+    ActivityIndicator
 } from 'react-native';
+
+import firebase from "../../../config/firebase";
 
 import {StackActions} from 'react-navigation';
 import HomeButton from '../../components/HomeButton';
@@ -17,53 +20,78 @@ import QuestionCard from '../../components/Games/QuestionCard';
 import BackgroundContainer from "../../components/BackgroundContainer"
 //import component safe data : 2 * 3 * 4 * 5, standing for the 4 fields
 
-const data = [
-    {
-        question: "How high is mount everest in meters?",
-        answer1: "8448m",
-        answer2: "8848m",
-        answer3: "8884m",
-        answer4: "8488m",
-        solution: 3,
-        explanation: "There are at least 109 mountains on Earth with elevations greater than 7,200 met" +
-                "res (23,622 ft) above sea level. The vast majority of these mountains are locate" +
-                "d on the edge of the Indian and Eurasian continental plates. Only those summits " +
-                "are included that, by an objective measure, may be considered individual mountai" +
-                "ns as opposed to subsidiary peaks.",
-        info: "Mount Everest (Nepali: Sagarmatha सगरमाथा; Tibetan: Chomolungma ཇོ་མོ་གླང་མ; Chi" +
-                "nese: Zhumulangma 珠穆朗玛) is Earth's highest mountain above sea level, located in " +
-                "the Mahalangur Himal sub-range of the Himalayas. The international border betwee" +
-                "n Nepal (Province No. 1) and China (Tibet Autonomous Region) runs across its sum" +
-                "mit point.The current official elevation of 8,848 m (29,029 ft), recognised by C" +
-                "hina and Nepal, was established by a 1955 Indian survey and subsequently confirm" +
-                "ed by a Chinese survey in 1975."
-    }, {
-        question: "How high is the ...",
-        answer1: "550",
-        answer2: "100",
-        answer3: "100",
-        answer4: "100"
-    }, {
-        question: "How high is the ...",
-        answer1: "400",
-        answer2: "100",
-        answer3: "100",
-        answer4: "100"
-    }, {
-        question: "How high is the ...",
-        answer1: "200",
-        answer2: "100",
-        answer3: "100",
-        answer4: "100"
-    }
-];
-
 export default function App(props) {
+
+    const [data, //contains pressed button numbers of user, all pressed: [2,3,4,5]
+        setData] = useState({
+        question: "",
+        answer1: "",
+        answer2: "",
+        answer3: "",
+        answer4: "",
+        solution: 3,
+        explanation: "",
+        info: ""
+    });
+
+    const [isLoading,
+        setIsLoading] = useState(true);
+
+    const _fetchData = async() => {
+
+        //fetch()
+        const db = await firebase.firestore()
+
+        /*db
+            .collection("MultipleChoiceSets")
+            .where('random', '<=', 1)
+            .orderBy('random')
+            .limit(1)
+            .get()
+            .then((querySnapshot) => {
+                querySnapshot.forEach((doc) => {
+                    console.log(`${doc.id} => ${doc.data()}`);
+                });
+            });*/
+
+        var random = Math.floor(Math.random() * 100000) + 1;
+        //const ref = db.collection('MultipleChoiceSets')
+        console.log(random)
+
+        async function process_tasks(db) {
+            let campaignsRef = db.collection('MultipleChoiceSets')
+            let activeRef = await campaignsRef
+                .where('random', '>=', random)
+                .orderBy('random')
+                .limit(1)
+                .get();
+            for (doc of activeRef.docs) {
+                return doc.data();
+            }
+        }
+        try {
+            data1 = await process_tasks(db);
+            setData(data1);
+            setIsLoading(false);
+
+        } catch (err) {
+            console.log('Error getting documents', err)
+            setIsLoading(false);
+        }
+        
+
+    }
+
+    useEffect(() => { // code to run on component mount
+
+        _fetchData()
+
+    }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
 
     const evaluateAnswer = () => {
         const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
 
-        let n = data[0].solution;
+        let n = data.solution;
         let i = userAnswer.message.length;
         while (i > 0) { //determine if the solution given by the user is right
             i = i - 1;
@@ -100,10 +128,11 @@ export default function App(props) {
         props
             .navigation
             .dispatch(pushSolutionScreen);
+
+        setIsLoading(true)
     }
 
-    const text = "One question for answers!";
-    const navigationParams = {
+    const navigationParams = { //init navigation params for the next screen
         round: props
             .navigation
             .getParam('round', ''),
@@ -111,18 +140,10 @@ export default function App(props) {
             .navigation
             .getParam('playStyle', 'competitive'),
         userWins: 0,
-        explanation: data[0].explanation,
-        info: data[0].info
+        explanation: data.explanation,
+        info: data.info
     }
 
-    const showHomeButton = props
-        .navigation
-        .getParam('playStyle', 'competitive') === "training"
-        ? true
-        : false; //Show Home button in traing view
-    const homeButtonStyle = "";
-
-    let Data = data[0];
     const headerColor = {
         color: 'green'
     }
@@ -131,6 +152,13 @@ export default function App(props) {
         setUserAnswer] = useState({
         message: [0, 0, 0, 0]
     });
+
+    const showHomeButton = props //Show home button only in training mode
+        .navigation
+        .getParam('playStyle', 'competitive') === "training"
+        ? true
+        : false; //Show Home button in traing view
+    const homeButtonStyle = "";
 
     const [showNextButton, //contains pressed button numbers of user, all pressed: [2,3,4,5]
         setShowNextButton] = useState(false);
@@ -144,12 +172,22 @@ export default function App(props) {
             : false);
     }
 
+    if (isLoading === true) {       //return loading screen, if data is loading 
+        return (
+            <BackgroundContainer>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="darkorange"></ActivityIndicator>
+                </View>
+            </BackgroundContainer>
+        )
+    }
+
     return (
         <BackgroundContainer >
             <View style={styles.container}>
                 <HeaderText style={headerColor} text="Multiple Choice"></HeaderText>
-                <QuestionCard text={Data} ></QuestionCard>
-                <Block parentCallback={callbackFunction} text={Data}></Block>
+                <QuestionCard text={data}></QuestionCard>
+                <Block parentCallback={callbackFunction} text={data}></Block>
                 <HomeButton visible={showHomeButton} style={homeButtonStyle}></HomeButton>
                 <NextButton
                     navigateFunction={evaluateAnswer}
@@ -175,5 +213,9 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 10,
         right: 3
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center"
     }
 });

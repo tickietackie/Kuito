@@ -1,4 +1,4 @@
-import React, {Component} from 'react';
+import React, {Component, useState} from 'react';
 import {
     Platform,
     StyleSheet,
@@ -18,19 +18,35 @@ import GameHistory from '../components/GameHistory'
 
 export default function Leaderboard(props) {
 
+    const [random,
+        setRandom] = useState(Math.floor(Math.random() * 100000) + 1);
+
+    //var random = Math.floor(Math.random() * 100000) + 1;
+
+    const navigationProperties = {
+        round: 1,
+        playStyle: 'competetive',
+        randomId: random,
+    };
+
+    const navigate = () => {
+        setRandom(Math.floor(Math.random() * 100000) + 1);
+        props.navigation.navigate("MultipleChoice", navigationProperties)
+    }
+
         return (
           <BackgroundContainer>
               <View style={styles.container}>
                 <HeaderText text="Leaderboard"></HeaderText>
                 <Button
                     title="Linking"
-                    onPress={() => props.navigation.navigate("LinkingGame")}/>
+                    onPress={() => props.navigation.navigate("LinkingGame", navigationProperties)}/>
                 <Button
                     title="Guess"
-                    onPress={() => props.navigation.navigate("GuessPicture")}/>
+                    onPress={() => props.navigation.navigate("GuessPicture", navigationProperties)}/>
                 <Button
                     title="Multiple"
-                    onPress={() => props.navigation.navigate("MultipleChoice")}/>
+                    onPress={() => navigate()}/>
             </View>
             <GameHistory></GameHistory>
           </BackgroundContainer>

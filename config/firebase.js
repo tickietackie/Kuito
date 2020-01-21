@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 
-/*import {
+import {
     API_KEY,
     AUTH_DOMAIN,
     DATABASE_URL,
@@ -8,7 +8,7 @@ import * as firebase from 'firebase';
     STORAGE_BUCKET,
     MESSAGING_SENDER_ID,
     APP_ID
-} from "react-native-dotenv"*/
+} from "react-native-dotenv"
 
 import 'firebase/firestore';
 

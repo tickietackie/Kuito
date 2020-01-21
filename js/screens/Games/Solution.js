@@ -111,13 +111,13 @@ export default function App(props) {
                 </View>
                 <SafeAreaView style={styles.safeArea}>
                     <ScrollView style={styles.explanationContainer}>
-                        <Text style= {material.headline}>Explanation</Text>
+                        <Text style={material.headline}>Explanation</Text>
                         <Text style={[material.display0, styles.scrollViewText]}>{explanation}</Text>
                     </ScrollView>
                 </SafeAreaView>
                 <SafeAreaView style={styles.safeArea}>
                     <ScrollView style={styles.infoContainer}>
-                        <Text style= {material.headline}>Additional info</Text>
+                        <Text style={material.headline}>Did you know?</Text>
                         <Text style={[material.display0, styles.scrollViewText]}>{info}</Text>
                     </ScrollView>
                 </SafeAreaView>
@@ -137,7 +137,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         paddingTop: 45,
-        paddingBottom: 40,
+        paddingBottom: 40
     },
     backContainer: {
         position: "absolute",
@@ -155,14 +155,18 @@ const styles = StyleSheet.create({
         alignItems: "center",
         backgroundColor: "#A9E2F3",
         marginBottom: 40,
-        margin: 5,
+        margin: 0,
         borderRadius: 5,
         width: 250,
-        paddingRight: 10,
-        paddingLeft: 10
+        paddingRight: 5,
+        paddingLeft: 5
     },
     explanationContainer: {
-        padding: 10,
+        padding: 10
+    },
+    infoContainer: {
+        padding: 10,  
+        marginBottom: 5,
     },
     safeArea: {
         flex: 3,
@@ -178,13 +182,9 @@ const styles = StyleSheet.create({
             height: 0.2,
         },
         elevation: 2,*/
-        paddingBottom: 15,
+        paddingBottom: 15
     },
-    scrollViewText :{
-        marginBottom: 20,
-    },
-    infoContainer: {
-        padding: 10,  
-        marginBottom: 5,
+    scrollViewText: {
+        marginBottom: 20
     }
 });

@@ -10,7 +10,7 @@ import {
 
 export default function Drag() {
     const dropZoneValues = React.useRef(null);
-    const pan = React.useRef(new Animated.ValueXY());
+
     const [bgColor,
         setBgColor] = React.useState('#2c3e50');
     const [bgColorRight,
@@ -25,6 +25,11 @@ export default function Drag() {
         x: 0,
         y: 0,
     });
+
+    /*const [pan,
+        setPan] = React.useState(new Animated.ValueXY());*/
+    
+    const pan = React.useRef(new Animated.ValueXY());
 
     const [top,
         setTop] = React.useState({
@@ -68,6 +73,11 @@ export default function Drag() {
         onMoveShouldSetPanResponderCapture: () => true,
 
         onPanResponderGrant: (evt, gestureState) => {
+            //let v = new Animated.ValueXY({x: dragPos.x, y: dragPos.y})
+            console.log(pan.current)
+
+            var v = new Animated.ValueXY({x: gestureState.moveX, y: gestureState.moveY})
+
             // The gesture has started. Show visual feedback so the user knows what is
             // happening! gestureState.d{x,y} will be set to zero now
             console.log("start2");
@@ -107,7 +117,7 @@ export default function Drag() {
         // The user has released all touches while this view is the responder. This
         // typically means a gesture has succeeded
         onPanResponderRelease: (e, gesture) => {
-            /*setCircleColor('#1abc9c')
+            setCircleColor('#1abc9c')
             setShadow({})
             if (isDropZone(gesture)) 
                 setBgColor('red');
@@ -139,12 +149,13 @@ export default function Drag() {
                 setDragPos({x: gesture.x0 - gesture.moveX, y: gesture.y0 - gesture.moveY})
                 console.log("release")
                 console.log({x: gesture.x0 - gesture.moveX, y: gesture.y0 - gesture.moveY});
-            }*/
+            }
         },
         onPanResponderTerminate: (evt, gestureState) => {
             // Another component has become the responder, so this gesture should be
             // cancelled
             //setDragPos({x: 0, y: 0})
+            //gestureState.flattenOffset();
         }
     }), []);
 

@@ -1,5 +1,13 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {StyleSheet, View, Image, ActivityIndicator} from 'react-native';
+import {
+    Button,
+    StyleSheet,
+    Text,
+    View,
+    ScrollView,
+    SafeAreaView,
+    ActivityIndicator
+} from 'react-native';
 
 import firebase from "../../../config/firebase";
 import {StackActions} from 'react-navigation';
@@ -11,97 +19,113 @@ import Block from '../../components/Games/Block';
 import BackgroundContainer from "../../components/BackgroundContainer"
 //import component safe data : 2 * 3 * 4 * 5, standing for the 4 fields
 
-const data = [
-    {
-        question: "How high is mount everest in meters?",
-        answer_1: "K2",
-        answer_2: "Cho Oyu",
-        answer_3: "Mount Everest",
-        answer_4: "Kangchendzönga",
-        solution: 4,
-        explanation: "There are at least 109 mountains on Earth with elevations greater than 7,200 met" +
-            "res (23,622 ft) above sea level. The vast majority of these mountains are locate" +
-            "d on the edge of the Indian and Eurasian continental plates. Only those summits " +
-            "are included that, by an objective measure, may be considered individual mountai" +
-            "ns as opposed to subsidiary peaks.",
-        info: "Mount Everest (Nepali: Sagarmatha सगरमाथा; Tibetan: Chomolungma ཇོ་མོ་གླང་མ; Chi" +
-            "nese: Zhumulangma 珠穆朗玛) is Earth's highest mountain above sea level, located in " +
-            "the Mahalangur Himal sub-range of the Himalayas. The international border betwee" +
-            "n Nepal (Province No. 1) and China (Tibet Autonomous Region) runs across its sum" +
-            "mit point.The current official elevation of 8,848 m (29,029 ft), recognised by C" +
-            "hina and Nepal, was established by a 1955 Indian survey and subsequently confirm" +
-            "ed by a Chinese survey in 1975."
-    }
-];
-
 export default function App(props) {
+
+    const [data, //contains pressed button numbers of user, all pressed: [2,3,4,5]
+        setData] = useState({
+        question: "",
+        answer_1: "",
+        answer_2: "",
+        answer_3: "",
+        answer_4: "",
+        solution: 3,
+        explanation: "",
+        info: "",
+        random: 0
+    });
+
+    const [pictureUrl,
+        setPictureUrl] = useState('')
 
     const [isLoading,
         setIsLoading] = useState(true);
 
     const _fetchData = async() => {
 
-        var storage = firebase.storage();
-
-        // Create a reference to the file we want to download
-        var starsRef = storageRef.child('Games/GuessThePicture/Everest_North_Face_toward_Base_Camp_Tibet_Luca_Galuzzi_2006.jpg');
-
-        // Get the download URL
-        starsRef
-            .getDownloadURL()
-            .then(function (url) {
-                // Insert url into an <img> tag to "download"
-                var imageUrl = url;
-            })
-            .catch(function (error) {
-
-                // A full list of error codes is available at
-                // https://firebase.google.com/docs/storage/web/handle-errors
-                switch (error.code) {
-                    case 'storage/object-not-found':
-                        // File doesn't exist
-                        break;
-
-                    case 'storage/unauthorized':
-                        // User doesn't have permission to access the object
-                        break;
-
-                    case 'storage/canceled':
-                        // User canceled the upload
-                        break;
-
-                    case 'storage/unknown':
-                        // Unknown error occurred, inspect the server response
-                        break;
-                }
-            });
-
         //fetch()
-        const db = await firebase.firestore()
+        /*const db = await firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
         console.log(random)
 
-        const GetData = async(qData) => {
-            qData
-                .get()
-                .then(async function (querySnapshot) {
-                    await querySnapshot
-                        .forEach(function (doc) {
-                            console.log(doc.id, ' => ', doc.data());
-                            data = doc.data()
-                        });
+        async function GetPictureUrl(storage, setId) { //Get picute url from firebase storage
+            // Create a reference to the file we want to download
+            var picRef = storage.ref('Games/GuessThePicture/' + setId + '.jpg');
 
-                })
-                .catch(function (error) {
-                    console.log("Error getting documents: ", error);
-                    setIsLoading(false);
-                });
+            // Get the download URL
+            urlRef = await picRef
+                .getDownloadURL()
+            return urlRef;
         }
 
-        async function process_tasks(db) {
-            let campaignsRef = db.collection('MultipleChoiceSets')
+        async function GetMultipleChoiceSet(db) {
+            let campaignsRef = db.collection('GuessPictureSets')
+            let activeRef = await campaignsRef
+                .where('random', '>=', random)
+                .orderBy('random')
+                .limit(1)
+                .get();
+            for (doc of activeRef.docs) {
+                var docData = doc.data()
+                setData(docData);
+                var storage = firebase.storage();
+                const setId = docData.random;
+                try {
+                    pictureUrlQ = await GetPictureUrl(storage, setId);
+                    if (pictureUrlQ) {
+                        setPictureUrl(pictureUrlQ);
+                    }
+                } catch (error) {
+                    switch (error.code) {
+                        case 'storage/object-not-found':
+                            // File doesn't exist
+                            console.log('File does not exist', error);
+                            break;
+
+                        case 'storage/unauthorized':
+                            console.log('Missing permission', error);
+                            // User doesn't have permission to access the object
+                            break;
+
+                        case 'storage/canceled':
+                            // User canceled the upload
+                            break;
+
+                        case 'storage/unknown':
+                            console.log('Unknown error occured', error);
+                            // Unknown error occurred, inspect the server response
+                            break;
+                    }
+                }
+                return docData;
+            }
+        }
+
+        try {
+            const data1 = GetMultipleChoiceSet(db)
+            if (data1) {
+                setData(data1)
+                setIsLoading(false);
+            } else {
+                console.log('Error getting documents, sfs')
+                //setIsLoading(false);
+            }
+
+        } catch (err) {
+            console.log('Error getting documents sfdf', err)
+            //setIsLoading(false);
+            return;
+        }*/
+
+        const db = firebase.firestore()
+
+        var random = Math.floor(Math.random() * 100000) + 1;
+        //const ref = db.collection('MultipleChoiceSets')
+        console.log(random)
+
+        async function GetGuessPictureSet(db) {
+            let campaignsRef = db.collection('GuessPictureSets')
             let activeRef = await campaignsRef
                 .where('random', '>=', random)
                 .orderBy('random')
@@ -111,17 +135,55 @@ export default function App(props) {
                 return doc.data();
             }
         }
+
+        async function GetUrl(storage, setId) {
+            // Create a reference to the file we want to download
+            var picRef = storage.ref('Games/GuessThePicture/' + setId + '.jpg');
+
+            // Get the download URL
+            urlRef = await picRef.getDownloadURL()
+            //console.log(urlRef)
+            return urlRef;
+        }
+
         try {
-            data1 = await process_tasks(db);
-            //setData(data1);
-            setIsLoading(false);
+            data1 = await GetGuessPictureSet(db);
+            var storage = firebase.storage();
+            const setId = data1.random;
+            try {
+                const url = await GetUrl(storage, setId);
+                setData(data1);
+                setPictureUrl(url);
+                setIsLoading(false);
+            } catch (error) {
+                switch (error.code) {
+                    case 'storage/object-not-found':
+                        // File doesn't exist
+                        console.log('File does not exist', error);
+                        break;
+
+                    case 'storage/unauthorized':
+                        console.log('Missing permission', error);
+                        // User doesn't have permission to access the object
+                        break;
+
+                    case 'storage/canceled':
+                        // User canceled the upload
+                        break;
+
+                    case 'storage/unknown':
+                        console.log('Unknown error occured', error);
+                        // Unknown error occurred, inspect the server response
+                        break;
+                    default:
+                            console.log('Error', error);
+                }
+            }
 
         } catch (err) {
             console.log('Error getting documents', err)
             setIsLoading(false);
         }
-        //}
-
     }
 
     useEffect(() => { // code to run on component mount
@@ -133,7 +195,7 @@ export default function App(props) {
     const evaluateAnswer = () => {
         const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
 
-        let n = data[0].solution;
+        let n = data.solution;
         let i = userAnswer.message.length;
         while (i > 0) { //determine if the solution given by the user is right
             i = i - 1;
@@ -167,7 +229,7 @@ export default function App(props) {
             pushSolutionScreen.params.userWins = 1;
         }
 
-        setIsLoading(true)
+        //setIsLoading(true)
 
         props
             .navigation
@@ -182,8 +244,8 @@ export default function App(props) {
             .navigation
             .getParam('playStyle', 'competitive'),
         userWins: 0,
-        explanation: data[0].explanation,
-        info: data[0].info
+        explanation: data.explanation,
+        info: data.info
     }
 
     const showHomeButton = props
@@ -193,7 +255,7 @@ export default function App(props) {
         : false; //Show Home button in traing view
     const homeButtonStyle = "";
 
-    let blockData = data[0];
+    let blockData = data;
     const headerColor = {
         color: 'green'
     }
@@ -206,7 +268,6 @@ export default function App(props) {
     const [showNextButton, //contains pressed button numbers of user, all pressed: [2,3,4,5]
         setShowNextButton] = useState(false);
 
-    const inputRef = useRef([0, 0, 0, 0]);
     const callbackFunction = (childData) => {
         setUserAnswer({message: childData})
         //if array not empty show next button (user has pressed at leasat one button)
@@ -229,7 +290,7 @@ export default function App(props) {
         <BackgroundContainer >
             <View style={styles.container}>
                 <HeaderText style={headerColor} text="Guess the picture"></HeaderText>
-                <ImageQuestionCard></ImageQuestionCard>
+                <ImageQuestionCard picUrl={pictureUrl}></ImageQuestionCard>
                 <Block parentCallback={callbackFunction} text={blockData}></Block>
                 <HomeButton visible={showHomeButton} style={homeButtonStyle}></HomeButton>
                 <NextButton
@@ -256,5 +317,9 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 10,
         right: 3
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center"
     }
 });

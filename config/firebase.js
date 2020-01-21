@@ -1,6 +1,6 @@
 import * as firebase from 'firebase';
 
-import {
+/*import {
     API_KEY,
     AUTH_DOMAIN,
     DATABASE_URL,
@@ -8,20 +8,33 @@ import {
     STORAGE_BUCKET,
     MESSAGING_SENDER_ID,
     APP_ID
-} from "react-native-dotenv"
+} from "react-native-dotenv"*/
 
 import 'firebase/firestore';
 
 // Initialize Firebase
-const firebaseConfig = {
-    apiKey: API_KEY,
-    authDomain: AUTH_DOMAIN,
-    databaseURL: DATABASE_URL,
-    projectId: PROJECT_ID,
-    storageBucket: STORAGE_BUCKET,
-    messagingSenderId: MESSAGING_SENDER_ID,
-    appId: APP_ID
-};
+try {
+    var firebaseConfig = {
+        apiKey: API_KEY,
+        authDomain: AUTH_DOMAIN,
+        databaseURL: DATABASE_URL,
+        projectId: PROJECT_ID,
+        storageBucket: STORAGE_BUCKET,
+        messagingSenderId: MESSAGING_SENDER_ID,
+        appId: APP_ID
+    };
+}
+catch {
+    var firebaseConfig = {
+        apiKey: "API_KEY",
+        authDomain: "AUTH_DOMAIN",
+        databaseURL: "DATABASE_URL",
+        projectId: "PROJECT_ID",
+        storageBucket: "STORAGE_BUCKET",
+        messagingSenderId: "MESSAGING_SENDER_ID",
+        appId: "APP_ID"
+    };
+}
 
 console.log(firebaseConfig)
 

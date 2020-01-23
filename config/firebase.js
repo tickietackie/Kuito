@@ -36,6 +36,6 @@ catch {
     };
 }
 
-console.log(firebaseConfig)
+//console.log(firebaseConfig)
 
 export default !firebase.apps.length ? firebase.initializeApp(firebaseConfig) : firebase.app();

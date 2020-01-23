@@ -42,18 +42,6 @@ export default function App(props) {
         //fetch()
         const db = firebase.firestore()
 
-        /*db
-            .collection("MultipleChoiceSets")
-            .where('random', '<=', 1)
-            .orderBy('random')
-            .limit(1)
-            .get()
-            .then((querySnapshot) => {
-                querySnapshot.forEach((doc) => {
-                    console.log(`${doc.id} => ${doc.data()}`);
-                });
-            });*/
-
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
         console.log(random)
@@ -87,7 +75,6 @@ export default function App(props) {
     }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
 
     const evaluateAnswer = () => {
-        const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
 
         let n = data.solution;
         let i = userAnswer.message.length;
@@ -120,14 +107,40 @@ export default function App(props) {
         }
 
         if (n === 1) { // if solution given by the user is right
-            pushSolutionScreen.params.userWins = 1;
+            navigationParams.userWins = 1;
+            navigationParams.Game[round-1].UserWins = 1
         }
+        else {navigationParams.Game[round-1].UserWins = 0}
+
+        const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
+
 
         props
             .navigation
             .dispatch(pushSolutionScreen);
 
         setIsLoading(true)
+    }
+    const userId1 = 1;
+    const userId2 = 1;
+
+    const multipleChoiceId = 0
+    const round = props //Get round
+        .navigation
+        .getParam('round', '')
+
+    let game = props //set the played game (MultipleChoice = 0) in the array with the round
+        .navigation
+        .getParam("Game", '')
+
+    if (round != '' && game != '') {
+        game.push({[round]: 0, UserWins: 0})
+    } else {
+        game = [
+            {
+                1: multipleChoiceId, UserWins: 0,
+            }
+        ]; //if round is not, set set it to 0
     }
 
     const navigationParams = { //init navigation params for the next screen
@@ -139,7 +152,8 @@ export default function App(props) {
             .getParam('playStyle', 'competitive'),
         userWins: 0,
         explanation: data.explanation,
-        info: data.info
+        info: data.info,
+        Game: game
     }
 
     const headerColor = {
@@ -170,7 +184,7 @@ export default function App(props) {
             : false);
     }
 
-    if (isLoading === true) {       //return loading screen, if data is loading 
+    if (isLoading === true) { //return loading screen, if data is loading
         return (
             <BackgroundContainer>
                 <View style={styles.loadingContainer}>

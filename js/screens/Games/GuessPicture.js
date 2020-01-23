@@ -42,82 +42,6 @@ export default function App(props) {
 
     const _fetchData = async() => {
 
-        //fetch()
-        /*const db = await firebase.firestore()
-
-        var random = Math.floor(Math.random() * 100000) + 1;
-        //const ref = db.collection('MultipleChoiceSets')
-        console.log(random)
-
-        async function GetPictureUrl(storage, setId) { //Get picute url from firebase storage
-            // Create a reference to the file we want to download
-            var picRef = storage.ref('Games/GuessThePicture/' + setId + '.jpg');
-
-            // Get the download URL
-            urlRef = await picRef
-                .getDownloadURL()
-            return urlRef;
-        }
-
-        async function GetMultipleChoiceSet(db) {
-            let campaignsRef = db.collection('GuessPictureSets')
-            let activeRef = await campaignsRef
-                .where('random', '>=', random)
-                .orderBy('random')
-                .limit(1)
-                .get();
-            for (doc of activeRef.docs) {
-                var docData = doc.data()
-                setData(docData);
-                var storage = firebase.storage();
-                const setId = docData.random;
-                try {
-                    pictureUrlQ = await GetPictureUrl(storage, setId);
-                    if (pictureUrlQ) {
-                        setPictureUrl(pictureUrlQ);
-                    }
-                } catch (error) {
-                    switch (error.code) {
-                        case 'storage/object-not-found':
-                            // File doesn't exist
-                            console.log('File does not exist', error);
-                            break;
-
-                        case 'storage/unauthorized':
-                            console.log('Missing permission', error);
-                            // User doesn't have permission to access the object
-                            break;
-
-                        case 'storage/canceled':
-                            // User canceled the upload
-                            break;
-
-                        case 'storage/unknown':
-                            console.log('Unknown error occured', error);
-                            // Unknown error occurred, inspect the server response
-                            break;
-                    }
-                }
-                return docData;
-            }
-        }
-
-        try {
-            const data1 = GetMultipleChoiceSet(db)
-            if (data1) {
-                setData(data1)
-                setIsLoading(false);
-            } else {
-                console.log('Error getting documents, sfs')
-                //setIsLoading(false);
-            }
-
-        } catch (err) {
-            console.log('Error getting documents sfdf', err)
-            //setIsLoading(false);
-            return;
-        }*/
-
         const db = firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
@@ -176,7 +100,7 @@ export default function App(props) {
                         // Unknown error occurred, inspect the server response
                         break;
                     default:
-                            console.log('Error', error);
+                        console.log('Error', error);
                 }
             }
 
@@ -192,9 +116,8 @@ export default function App(props) {
 
     }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
 
-    const evaluateAnswer = () => {
-        const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
-
+    const evaluateAnswer = () => { //evaluate the given answer of the user for correctness
+  
         let n = data.solution;
         let i = userAnswer.message.length;
         while (i > 0) { //determine if the solution given by the user is right
@@ -226,14 +149,40 @@ export default function App(props) {
         }
 
         if (n === 1) { // if solution given by the user is right
-            pushSolutionScreen.params.userWins = 1;
+            navigationParams.userWins = 1;
+            navigationParams.Game[round - 1].UserWins = 1
+        } else {
+            navigationParams.Game[round - 1].UserWins = 0
         }
+
+        const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
 
         //setIsLoading(true)
 
         props
             .navigation
             .dispatch(pushSolutionScreen);
+    }
+
+    const guessPictureId = 1
+
+    const round = props //Get round
+        .navigation
+        .getParam('round', '')
+
+    let game = props //set the played game (MultipleChoice = 0) in the array with the round
+        .navigation
+        .getParam("Game", '')
+
+    if (round != '' && game != '') {
+        game.push({[round]: 0, UserWins: 0})
+    } else {
+        game = [
+            {
+                1: guessPictureId,
+                UserWins: 0
+            }
+        ]; //if round is not, set set it to 0
     }
 
     const navigationParams = { //init navigation params for the next screen
@@ -245,7 +194,8 @@ export default function App(props) {
             .getParam('playStyle', 'competitive'),
         userWins: 0,
         explanation: data.explanation,
-        info: data.info
+        info: data.info,
+        Game: game
     }
 
     const showHomeButton = props

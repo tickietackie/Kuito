@@ -26,38 +26,102 @@ export default function Leaderboard(props) {
     const navigationProperties = {
         round: 1,
         playStyle: 'competetive',
+        randomId: random
+    };
+
+    const game = [
+        {
+            1: 0,
+            UserWins: 0,
+            userId: 1,
+            gameId: 50000
+        }, {
+            2: 0,
+            UserWins: 1,
+            userId: 1,
+            gameId: 50000
+        }, {
+            2: 0,
+            UserWins: 1,
+            userId: 1,
+            gameId: 50000
+        }
+    ]
+
+    const game2 = [
+        {
+            1: 0,
+            UserWins: 0,
+            userId: 1,
+            gameId: 50000
+        }, {
+            2: 0,
+            UserWins: 1,
+            userId: 1,
+            gameId: 50000
+        }, {
+            2: 0,
+            UserWins: 1,
+            userId: 1,
+            gameId: 50000
+        },
+        {
+            1: 0,
+            UserWins: 0,
+            userId: 1,
+            gameId: 50000
+        }, {
+            2: 0,
+            UserWins: 1,
+            userId: 1,
+            gameId: 50000
+        }, {
+            2: 0,
+            UserWins: 1,
+            userId: 1,
+            gameId: 50000
+        }
+    ]
+
+    const navigationPropertiesResult = {
+        round: 1,
+        playStyle: 'competetive',
         randomId: random,
+        Game: game
     };
 
     const navigate = () => {
         setRandom(Math.floor(Math.random() * 100000) + 1);
-        props.navigation.navigate("MultipleChoice", navigationProperties)
+        props
+            .navigation
+            .navigate("MultipleChoice", navigationProperties)
     }
 
-        return (
-          <BackgroundContainer>
-              <View style={styles.container}>
+    return (
+        <BackgroundContainer>
+            <View style={styles.container}>
                 <HeaderText text="Leaderboard"></HeaderText>
                 <Button
                     title="Linking"
                     onPress={() => props.navigation.navigate("LinkingGame", navigationProperties)}/>
                 <Button
                     title="Guess"
-                    onPress={() => props.navigation.navigate("GuessPicture", navigationProperties)}/>
+                    onPress={() => props.navigation.navigate("GuessPicture", navigationPropertiesResult)}/>
+                <Button title="Multiple" onPress={() => navigate()}/>
                 <Button
-                    title="Multiple"
-                    onPress={() => navigate()}/>
+                    title="Result"
+                    onPress={() => props.navigation.navigate("Result", navigationProperties)}/>
             </View>
             <GameHistory></GameHistory>
-          </BackgroundContainer>
+        </BackgroundContainer>
 
-        );
-    
+    );
+
 }
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 45,
+        paddingTop: 45
     },
     button: {
         marginBottom: 30,
@@ -81,6 +145,6 @@ const styles = StyleSheet.create({
         color: "black",
         padding: 5,
         margin: 10,
-        backgroundColor: "red",
+        backgroundColor: "red"
     }
 });

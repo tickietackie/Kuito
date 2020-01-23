@@ -7,8 +7,9 @@ import BackgroundContainer from "../../components/BackgroundContainer"
 import {material} from 'react-native-typography';
 import HeaderText from '../../components/HeaderText';
 
+import firebase from "../../../config/firebase";
+
 export default function App(props) {
-    const text = "This is the Solution";
     if (props.visible === false) {
         //return null;
     }
@@ -16,6 +17,11 @@ export default function App(props) {
     const round = props
         .navigation
         .getParam('round', '');
+    const roundLength = 3; //Rounds after the game ends
+
+    const initLoading = round >= roundLength ? true : false;
+    const [isLoading,
+        setIsLoading] = useState(initLoading);
 
     const NavigateToRandomGame = () => {
 
@@ -23,18 +29,26 @@ export default function App(props) {
             round: Number.parseInt(props.navigation.getParam('round', ''), 10) + 1, //inc round
             playStyle: props //Set playStyle again to the last playstyle for next screen
                 .navigation
-                .getParam('playStyle', 'competitive')
+                .getParam('playStyle', 'competitive'),
+            Game: props //Set playStyle again to the last playstyle for next screen
+                .navigation
+                .getParam('Game', '')
         };
 
         let RandomScreen = "";
 
         if (props.navigation.getParam('playStyle', 'competitive') === 'competetive') {
-            if (rand === 1) { //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
-                RandomScreen = StackActions.push({routeName: 'LinkingGame', params: navigationParams});
-            } else if (rand === 2) {
-                RandomScreen = StackActions.push({routeName: 'MultipleChoice', params: navigationParams});
-            } else {
-                RandomScreen = StackActions.push({routeName: 'GuessPicture', params: navigationParams});
+            if (round >= roundLength) { //if round is finished -> navigate to result screen
+                RandomScreen = StackActions.push({routeName: 'Result', params: navigationParams});
+            }
+            else {
+                if (rand === 1) { //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
+                    RandomScreen = StackActions.push({routeName: 'LinkingGame', params: navigationParams});
+                } else if (rand === 2) {
+                    RandomScreen = StackActions.push({routeName: 'MultipleChoice', params: navigationParams});
+                } else {
+                    RandomScreen = StackActions.push({routeName: 'GuessPicture', params: navigationParams});
+                }
             }
         } else { //Replace last route with the the solution screen, to avoid endless stacking in traing mode
             RandomScreen = StackActions.replace({
@@ -70,16 +84,59 @@ export default function App(props) {
 
     const [rand,
         setRand] = useState(Math.floor(Math.random() * 3) + 1); //Set random starting number for the random game vs opponent
-    const nextButtonTitle = "Next";
+
+    async function PersistGameData() { //fetch()
+        const db = firebase.firestore()
+
+        var random = Math.floor(Math.random() * 100000) + 1;
+        //const ref = db.collection('MultipleChoiceSets')
+        console.log(random)
+
+        async function AddGameDataToDb(db) {
+            // Add a new document with a generated id.
+            const game = props
+                .navigation
+                .getParam('Game', '');
+            let playedGamesRef = db.collection('PlyedGames');
+            let savedGame = await playedGamesRef.add(game)
+            for (doc of savedGame.docs) {
+                return doc.data();
+            }
+            /*async function GetMultipleChoiceSet(db) {
+                    let campaignsRef = db.collection('MultipleChoiceSets')
+                    let activeRef = await campaignsRef
+                        .where('random', '>=', random)
+                        .orderBy('random')
+                        .limit(1)
+                        .get();
+                    for (doc of activeRef.docs) {
+                        return doc.data();
+                    }
+                }*/
+        }
+        try {
+            data1 = await AddGameDataToDb(db);
+            setData(data1);
+            setIsLoading(false);
+
+        } catch (err) {
+            console.log('Error getting documents', err)
+            setIsLoading(false);
+        }
+    }
 
     let showNextButton = true;
-    let homeButtonStyle = "";
-    if (round >= 3 && props.navigation.getParam('playStyle', 'competitive') === "competetive") { //Do not display the next button after 3 rounds
-        showNextButton = false
+    let homeButtonStyle = "";    
+    let nextButtonTitle = "Next";
+
+    if (round >= roundLength && props.navigation.getParam('playStyle', 'competitive') === "competetive") { //Do not display the next button after 3 rounds
+        showNextButton = true
+        nextButtonTitle
         homeButtonStyle = {
             justifyContent: "center",
             left: "auto"
         }
+
     };
     const showHomeButton = true;
 
@@ -165,8 +222,8 @@ const styles = StyleSheet.create({
         padding: 10
     },
     infoContainer: {
-        padding: 10,  
-        marginBottom: 5,
+        padding: 10,
+        marginBottom: 5
     },
     safeArea: {
         flex: 3,

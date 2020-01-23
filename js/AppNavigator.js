@@ -8,6 +8,9 @@ import { StackActions } from 'react-navigation';
 import * as Icon from '@expo/vector-icons';
 //import { createStackNavigator } from 'react-navigation-stack';
 
+import AuthLoading from './screens/Authentication/AuthLoading';
+import SignInScreen from './screens/Authentication/SignIn';
+
 import Home from './screens/Home';
 import Settings from './screens/Settings';
 
@@ -18,6 +21,8 @@ import GuessPicture from './screens/Games/GuessPicture';
 import LinkingGame from './screens/Games/LinkingGame';
 import MultipleChoice from './screens/Games/MultipleChoice';
 import Solution from './screens/Games/Solution';
+import Result from './screens/Games/Result';
+
 
 import Leaderboard from './screens/Leaderboard';
 import Stats from './screens/Stats';
@@ -80,6 +85,9 @@ const AppStackModal = createStackNavigator(
         Solution: {
             screen: Solution,
         },   
+        Result: {
+            screen: Result,
+        },   
     },
     {
         headerMode: 'none',
@@ -125,6 +133,20 @@ const TabNavigator = createBottomTabNavigator({
     }
 })
 
-export default createAppContainer(TabNavigator);
+const AuthStack = createStackNavigator({ SignIn: SignInScreen});
+
+const App = createSwitchNavigator(
+    {
+      AuthLoading: AuthLoading,
+      App: TabNavigator,
+      Auth: AuthStack,
+    },
+    {
+      initialRouteName: 'AuthLoading',
+    }
+  )
+  
+
+export default createAppContainer(App);
 
 

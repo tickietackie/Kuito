@@ -26,26 +26,14 @@ export default function Leaderboard(props) {
     const navigationProperties = {
         round: 1,
         playStyle: 'competetive',
-        randomId: random
+        randomId: random,
+        userId: "abc"
     };
 
     const game = [
-        {
-            1: 0,
-            UserWins: 0,
-            userId: 1,
-            gameId: 50000
-        }, {
-            2: 0,
-            UserWins: 1,
-            userId: 1,
-            gameId: 50000
-        }, {
-            2: 0,
-            UserWins: 1,
-            userId: 1,
-            gameId: 50000
-        }
+        {1: 1, UserWins: 1, userId: "abc", gameId: "OJjrseCfzKXo77BdDKVg"},
+        {2: 0, UserWins: 0, userId: "abc", gameId: "HSiwNxBCMSmS0kRgR7LD"},
+        {3: 1, UserWins: 1, userId: "abc", gameId: "O4qZ90l3qIbEvlebuev3"}
     ]
 
     const game2 = [
@@ -84,10 +72,11 @@ export default function Leaderboard(props) {
     ]
 
     const navigationPropertiesResult = {
-        round: 1,
+        round: 3,
         playStyle: 'competetive',
         randomId: random,
-        Game: game
+        Game: game,
+        userId: "abc",
     };
 
     const navigate = () => {
@@ -108,6 +97,9 @@ export default function Leaderboard(props) {
                     title="Guess"
                     onPress={() => props.navigation.navigate("GuessPicture", navigationPropertiesResult)}/>
                 <Button title="Multiple" onPress={() => navigate()}/>
+                <Button
+                    title="Solution"
+                    onPress={() => props.navigation.navigate("Solution", navigationPropertiesResult)}/>
                 <Button
                     title="Result"
                     onPress={() => props.navigation.navigate("Result", navigationProperties)}/>

@@ -19,11 +19,60 @@ export default function App(props) {
         .getParam('round', '');
     const roundLength = 3; //Rounds after the game ends
 
-    const initLoading = round >= roundLength ? true : false;
+    const initLoading = round >= roundLength
+        ? true
+        : false;
     const [isLoading,
         setIsLoading] = useState(initLoading);
 
-    const NavigateToRandomGame = () => {
+    async function PersistGameData() { //fetch()
+        const db = firebase.firestore()
+
+        var random = Math.floor(Math.random() * 100000) + 1;
+        //const ref = db.collection('MultipleChoiceSets')
+        console.log(random)
+
+        async function AddGameDataToDb(db) {
+            // Add a new document with a generated id.
+            const navigation = props.navigation
+
+            const gameRounds = navigation.getParam('Game', '');
+            const userId = navigation.getParam('userId', '');
+
+
+            let game = {
+                userId1: userId,
+                games_played: gameRounds,
+                finished: 0,
+            }
+
+            if (!game.created) {
+                const today = new Date();
+                const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+                const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                const dateTime = date + ' ' + time;
+                game.started = dateTime;
+            }
+
+            let playedGamesRef = db.collection('PlayedGames');
+            let savedGame = await playedGamesRef.add(game)
+            //for (doc of savedGame.docs) {
+                //return doc.data();
+            //}
+            //console.log (savedGame);
+        }
+        try {
+            data1 = await AddGameDataToDb(db);
+            setData(data1);
+            setIsLoading(false);
+
+        } catch (err) {
+            console.log('Error saving document', err)
+            setIsLoading(false);
+        }
+    }
+
+    const NavigateToRandomGame = async() => {
 
         const navigationParams = { //Get round and playstyle from last screen
             round: Number.parseInt(props.navigation.getParam('round', ''), 10) + 1, //inc round
@@ -32,16 +81,20 @@ export default function App(props) {
                 .getParam('playStyle', 'competitive'),
             Game: props //Set playStyle again to the last playstyle for next screen
                 .navigation
-                .getParam('Game', '')
+                .getParam('Game', ''),
+            userId: props //Set playStyle again to the last playstyle for next screen
+                .navigation
+                .getParam('userId', '')
         };
 
         let RandomScreen = "";
 
         if (props.navigation.getParam('playStyle', 'competitive') === 'competetive') {
             if (round >= roundLength) { //if round is finished -> navigate to result screen
+                await PersistGameData()
+                var test = "";
                 RandomScreen = StackActions.push({routeName: 'Result', params: navigationParams});
-            }
-            else {
+            } else {
                 if (rand === 1) { //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
                     RandomScreen = StackActions.push({routeName: 'LinkingGame', params: navigationParams});
                 } else if (rand === 2) {
@@ -85,48 +138,8 @@ export default function App(props) {
     const [rand,
         setRand] = useState(Math.floor(Math.random() * 3) + 1); //Set random starting number for the random game vs opponent
 
-    async function PersistGameData() { //fetch()
-        const db = firebase.firestore()
-
-        var random = Math.floor(Math.random() * 100000) + 1;
-        //const ref = db.collection('MultipleChoiceSets')
-        console.log(random)
-
-        async function AddGameDataToDb(db) {
-            // Add a new document with a generated id.
-            const game = props
-                .navigation
-                .getParam('Game', '');
-            let playedGamesRef = db.collection('PlyedGames');
-            let savedGame = await playedGamesRef.add(game)
-            for (doc of savedGame.docs) {
-                return doc.data();
-            }
-            /*async function GetMultipleChoiceSet(db) {
-                    let campaignsRef = db.collection('MultipleChoiceSets')
-                    let activeRef = await campaignsRef
-                        .where('random', '>=', random)
-                        .orderBy('random')
-                        .limit(1)
-                        .get();
-                    for (doc of activeRef.docs) {
-                        return doc.data();
-                    }
-                }*/
-        }
-        try {
-            data1 = await AddGameDataToDb(db);
-            setData(data1);
-            setIsLoading(false);
-
-        } catch (err) {
-            console.log('Error getting documents', err)
-            setIsLoading(false);
-        }
-    }
-
     let showNextButton = true;
-    let homeButtonStyle = "";    
+    let homeButtonStyle = "";
     let nextButtonTitle = "Next";
 
     if (round >= roundLength && props.navigation.getParam('playStyle', 'competitive') === "competetive") { //Do not display the next button after 3 rounds
@@ -138,7 +151,7 @@ export default function App(props) {
         }
 
     };
-    const showHomeButton = true;
+    const showHomeButton = false;
 
     const solutionContainerColor = props
         .navigation

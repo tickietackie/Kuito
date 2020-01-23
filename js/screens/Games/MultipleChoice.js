@@ -34,6 +34,8 @@ export default function App(props) {
         info: ""
     });
 
+    const [gameId, setGameId] = useState(0);
+
     const [isLoading,
         setIsLoading] = useState(true);
 
@@ -54,6 +56,7 @@ export default function App(props) {
                 .limit(1)
                 .get();
             for (doc of activeRef.docs) {
+                setGameId(doc.id)
                 return doc.data();
             }
         }
@@ -108,12 +111,14 @@ export default function App(props) {
 
         if (n === 1) { // if solution given by the user is right
             navigationParams.userWins = 1;
-            navigationParams.Game[round-1].UserWins = 1
+            navigationParams.Game[round - 1].UserWins = 1
+            navigationParams.Game[round - 1].gameId = gameId
+        } else {
+            navigationParams.Game[round - 1].UserWins = 0
+            navigationParams.Game[round - 1].gameId = gameId
         }
-        else {navigationParams.Game[round-1].UserWins = 0}
 
         const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
-
 
         props
             .navigation
@@ -121,8 +126,11 @@ export default function App(props) {
 
         setIsLoading(true)
     }
-    const userId1 = 1;
-    const userId2 = 1;
+
+    const userId = props
+        .navigation
+        .getParam("userId", '1')
+    const userId2 = 2;
 
     const multipleChoiceId = 0
     const round = props //Get round
@@ -133,14 +141,18 @@ export default function App(props) {
         .navigation
         .getParam("Game", '')
 
-    if (round != '' && game != '') {
-        game.push({[round]: 0, UserWins: 0})
-    } else {
-        game = [
-            {
-                1: multipleChoiceId, UserWins: 0,
-            }
-        ]; //if round is not, set set it to 0
+    if (!game[round-1]) {
+        if (round != '' && game != '') {
+            game.push({[round]: multipleChoiceId, UserWins: 0, userId: userId})
+        } else {
+            game = [
+                {
+                    1: multipleChoiceId,
+                    UserWins: 0,
+                    userId: userId
+                }
+            ]; //if round is not, set set it to 0
+        }
     }
 
     const navigationParams = { //init navigation params for the next screen
@@ -153,7 +165,8 @@ export default function App(props) {
         userWins: 0,
         explanation: data.explanation,
         info: data.info,
-        Game: game
+        Game: game,
+        userId: userId
     }
 
     const headerColor = {

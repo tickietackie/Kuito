@@ -5,18 +5,26 @@ import {
     StyleSheet,
     Text,
     SafeAreaView,
-    ScrollView
+    ScrollView,
+    AsyncStorage
 } from 'react-native';
 
 import GameHistory from "../components/GameHistory"
 
 export default function App(props) {
 
-    function NavigateToRandomGame() {
+    async function NavigateToRandomGame() {
+
+        GetUserId = async() => {
+            return await AsyncStorage.getItem('userToken');
+        };
+
+        const userId = await GetUserId()
 
         const navigationProperties = {
             round: 1,
-            playStyle: 'competetive'
+            playStyle: 'competetive',
+            userId : userId
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;

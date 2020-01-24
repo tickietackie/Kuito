@@ -28,7 +28,9 @@ export default function App(props) {
     const userId = props
         .navigation
         .getParam("userId", '1')
-    const userId2 = 2;
+    const userId2 = props
+    .navigation
+    .getParam("userId2", '1')
 
     const [gameId,
         setGameId] = useState(0);
@@ -67,7 +69,8 @@ export default function App(props) {
         explanation: "empty",
         info: "yep",
         Game: game,
-        userId: userId
+        userId: userId,
+        userId2: userId2
     }
 
     const _fetchData = async() => {
@@ -76,7 +79,8 @@ export default function App(props) {
         const db = firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
-        //const ref = db.collection('MultipleChoiceSets') console.log(random)
+        //const ref = db.collection('MultipleChoiceSets') 
+        
 
         /*async function GetMultipleChoiceSet(db) {
             let campaignsRef = db.collection('MultipleChoiceSets')

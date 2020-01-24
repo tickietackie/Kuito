@@ -14,6 +14,23 @@ export default function App(props) {
         //return null;
     }
 
+    const [data, //contains pressed button numbers of user, all pressed: [2,3,4,5]
+        setData] = useState({
+        question: "",
+        answer_1: "",
+        answer_2: "",
+        answer_3: "",
+        answer_4: "",
+        solution: 3,
+        explanation: "",
+        info: ""
+    });
+
+    const [gameId, setGameId] = useState(0);
+
+    const [isLoading,
+        setIsLoading] = useState(true);
+
     const round = props
         .navigation
         .getParam('round', '');
@@ -22,8 +39,6 @@ export default function App(props) {
     const initLoading = round >= roundLength
         ? true
         : false;
-    const [isLoading,
-        setIsLoading] = useState(initLoading);
 
     async function PersistGameData() { //fetch()
         const db = firebase.firestore()
@@ -39,9 +54,8 @@ export default function App(props) {
             const gameRounds = navigation.getParam('Game', '');
             const userId = navigation.getParam('userId', '');
 
-
             let game = {
-                userId1: userId,
+                userId: userId,
                 games_played: gameRounds,
                 finished: 0,
             }
@@ -62,7 +76,7 @@ export default function App(props) {
             //console.log (savedGame);
         }
         try {
-            data1 = await AddGameDataToDb(db);
+            const data1 = await AddGameDataToDb(db);
             setData(data1);
             setIsLoading(false);
 
@@ -82,9 +96,12 @@ export default function App(props) {
             Game: props //Set playStyle again to the last playstyle for next screen
                 .navigation
                 .getParam('Game', ''),
-            userId: props //Set playStyle again to the last playstyle for next screen
+            userId: props 
                 .navigation
-                .getParam('userId', '')
+                .getParam('userId', 0),
+            userId2: props 
+            .navigation
+            .getParam('userId2', 0)
         };
 
         let RandomScreen = "";

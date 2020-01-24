@@ -7,32 +7,91 @@ import {
     SafeAreaView,
     ScrollView,
     AsyncStorage,
-    TouchableHighlight
+    TouchableHighlight,
+    ActivityIndicator
 } from 'react-native';
 
 import {material} from 'react-native-typography';
 
+import firebase from "../../config/firebase";
 import GameHistory from "../components/GameHistory"
 import BackgroundContainer from '../components/BackgroundContainer';
 
 export default function App(props) {
 
+    const [isLoading,
+        setIsLoading] = useState(false);
+
     async function NavigateToRandomGame() {
 
-        GetUserId = async() => {
+        setIsLoading(true);
+
+        const GetUserId = async() => {
             return await AsyncStorage.getItem('userToken');
         };
 
-        const userId = await GetUserId()
+        const GetRandomUser = async(db, userIdRandom) => {        //Get a random opponent => get random second user id, but ignore own userid
+            let campaignsRef = db.collection('users')
+            let activeRef = await campaignsRef
+                .where('random', '>=', random)
+                .where('random','>', userIdRandom)   //("not" queries are not supported by firestore, therefore > and <)
+                .orderBy('random')
+                .limit(1)
+                .get();
+            for (doc of activeRef.docs) {
+                return doc.id;
+            }
+        }
+
+        const GetRandomUser2 = async(db, userIdRandom) => {        //Get a random opponent => get random second user id, but ignore own userid
+            let campaignsRef = db.collection('users')
+            let activeRef = await campaignsRef
+                .where('random', '>=', random)
+                .where('random','<', userIdRandom)   //("not" queries are not supported by firestore, therefore > and <)
+                .orderBy('random')
+                .limit(1)
+                .get();
+            for (doc of activeRef.docs) {
+                return doc.id;
+            }
+        }
+
+        const random = Math.floor(Math.random() * 100000) + 1;
+        console.log("random:" + random)
+
+        var randomUserId = 0;
+        var userId = 0;
+        const userIdRandom = 99999;
+        try {
+            userId = await GetUserId()
+            const db = firebase.firestore();
+            randomUserId = await GetRandomUser(db, userIdRandom) //Get random user id
+            //If user id is the same perform another query, to complete the "not same user id" logic
+            const randomUserId2 = await GetRandomUser2(db, userIdRandom)
+            randomUserId = randomUserId !== userId ? randomUserId2 : 0
+        } catch (err) {
+            console.log('Error getting userIds', err)
+            alert("Failed to get your data. Please check your internet connection and retry!")      
+            setIsLoading(false);
+            return;
+        }
+
+        if (!randomUserId) {
+            alert("Failed to find a second user. Please check your internet connection!")
+            setIsLoading(false);
+            return;
+        }
 
         const navigationProperties = {
             round: 1,
             playStyle: 'competetive',
-            userId: userId
+            userId: userId,
+            userId2: randomUserId
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;
         setRand(RandomNumber); //change random state for next render
+        setIsLoading(false);
         props
             .navigation
             .navigate(RandomScreen, navigationProperties); //naviaget to random game
@@ -48,6 +107,16 @@ export default function App(props) {
         RandomScreen = "LinkingGame"
     } else {
         RandomScreen = "MultipleChoice"
+    }
+
+    if (isLoading === true) { //return loading screen, if data is loading
+        return (
+            <BackgroundContainer>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="darkorange"></ActivityIndicator>
+                </View>
+            </BackgroundContainer>
+        )
     }
 
     return (
@@ -110,6 +179,10 @@ const styles = StyleSheet.create({
             height: 2
         },
         elevation: 2,
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center"
     }
 
 });

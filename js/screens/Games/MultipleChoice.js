@@ -46,7 +46,7 @@ export default function App(props) {
 
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
-        console.log(random)
+        //console.log(random)
 
         async function GetMultipleChoiceSet(db) {
             let campaignsRef = db.collection('MultipleChoiceSets')
@@ -61,7 +61,7 @@ export default function App(props) {
             }
         }
         try {
-            data1 = await GetMultipleChoiceSet(db);
+            const data1 = await GetMultipleChoiceSet(db);
             setData(data1);
             setIsLoading(false);
 
@@ -130,7 +130,9 @@ export default function App(props) {
     const userId = props
         .navigation
         .getParam("userId", '1')
-    const userId2 = 2;
+    const userId2 = props
+    .navigation
+    .getParam("userId2", '1');
 
     const multipleChoiceId = 0
     const round = props //Get round
@@ -166,7 +168,9 @@ export default function App(props) {
         explanation: data.explanation,
         info: data.info,
         Game: game,
-        userId: userId
+        userId: userId,
+        userId2: userId2
+        
     }
 
     const headerColor = {

@@ -49,7 +49,7 @@ export default function App(props) {
 
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
-        console.log(random)
+       
 
         async function GetGuessPictureSet(db) {
             let campaignsRef = db.collection('GuessPictureSets')
@@ -75,7 +75,7 @@ export default function App(props) {
         }
 
         try {
-            data1 = await GetGuessPictureSet(db);
+            const data1 = await GetGuessPictureSet(db);
             var storage = firebase.storage();
             const setId = data1.random;
             try {
@@ -173,7 +173,9 @@ export default function App(props) {
     const userId = props
         .navigation
         .getParam("userId", '1')
-    const userId2 = 2;
+    const userId2 = props
+    .navigation
+    .getParam("userId2", '1')
 
     const guessPictureId = 1
 
@@ -210,7 +212,8 @@ export default function App(props) {
         explanation: data.explanation,
         info: data.info,
         Game: game,
-        userId: userId
+        userId: userId,
+        userId2: userId2
     }
 
     const showHomeButton = props

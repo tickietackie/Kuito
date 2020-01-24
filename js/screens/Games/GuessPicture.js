@@ -193,7 +193,7 @@ export default function App(props) {
                 {
                     1: guessPictureId,
                     UserWins: 0,
-                    userId: userId
+                    userId: userId,
                 }
             ]; //if round is not, set set it to 0
         }

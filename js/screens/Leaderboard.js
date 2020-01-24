@@ -36,40 +36,6 @@ export default function Leaderboard(props) {
         {3: 1, UserWins: 1, userId: "abc", gameId: "O4qZ90l3qIbEvlebuev3"}
     ]
 
-    const game2 = [
-        {
-            1: 0,
-            UserWins: 0,
-            userId: 1,
-            gameId: 50000
-        }, {
-            2: 0,
-            UserWins: 1,
-            userId: 1,
-            gameId: 50000
-        }, {
-            2: 0,
-            UserWins: 1,
-            userId: 1,
-            gameId: 50000
-        },
-        {
-            1: 0,
-            UserWins: 0,
-            userId: 1,
-            gameId: 50000
-        }, {
-            2: 0,
-            UserWins: 1,
-            userId: 1,
-            gameId: 50000
-        }, {
-            2: 0,
-            UserWins: 1,
-            userId: 1,
-            gameId: 50000
-        }
-    ]
 
     const navigationPropertiesResult = {
         round: 3,
@@ -95,14 +61,14 @@ export default function Leaderboard(props) {
                     onPress={() => props.navigation.navigate("LinkingGame", navigationProperties)}/>
                 <Button
                     title="Guess"
-                    onPress={() => props.navigation.navigate("GuessPicture", navigationPropertiesResult)}/>
+                    onPress={() => props.navigation.navigate("GuessPicture", navigationProperties)}/>
                 <Button title="Multiple" onPress={() => navigate()}/>
                 <Button
                     title="Solution"
                     onPress={() => props.navigation.navigate("Solution", navigationPropertiesResult)}/>
                 <Button
                     title="Result"
-                    onPress={() => props.navigation.navigate("Result", navigationProperties)}/>
+                    onPress={() => props.navigation.navigate("Result", navigationPropertiesResult)}/>
             </View>
             <GameHistory></GameHistory>
         </BackgroundContainer>

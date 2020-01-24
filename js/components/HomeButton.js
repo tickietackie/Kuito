@@ -2,6 +2,7 @@ import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
 import { withNavigation } from 'react-navigation';  //navigation won't be provided to childs automatically, therefore wrap it into with navigation before exporting it
 import {StackActions, NavigationActions} from 'react-navigation';
+import {material} from 'react-native-typography';
 
 const HomeButtonComponent = function HomeButton(props) {
 

@@ -1,4 +1,4 @@
-import React, {useState, useRef, useEffect} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     Button,
     StyleSheet,
@@ -188,7 +188,6 @@ export default function App(props) {
     const [showNextButton, //contains pressed button numbers of user, all pressed: [2,3,4,5]
         setShowNextButton] = useState(false);
 
-    const inputRef = useRef([0, 0, 0, 0]);
     const callbackFunction = (childData) => {
         setUserAnswer({message: childData})
         //if array not empty show next button (user has pressed at leasat one button)

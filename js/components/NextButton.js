@@ -1,5 +1,6 @@
 import React from 'react';
 import { Button, StyleSheet, Text, View } from 'react-native';
+import {material} from 'react-native-typography';
 
 export default function NextButton(props) {
 

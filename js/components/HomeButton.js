@@ -19,7 +19,7 @@ const HomeButtonComponent = function HomeButton(props) {
 const styles = StyleSheet.create({
     nextContainer: {
         position: "absolute",
-        bottom: 10,
+        bottom: "2%",
         //left: 10,
         justifyContent: "center",
         alignItems:"center",

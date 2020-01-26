@@ -14,7 +14,7 @@ import {
 import {material} from 'react-native-typography';
 
 import firebase from "../../config/firebase";
-import GameHistory from "../components/GameHistory"
+import GameHistory from "../components/GameHistory/GameHistoryComponent"
 import BackgroundContainer from '../components/BackgroundContainer';
 
 export default function App(props) {
@@ -30,11 +30,11 @@ export default function App(props) {
             return await AsyncStorage.getItem('userToken');
         };
 
-        const GetRandomUser = async(db, userIdRandom) => {        //Get a random opponent => get random second user id, but ignore own userid
+        const GetRandomUser = async(db, userIdRandom) => { //Get a random opponent => get random second user id, but ignore own userid
             let campaignsRef = db.collection('users')
             let activeRef = await campaignsRef
                 .where('random', '>=', random)
-                .where('random','>', userIdRandom)   //("not" queries are not supported by firestore, therefore > and <)
+                .where('random', '>', userIdRandom) //("not" queries are not supported by firestore, therefore > and <)
                 .orderBy('random')
                 .limit(1)
                 .get();
@@ -43,11 +43,11 @@ export default function App(props) {
             }
         }
 
-        const GetRandomUser2 = async(db, userIdRandom) => {        //Get a random opponent => get random second user id, but ignore own userid
+        const GetRandomUser2 = async(db, userIdRandom) => { //Get a random opponent => get random second user id, but ignore own userid
             let campaignsRef = db.collection('users')
             let activeRef = await campaignsRef
                 .where('random', '>=', random)
-                .where('random','<', userIdRandom)   //("not" queries are not supported by firestore, therefore > and <)
+                .where('random', '<', userIdRandom) //("not" queries are not supported by firestore, therefore > and <)
                 .orderBy('random')
                 .limit(1)
                 .get();
@@ -59,19 +59,33 @@ export default function App(props) {
         const random = Math.floor(Math.random() * 100000) + 1;
         console.log("random:" + random)
 
-        var randomUserId = 0;
-        var userId = 0;
-        const userIdRandom = 99999;
+        let randomUserId = 0;
+        let userId = 0;
+        const userIdRandom = 20000; //FIX Me: random from user has to be set here
         try {
-            userId = await GetUserId()
-            const db = firebase.firestore();
-            randomUserId = await GetRandomUser(db, userIdRandom) //Get random user id
-            //If user id is the same perform another query, to complete the "not same user id" logic
-            const randomUserId2 = await GetRandomUser2(db, userIdRandom)
-            randomUserId = randomUserId !== userId ? randomUserId2 : 0
+
+            let x=0;
+            while (randomUserId === 0) {
+                userId = await GetUserId()
+                const db = firebase.firestore();
+                const fetchedRandomUserId = await GetRandomUser(db, userIdRandom) //Get random user id
+                //If user id is the same perform another query, to complete the "not same user id" logic
+                const fetchedRandomUserId2 = await GetRandomUser2(db, userIdRandom)
+                if (fetchedRandomUserId !== userId && fetchedRandomUserId) {
+                    randomUserId = fetchedRandomUserId
+                } else if (fetchedRandomUserId2 !== userId && fetchedRandomUserId2) {
+                    randomUserId = fetchedRandomUserId2
+                } else {
+                    randomUserId = 0;
+                }
+                if (x >= 10) {
+                    break;
+                }
+                x++;
+            }
         } catch (err) {
             console.log('Error getting userIds', err)
-            alert("Failed to get your data. Please check your internet connection and retry!")      
+            alert("Failed to get your data. Please check your internet connection and retry!")
             setIsLoading(false);
             return;
         }
@@ -90,24 +104,25 @@ export default function App(props) {
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;
-        setRand(RandomNumber); //change random state for next render
+
+        let RandomScreen = "";
+        if (RandomNumber === 1) {
+            RandomScreen = "GuessPicture";
+        } else if (RandomNumber === 2) {
+            RandomScreen = "LinkingGame"
+        } else {
+            RandomScreen = "MultipleChoice"
+        }
+
+        //setRand(RandomNumber); //change random state for next render
         setIsLoading(false);
         props
             .navigation
             .navigate(RandomScreen, navigationProperties); //naviaget to random game
     }
 
-    const [rand,
-        setRand] = useState(Math.floor(Math.random() * 3) + 1); //Set random starting number for the random game vs opponent
-
-    let RandomScreen = "";
-    if (rand === 1) {
-        RandomScreen = "GuessPicture";
-    } else if (rand === 2) {
-        RandomScreen = "LinkingGame"
-    } else {
-        RandomScreen = "MultipleChoice"
-    }
+    //const [rand,
+        //setRand] = useState(Math.floor(Math.random() * 3) + 1); //Set random starting number for the random game vs opponent
 
     if (isLoading === true) { //return loading screen, if data is loading
         return (
@@ -150,10 +165,10 @@ export default function App(props) {
 const styles = StyleSheet.create({
     container: {
         //backgroundColor: '#CEF6CE',
-        flex: 1,
+        flex: 1
     },
     GameHistory: {
-        flex: 5,
+        flex: 5
     },
     scrollView: {
         backgroundColor: 'white',
@@ -178,7 +193,7 @@ const styles = StyleSheet.create({
             width: 1,
             height: 2
         },
-        elevation: 2,
+        elevation: 2
     },
     loadingContainer: {
         flex: 1,

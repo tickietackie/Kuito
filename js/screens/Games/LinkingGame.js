@@ -29,32 +29,53 @@ export default function App(props) {
         .navigation
         .getParam("userId", '1')
     const userId2 = props
-    .navigation
-    .getParam("userId2", '1')
+        .navigation
+        .getParam("userId2", '1')
 
     const [gameId,
         setGameId] = useState(0);
 
-    const linkingGameId = 2
     const round = props //Get round
         .navigation
-        .getParam('round', '')
+        .getParam('round', 1)
+
+    const gameType = 2 //gametyp 2 is the linking game
 
     let game = props //set the played game (MultipleChoice = 0) in the array with the round
         .navigation
         .getParam("Game", '')
 
-    if (!game[round - 1]) {
-        if (round != '' && game != '') {
-            game.push({[round]: linkingGameId, UserWins: 0, userId: userId})
-        } else {
-            game = [
-                {
-                    1: linkingGameId,
-                    UserWins: 0,
-                    userId: userId
-                }
-            ]; //if round is not, set set it to 0
+    let gameUser2 = props //set the played game (MultipleChoice = 0) in the array with the round
+        .navigation
+        .getParam("GameUser2", '')
+
+    if (!props.navigation.getParam("playAfterOpponent", 0)) { //set played games for the first player
+        if (!game[round - 1]) {
+            if (round != '' && game != '') {
+                game.push({gameType: gameType, UserWins: 0, userId: userId})
+            } else {
+                game = [
+                    {
+                        gameType: gameType,
+                        UserWins: 0,
+                        userId: userId
+                    }
+                ]; //if round is not, set set it to 0
+            }
+        }
+    } else {
+        if (!gameUser2[round - 1]) { //set games for the player, playing second
+            if (round != '' && gameUser2 != '') {
+                gameUser2.push({gameType: gameType, UserWins: 0, userId2: userId2})
+            } else {
+                gameUser2 = [
+                    {
+                        gameType: gameType,
+                        UserWins: 0,
+                        userId2: userId2
+                    }
+                ]; //if round is not, set set it to 0
+            }
         }
     }
 
@@ -69,8 +90,15 @@ export default function App(props) {
         explanation: "empty",
         info: "yep",
         Game: game,
+        GameUser2: gameUser2,
         userId: userId,
-        userId2: userId2
+        userId2: userId2,
+        playAfterOpponent: props
+            .navigation
+            .getParam('playAfterOpponent', 0),
+        playedGameDocId: props
+            .navigation
+            .getParam("playedGameDocId", 0)
     }
 
     const _fetchData = async() => {
@@ -79,8 +107,7 @@ export default function App(props) {
         const db = firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
-        //const ref = db.collection('MultipleChoiceSets') 
-        
+        //const ref = db.collection('MultipleChoiceSets')
 
         /*async function GetMultipleChoiceSet(db) {
             let campaignsRef = db.collection('MultipleChoiceSets')
@@ -117,12 +144,23 @@ export default function App(props) {
 
         const n = 0;
         if (n === 1) { // if solution given by the user is right
+            if (!props.navigation.getParam("playAfterOpponent", 0)) {
+                navigationParams.Game[round - 1].UserWins = 1
+                navigationParams.Game[round - 1].gameId = gameId
+            } else {
+                navigationParams.GameUser2[round - 1].UserWins = 1
+                navigationParams.GameUser2[round - 1].gameId = gameId
+            }
             navigationParams.userWins = 1;
-            navigationParams.Game[round - 1].UserWins = 1
-            navigationParams.Game[round - 1].gameId = gameId
+
         } else {
-            navigationParams.Game[round - 1].UserWins = 0
-            navigationParams.Game[round - 1].gameId = gameId
+            if (!props.navigation.getParam("playAfterOpponent", 0)) {
+                navigationParams.Game[round - 1].UserWins = 0
+                navigationParams.Game[round - 1].gameId = gameId
+            } else {
+                navigationParams.GameUser2[round - 1].UserWins = 0
+                navigationParams.GameUser2[round - 1].gameId = gameId
+            }
         }
 
         const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree

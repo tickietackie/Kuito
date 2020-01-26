@@ -30,14 +30,42 @@ const ResultEntryComponent = function Category(props) {
         }
     }
 
+    const result2 = props.result2
+        ? props.result2
+        : "-"
+
+    let resultBGColor2 = "";
+    if (result2 == "win") {
+        resultBGColor2 = {
+            backgroundColor: "limegreen"
+        }
+    } else if (result2 == "lose") {
+        resultBGColor2 = {
+            backgroundColor: "red"
+        }
+    } else if (result2 == "remi") {
+        resultBGColor2 = {
+            backgroundColor: "gold"
+        }
+    } else {
+        resultBGColor2= {
+            backgroundColor: "dodgerblue"
+        }
+    }
+
     return (
         <View style={styles.container}>
             <View style={styles.roundContainer}>
-                <Text style={[material.display1, styles.roundText]}>Round: {props.round}</Text>
+                <Text style={[material.display1, styles.roundText]}>{props.round}</Text>
             </View>
             <View style={styles.resultContainer}>
                 <View style={[styles.resultBorder, resultBGColor]} >
-                    <Text style={[material.display1, styles.roundText, resultBGColor]}>{result}</Text>
+                    <Text style={[material.display1, styles.resultText, resultBGColor]}>{result}</Text>
+                </View>
+            </View>
+            <View style={styles.resultContainer}>
+                <View style={[styles.resultBorder, resultBGColor2]} >
+                    <Text style={[material.display1, styles.resultText, resultBGColor2]}>{result2}</Text>
                 </View>
             </View>
         </View>
@@ -62,17 +90,19 @@ const styles = StyleSheet.create({
         margin: 20,
         borderRadius: 5,
         borderWidth: 2,
-        borderColor: "navy"
+        borderColor: "navy",
+        minWidth: "90%",
+        flex: 1,
 
     },
     roundContainer: {
         //marginBottom: 30,
         alignItems: 'center',
         backgroundColor: 'navy',
-        flexDirection: 'row',
-        minWidth: 170,
+        //  flexDirection: 'row',
+        flex: 1,
         justifyContent: "center",
-        borderRightWidth:1,
+        //borderRightWidth:1,
         borderColor: "white",
     },
     resultContainer: {
@@ -80,13 +110,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         backgroundColor: 'navy',
         flexDirection: 'row',
-        minWidth: 150,
+        //minWidth: 40,
         justifyContent: "center",
-        borderLeftWidth:1,
+        borderLeftWidth:2,
         borderColor: "white",
+        flex: 2,
+        padding: 10,
     },
     roundText: {
-
+        
         color: 'white',
 
         textAlign: "center",
@@ -94,8 +126,17 @@ const styles = StyleSheet.create({
     },
     resultBorder: {
         borderRadius: 5,
-        minWidth: 100,
-        margin: 15,
-        padding: 5,
+        minWidth: 30,
+        //margin: 10,
+    },
+    resultText: {
+        borderRadius: 5,
+        minWidth: 30,
+        margin: 5,
+        marginRight:15,
+        marginLeft: 15,
+        padding: 0,
+        color: 'white',
+        textAlign: "center",
     }
 });

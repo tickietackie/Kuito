@@ -17,19 +17,18 @@ export default function QuestionCard(props) {
 
 const styles = StyleSheet.create({
     container: {
-        margin: 5,
-        flex: 2,
-        paddingTop: 5
+        margin: "3%",
+        flex: 3,
     },
     questionContainer: {
-        flex: 2,
+        flex: 3,
         justifyContent: "center",
         alignItems: "center",
-        marginBottom: 40,
+        //marginBottom: "5%",
         borderRadius: 5,
         shadowColor: 'black',
-        width: 300,
-        height: 50
+        //padding:40,
+        minWidth : 300,
     },
     question: {
         flex: 1,

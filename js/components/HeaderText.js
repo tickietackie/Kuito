@@ -5,7 +5,7 @@ import { material } from 'react-native-typography'
 export default function header(props) {
     return (
         <View style={styles.container}>
-            <Text style={[material.display2, props.style]}>{props.text}</Text>
+            <Text style={[material.display2, styles.text, props.style]}>{props.text}</Text>
         </View>
     );
 }
@@ -17,9 +17,6 @@ const styles = StyleSheet.create({
     },
     text: {
         fontSize: 42,
-        color: "black",
-        padding: 5,
-        margin: 10,
     }
 });
 

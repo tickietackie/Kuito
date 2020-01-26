@@ -20,26 +20,7 @@ export default function Drag() {
     const [shadow,
         setShadow] = React.useState({});
 
-    const [dragPos,
-        setDragPos] = React.useState({x: 0, y: 0});
-
-    /*const [pan,
-        setPan] = React.useState(new Animated.ValueXY());*/
-
-    const [top,
-        setTop] = React.useState({top: 350});
-    
-        const offset = {x:0, y:0};
-    let test = new Animated.ValueXY({x:0, y:0})
-    test = test.setValue(3);
-    
-    console.log(test)
-    //const pan = React.useRef();
-    const pan = React.useRef(new Animated.ValueXY({x:0, y:0}));
-
-    console.log(dragPos);
-    console.log("pan:");
-    console.log(pan);
+    const pan = React.useRef(new Animated.ValueXY({x: 0, y: 0}));
 
     const isDropZone = React.useCallback((gesture) => {
         const dz = dropZoneValues.current;
@@ -63,6 +44,7 @@ export default function Drag() {
             setBgColorRight('#2c3e50');
             setBgColor('#2c3e50');
         }
+
     }, [isDropZone, isDropZone2]);
 
     const setDropZoneValuesLeft = React.useCallback((event) => {
@@ -79,24 +61,16 @@ export default function Drag() {
         onMoveShouldSetPanResponderCapture: () => true,
 
         onPanResponderGrant: (evt, gestureState) => {
-            //let v = new Animated.ValueXY({x: dragPos.x, y: dragPos.y})
-            //console.log(pan.current)
+            pan
+                .current
+                .setOffset({x: pan.current.x._value, y: pan.current.y._value});
+            pan
+                .current
+                .setValue({x: 0, y: 0});
 
-            // var v = new Animated.ValueXY({x: 100, y: 100}) pan.current = v; The gesture
-            // has started. Show visual feedback so the user knows what is happening!
-            // gestureState.d{x,y} will be set to zero now
-            console.log("start2");
-            console.log(panResponder);
-            // gestureState.dx = panResponder.gestureState.moveX; gestureState.dy =
-            // panResponder.gestureState.moveX; gestureState.moveY = 0; gestureState.moveX =
-            // 0;
-            console.log(gestureState)
             console.log("start");
             setBgColorRight('#2c3e50');
             setBgColor('#2c3e50');
-            //pan.current.x = dragPos.x; pan.current.y = dragPos.y;
-
-            setCircleColor("blue");
             setShadow({
                 shadowOpacity: 0.75,
                 shadowRadius: 5,
@@ -125,43 +99,42 @@ export default function Drag() {
             setShadow({})
             if (isDropZone(gesture)) {
                 setBgColor('red');
-            }
-            else if (isDropZone2(gesture)) {
+            } else if (isDropZone2(gesture)) {
                 setBgColorRight('blue');
             } else {
-                //setBgColorRight('#2c3e50');
+                setBgColorRight('#2c3e50');
                 setBgColor('#2c3e50');
             }
             if (!isDropZone(gesture) && !isDropZone2(gesture)) {
                 setBgColor('#2c3e50');
-                setDragPos({x: 0, y: 0})
-                //setTop({top: top.top + gesture.dy})
+
                 Animated
                     .spring(pan.current, {
                     toValue: {
-                        x: 0,
-                        y: 0
+                        x: 0 - pan.current.x._offset,
+                        y: 0 - pan.current.y._offset
                     }
                 })
-                    .start();
+                    .start(() => {
+                        pan
+                            .current
+                            .setValue({x: 0, y: 0})
+                        pan
+                            .current
+                            .setOffset({x: 0, y: 0})
+                    }); //After animation set value to 0
+
             } else {
-                //setBgColor('#2c3e50');
-                console.log("r1")
-                //setTop({top: gesture.y0 + gesture.dy})
-                setDragPos({
-                    x: gesture.x0 - gesture.moveX,
-                    y: gesture.y0 - gesture.moveY
-                })
-                console.log("release")
-                console.log({
-                    x: gesture.x0 - gesture.moveX,
-                    y: gesture.y0 - gesture.moveY
-                });
+                pan
+                    .current
+                    .flattenOffset()
             }
         },
         onPanResponderTerminate: (evt, gestureState) => {
             // Another component has become the responder, so this gesture should be
-            // cancelled setDragPos({x: 0, y: 0}) gestureState.flattenOffset();
+            pan
+                .current
+                .flattenOffset();
         }
     }), []);
 

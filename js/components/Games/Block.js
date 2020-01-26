@@ -23,31 +23,30 @@ export default function block(props) {
         if (buttonOpacity2.opacity == 0.7) 
             userAnswer.push(3);
         else 
-        userAnswer.push(0);
+            userAnswer.push(0);
         if (buttonOpacity3.opacity == 0.7) 
             userAnswer.push(4);
         else 
-        userAnswer.push(0);
+            userAnswer.push(0);
         if (buttonOpacity4.opacity == 0.7) 
             userAnswer.push(5);
         else 
-        userAnswer.push(0);
+            userAnswer.push(0);
         if (opacity === 0.7) { //correct opacity for the changed button because setbuttonopacity needs time to execute
             userAnswer[buttonId] = (buttonId + 2);
-        } 
-        else 
-        userAnswer[buttonId] = (0);
+        } else 
+            userAnswer[buttonId] = (0);
         
-        let slicedCount= 0;
+        let slicedCount = 0;
         const length = userAnswer.length
         for (let index = 0; index < length; index++) {
             if (userAnswer[index - slicedCount] === 0) {
-                userAnswer.splice(index - slicedCount, 1)   
-                slicedCount++;   
-            }  
-            
+                userAnswer.splice(index - slicedCount, 1)
+                slicedCount++;
+            }
+
         }
-         
+
         props.parentCallback(userAnswer);
     }
 
@@ -142,6 +141,7 @@ const styles = StyleSheet.create({
     container: {
         margin: 5,
         flex: 3,
+        marginBottom: "20%"
     },
     /*questionContainer: {
         flex: 2,
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
     },*/
     answerContainer: {
         flex: 3,
-        width: 320,
+        //width: 320,
         flexDirection: 'row',
         flexWrap: 'wrap',
         overflow: 'visible',
@@ -167,8 +167,8 @@ const styles = StyleSheet.create({
     },
     answer: {},
     container2: {
-        height: 100,
-        width: 150,
+        aspectRatio: 5/3,
+        width: "46%",
         margin: 5,
         //overflow: 'scroll',
         justifyContent: 'center',

@@ -8,14 +8,12 @@ import {
     FlatList
 } from 'react-native';
 import {StackActions, NavigationActions} from 'react-navigation';
-import NextButton from '../../components/NextButton';
 import HomeButton from '../../components/HomeButton';
 import BackgroundContainer from "../../components/BackgroundContainer"
 import {material} from 'react-native-typography';
 import HeaderText from '../../components/HeaderText';
 import ResultEntry from '../../components/ResultEntry';
 
-import firebase from "../../../config/firebase";
 
 export default function App(props) {
     if (props.visible === false) {
@@ -31,14 +29,29 @@ export default function App(props) {
     const homeButtonStyle = {
         justifyContent: "center",
         alignItems: "center",
-        felx: 1
+        flex: 1
     }
 
-    function Item({round, result}) { //Each item in the list will be render like this item
+    function Item({round, result, result2}) { //Each item in the list will be render like this item
         return (
-            <ResultEntry result={result} round={round}></ResultEntry>
+            <ResultEntry result={result} result2={result2} round={round}></ResultEntry>
         );
     }
+
+    const userId = props
+        .navigation
+        .getParam("userId", 'Player 1')
+        ? props
+            .navigation
+            .getParam("userId", 'Player 1')
+        : "Player 1"
+    const userId2 = props
+        .navigation
+        .getParam("userId2", 'Player 2')
+        ? props
+            .navigation
+            .getParam("userId2", 'Player 2')
+        : "Player 2"
 
     const DATA = props
         .navigation
@@ -48,8 +61,10 @@ export default function App(props) {
     var i = 1;
     //obj = {...obj, ...pair};  add object key : value pair
     DATA.forEach(element => {
-        let gameResult = DATA[i-1].UserWins === 0 ? "lose" : "win"
-        results.push({round: `${i}`, result: gameResult});     //spread operator 
+        let gameResult = DATA[i - 1].UserWins === 0
+            ? "lose"
+            : "win"
+        results.push({round: `${i}`, result: gameResult}); //spread operator
         i++;
     });
 
@@ -60,6 +75,20 @@ export default function App(props) {
                     <HeaderText text="Result"></HeaderText>
                 </View>
                 <View style={styles.resultsContainer}>
+
+                    <View style={styles.HeadingContainer}>
+                        <View style={styles.roundHeadingContainer}>
+                            <Text style={[styles.roundText, material.body2]}>Round</Text>
+                        </View>
+                        <View style={styles.resultHeadingContainer}>
+                            <Text style={[styles.resultText, material.body2]}>{userId}</Text>
+                        </View>
+                        <View style={styles.resultHeadingContainer}>
+                            <Text style={[styles.resultText, material.body2]}>{userId2}</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.hr}/>
                     <SafeAreaView >
                         <FlatList
                             data={results}
@@ -82,8 +111,7 @@ const styles = StyleSheet.create({
     container: {
         //flex: 1,
         alignItems: 'center',
-        //justifyContent: 'center',
-        //paddingBottom: 40
+        //justifyContent: 'center', paddingBottom: 40
     },
     resultsContainer: {
         paddingTop: 10,
@@ -93,5 +121,42 @@ const styles = StyleSheet.create({
         position: "absolute",
         bottom: 10,
         left: 3
+    },
+    hr: {
+        borderBottomColor: 'black',
+        //shadowOffset: 1,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        alignSelf: 'stretch'
+    },
+    HeadingContainer: {
+        flex: 1,
+        minWidth: "90%",
+        minHeight: 40,
+        flexDirection: "row"
+    },
+    roundHeadingContainer: {
+        //marginBottom: 30,
+        alignItems: 'center',
+        //  flexDirection: 'row',
+        flex: 1,
+        justifyContent: "center",
+        //borderRightWidth:1,
+        borderColor: "white",
+        overflow: "scroll"
+    },
+    resultHeadingContainer: {
+        alignItems: 'center',
+        //minWidth: 40,
+        justifyContent: "center",
+        flex: 2,
+        overflow: "scroll"
+    },
+    roundText: {
+        color: 'black',
+        textAlign: "center",
+    },
+    resultText: {
+        color: 'black',
+        textAlign: "center",
     }
 });

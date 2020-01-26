@@ -14,12 +14,11 @@ class SignInScreen extends React.Component {
                     <Button title="Sign in!" onPress={this._signInAsync}/>
                 </View>
             </BackgroundContainer>
-
         );
     }
 
     _signInAsync = async() => {
-        await AsyncStorage.setItem('userToken', 'LoAfTCync6YsRoSWGTSd');
+        await AsyncStorage.setItem('userToken', 'LoAfTCync6YsRoSWGTSd');        //LoAfTCync6YsRoSWGTSd      //3HqKXEByGlt7DQ2UNDJc
         this
             .props
             .navigation

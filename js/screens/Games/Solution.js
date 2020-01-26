@@ -26,7 +26,8 @@ export default function App(props) {
         info: ""
     });
 
-    const [gameId, setGameId] = useState(0);
+    const [gameId,
+        setGameId] = useState(0);
 
     const [isLoading,
         setIsLoading] = useState(true);
@@ -35,6 +36,10 @@ export default function App(props) {
         .navigation
         .getParam('round', '');
     const roundLength = 3; //Rounds after the game ends
+
+    const playedGameDocId = props
+        .navigation
+        .getParam("playedGameDocId", 0)
 
     const initLoading = round >= roundLength
         ? true
@@ -52,12 +57,14 @@ export default function App(props) {
             const navigation = props.navigation
 
             const gameRounds = navigation.getParam('Game', '');
-            const userId = navigation.getParam('userId', '');
-
+            const userId = navigation.getParam('userId', 0);
+            const userId2 = navigation.getParam('userId2', 0);
+    
             let game = {
                 userId: userId,
                 games_played: gameRounds,
                 finished: 0,
+                userId2: userId2
             }
 
             if (!game.created) {
@@ -70,14 +77,10 @@ export default function App(props) {
 
             let playedGamesRef = db.collection('PlayedGames');
             let savedGame = await playedGamesRef.add(game)
-            //for (doc of savedGame.docs) {
-                //return doc.data();
-            //}
-            //console.log (savedGame);
+            //for (doc of savedGame.docs) { return doc.data(); } console.log (savedGame);
         }
         try {
-            const data1 = await AddGameDataToDb(db);
-            setData(data1);
+            await AddGameDataToDb(db);
             setIsLoading(false);
 
         } catch (err) {
@@ -86,40 +89,138 @@ export default function App(props) {
         }
     }
 
-    const NavigateToRandomGame = async() => {
+    async function UpdateGameData() {
+        const db = firebase.firestore()
+
+        var random = Math.floor(Math.random() * 100000) + 1;
+        //const ref = db.collection('MultipleChoiceSets')
+        console.log(random)
+
+        async function UpdateGameDataInDb(db) { //Update existing properties of the played game
+        
+            const navigation = props.navigation
+
+            const gameRounds = navigation.getParam('Game', '');
+            const userId = navigation.getParam('userId', 0);
+            const userId2 = navigation.getParam('userId2', 0);
+    
+            let game = {
+                userId: userId,
+                games_played: gameRounds,
+                finished: 0,
+                userId2: userId2
+            }
+
+            if (!game.finished) {
+                const today = new Date();
+                const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+                const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+                const dateTime = date + ' ' + time;
+                game.finished = dateTime;
+            }
+
+            let playedGamesRef = db
+                .collection('PlayedGames')
+                .doc(playedGameDocId)
+            let savedGame = await playedGamesRef.update({finished: game.finished});
+
+        }
+
+        async function AddGameUser2DataToDb(db) {
+            // Add second played games of user 2 to the existing game
+            const navigation = props.navigation
+
+            const gameUser2Rounds = navigation.getParam('GameUser2', '');
+
+            let playedGamesRef = db
+                .collection('PlayedGames')
+                .doc(playedGameDocId)
+            let savedGame = await playedGamesRef.set({
+                games_playedUser2: gameUser2Rounds
+            }, {merge: true});
+
+        }
+        try {
+            await UpdateGameDataInDb(db);
+            await AddGameUser2DataToDb(db);
+            setIsLoading(false);
+
+        } catch (err) {
+            console.log('Error updating document', err)
+            setIsLoading(false);
+        }
+    }
+
+    const NavigateToNextScreen = async() => {
 
         const navigationParams = { //Get round and playstyle from last screen
             round: Number.parseInt(props.navigation.getParam('round', ''), 10) + 1, //inc round
             playStyle: props //Set playStyle again to the last playstyle for next screen
                 .navigation
                 .getParam('playStyle', 'competitive'),
+            GameUser2: props
+                .navigation
+                .getParam('GameUser2', ''),
             Game: props //Set playStyle again to the last playstyle for next screen
                 .navigation
                 .getParam('Game', ''),
-            userId: props 
+            userId: props
                 .navigation
                 .getParam('userId', 0),
-            userId2: props 
-            .navigation
-            .getParam('userId2', 0)
+            userId2: props
+                .navigation
+                .getParam('userId2', 0),
+            playAfterOpponent: props
+                .navigation
+                .getParam('playAfterOpponent', 0),
+            playedGameDocId: props
+                .navigation
+                .getParam("playedGameDocId", 0)
         };
 
         let RandomScreen = "";
 
         if (props.navigation.getParam('playStyle', 'competitive') === 'competetive') {
-            if (round >= roundLength) { //if round is finished -> navigate to result screen
-                await PersistGameData()
-                var test = "";
-                RandomScreen = StackActions.push({routeName: 'Result', params: navigationParams});
-            } else {
-                if (rand === 1) { //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
-                    RandomScreen = StackActions.push({routeName: 'LinkingGame', params: navigationParams});
-                } else if (rand === 2) {
-                    RandomScreen = StackActions.push({routeName: 'MultipleChoice', params: navigationParams});
+
+            if (props.navigation.getParam("playAfterOpponent", 0)) { //check if played as the second player
+                if (round >= roundLength) { //if round is finished as the second player-> navigate to result screen and update game data
+                    await UpdateGameData()
+                    RandomScreen = StackActions.push({routeName: 'Result', params: navigationParams});
                 } else {
-                    RandomScreen = StackActions.push({routeName: 'GuessPicture', params: navigationParams});
+
+                    const game = props //Set playStyle again to the last playstyle for next screen
+                        .navigation
+                        .getParam('Game', '')
+
+                    const nextGameType = game[round].gameType;
+
+                    let screen = ""
+                    if (nextGameType === 0) {
+                        screen = "MultipleChoice"
+                    } else if (nextGameType === 1) {
+                        screen = "GuessPicture"
+                    } else {
+                        screen = "LinkingGame"
+                    }
+
+                    RandomScreen = StackActions.push({routeName: screen, params: navigationParams});
+
+                }
+            } else {
+                if (round >= roundLength) { //if round is finished -> navigate to result screen and set game data in database
+                    await PersistGameData()
+                    RandomScreen = StackActions.push({routeName: 'Result', params: navigationParams});
+                } else {
+                    if (rand === 1) { //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
+                        RandomScreen = StackActions.push({routeName: 'LinkingGame', params: navigationParams});
+                    } else if (rand === 2) {
+                        RandomScreen = StackActions.push({routeName: 'MultipleChoice', params: navigationParams});
+                    } else {
+                        RandomScreen = StackActions.push({routeName: 'GuessPicture', params: navigationParams});
+                    }
                 }
             }
+
         } else { //Replace last route with the the solution screen, to avoid endless stacking in traing mode
             RandomScreen = StackActions.replace({
                 index: 0,
@@ -211,7 +312,7 @@ export default function App(props) {
             </View>
             <HomeButton visible={showHomeButton} style={homeButtonStyle}></HomeButton>
             <NextButton
-                navigateFunction={NavigateToRandomGame}
+                navigateFunction={NavigateToNextScreen}
                 nextButtonTitle={nextButtonTitle}
                 visible={showNextButton}></NextButton>
         </BackgroundContainer>

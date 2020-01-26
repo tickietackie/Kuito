@@ -14,7 +14,7 @@ import {
 import BackgroundContainer from '../components/BackgroundContainer';
 import HeaderText from '../components/HeaderText';
 
-import GameHistory from '../components/GameHistory'
+import GameHistory from '../components/GameHistory/GameHistoryComponent'
 
 export default function Leaderboard(props) {
 

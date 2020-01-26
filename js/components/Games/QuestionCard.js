@@ -15,7 +15,7 @@ export default function QuestionCard(props) {
 
 const styles = StyleSheet.create({
     container: {
-        margin: 5,
+        margin: "3%",
         flex: 2,
     },
     questionContainer: {
@@ -23,15 +23,16 @@ const styles = StyleSheet.create({
         justifyContent: "center",
         alignItems: "center",
         backgroundColor: "#A9E2F3",
-        marginBottom: 40,
-        margin: 20,
+        //marginBottom: "5%",
         borderRadius: 5,
         shadowColor: 'black',
-        padding:30,
+        //padding:40,
         minWidth : 300,
     },
     question: {
-        alignItems: 'center'
+        alignItems: 'center',
+        justifyContent: "center",
+        textAlign: "center"
     },
 });
 

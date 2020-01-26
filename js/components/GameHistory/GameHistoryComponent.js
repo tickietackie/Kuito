@@ -33,6 +33,7 @@ export default function block(props) {
         console.log(random)
 
         const GetUserId = async() => {
+            //return await AsyncStorage.getItem('username');
             return await AsyncStorage.getItem('userToken');
         };
 
@@ -214,13 +215,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingBottom: 20,
-        margin: 5,
+        marginHorizontal: 5,
         backgroundColor: 'white',
         alignItems: 'center',
         //justifyContent: 'center', borderWidth: 1
         borderRadius: 10,
-        marginLeft: 10,
-        marginRight: 10,
+        minWidth: "90%",
         //marginTop: 10
     },
     titel: {

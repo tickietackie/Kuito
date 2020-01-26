@@ -45,6 +45,7 @@ export default function block(props) {
         console.log(random)
 
         GetUserId = async() => {
+            //return await AsyncStorage.getItem('username');
             return await AsyncStorage.getItem('userToken');
         };
 

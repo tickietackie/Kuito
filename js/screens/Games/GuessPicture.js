@@ -310,7 +310,7 @@ export default function App(props) {
 
     return (
         <BackgroundContainer >
-            <SafeAreaView> style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <HeaderText style={headerColor} text="Guess the image"></HeaderText>
                 <ImageQuestionCard picUrl={pictureUrl}></ImageQuestionCard>
                 <Block parentCallback={callbackFunction} text={blockData}></Block>
@@ -327,7 +327,7 @@ export default function App(props) {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        paddingTop: "0%",
+        paddingTop: 0,
         flex: 1,
     },
     backContainer: {

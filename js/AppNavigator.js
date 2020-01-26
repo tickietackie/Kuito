@@ -10,6 +10,7 @@ import * as Icon from '@expo/vector-icons';
 
 import AuthLoading from './screens/Authentication/AuthLoading';
 import SignInScreen from './screens/Authentication/SignIn';
+import SignUp from './screens/Authentication/SignUp';
 
 import Home from './screens/Home';
 import Settings from './screens/Settings';
@@ -26,26 +27,6 @@ import Result from './screens/Games/Result';
 
 import Leaderboard from './screens/Leaderboard';
 import Stats from './screens/Stats';
-
-
-
-/*createStackNavigator({
-    // For each screen that you can navigate to, create a new entry like this:
-    Profile: {
-      // `ProfileScreen` is a React component that will be the main content of the screen.
-      screen: ProfileScreen,
-      // When `ProfileScreen` is loaded by the StackNavigator, it will be given a `navigation` prop.
-  
-      // Optional: When deep linking or using react-navigation in a web app, this path is used:
-      path: 'people/:name',
-      // The action and route params are extracted from the path.
-  
-      // Optional: Override the `navigationOptions` for the screen
-      navigationOptions: ({ navigation }) => ({
-        title: `${navigation.state.params.name}'s Profile'`,
-      }),
-    },
-  });*/
 
 
 const HomeStack = createStackNavigator(
@@ -95,7 +76,6 @@ const AppStackModal = createStackNavigator(
 )
 
 
-
 const TabNavigator = createBottomTabNavigator({
     Home: {
         screen: AppStackModal,
@@ -133,7 +113,16 @@ const TabNavigator = createBottomTabNavigator({
     }
 })
 
-const AuthStack = createStackNavigator({ SignIn: SignInScreen});
+
+const AuthStack = createStackNavigator(
+    {
+        SignIn: SignInScreen,
+        SignUp: SignUp,
+    },
+    {
+        headerMode: 'none',
+    }
+)
 
 const App = createSwitchNavigator(
     {

@@ -27,6 +27,7 @@ export default function App(props) {
         setIsLoading(true);
 
         const GetUserId = async() => {
+            //return await AsyncStorage.getItem('username');
             return await AsyncStorage.getItem('userToken');
         };
 
@@ -61,7 +62,7 @@ export default function App(props) {
 
         let randomUserId = 0;
         let userId = 0;
-        const userIdRandom = 20000; //FIX Me: random from user has to be set here
+        const userIdRandom = await AsyncStorage.getItem('userRandom'); 
         try {
 
             let x=0;
@@ -156,7 +157,6 @@ export default function App(props) {
                 <View style={styles.GameHistory}>
                     <GameHistory></GameHistory>
                 </View>
-
             </View>
         </BackgroundContainer>
     );
@@ -203,7 +203,8 @@ const styles = StyleSheet.create({
     },
     loadingContainer: {
         flex: 1,
-        justifyContent: "center"
+        justifyContent: "center",
+        minWidth: "85%",
     }
 
 });

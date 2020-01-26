@@ -106,7 +106,7 @@ export default function App(props) {
         //fetch()
         const db = firebase.firestore()
 
-        var random = Math.floor(Math.random() * 100000) + 1;
+        const random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
 
         /*async function GetMultipleChoiceSet(db) {
@@ -174,7 +174,7 @@ export default function App(props) {
 
     return (
         <BackgroundContainer >
-            <SafeAreaView>
+            <SafeAreaView style={styles.container}>
                 <View style={styles.container}>
                     <HeaderText style={headerColor} text="Linking Game"></HeaderText>
                     <DragableLink text="text"></DragableLink>
@@ -183,7 +183,7 @@ export default function App(props) {
                     navigateFunction={evaluateAnswer}
                     nextButtonTitle={"Next"}
                     visible={showNextButton}></NextButton>
-            </SafeAreaView>
+           </SafeAreaView>
         </BackgroundContainer>
     );
 }
@@ -191,7 +191,6 @@ export default function App(props) {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        paddingTop: 45,
         flex: 1
     },
     backContainer: {

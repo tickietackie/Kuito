@@ -267,7 +267,7 @@ export default function App(props) {
 
     return (
         <BackgroundContainer >
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <HeaderText style={headerColor} text="Multiple Choice"></HeaderText>
                 <QuestionCard text={data}></QuestionCard>
                 <Block parentCallback={callbackFunction} text={data}></Block>
@@ -276,7 +276,7 @@ export default function App(props) {
                     navigateFunction={evaluateAnswer}
                     nextButtonTitle={"Next"}
                     visible={showNextButton}></NextButton>
-            </View>
+            </SafeAreaView>
         </BackgroundContainer>
     );
 }

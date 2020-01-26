@@ -49,7 +49,7 @@ export default withNavigation(CategoryComponent);
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 60,
+        paddingTop: "10%",
         alignItems: 'center',
         shadowOpacity: 0.75,
         shadowRadius: 5,

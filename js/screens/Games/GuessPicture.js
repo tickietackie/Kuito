@@ -310,7 +310,7 @@ export default function App(props) {
 
     return (
         <BackgroundContainer >
-            <View style={styles.container}>
+            <SafeAreaView> style={styles.container}>
                 <HeaderText style={headerColor} text="Guess the image"></HeaderText>
                 <ImageQuestionCard picUrl={pictureUrl}></ImageQuestionCard>
                 <Block parentCallback={callbackFunction} text={blockData}></Block>
@@ -319,7 +319,7 @@ export default function App(props) {
                     navigateFunction={evaluateAnswer}
                     nextButtonTitle={"Next"}
                     visible={showNextButton}></NextButton>
-            </View>
+            </SafeAreaView>
         </BackgroundContainer>
     );
 }
@@ -327,7 +327,7 @@ export default function App(props) {
 const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
-        paddingTop: "8%",
+        paddingTop: "0%",
         flex: 1,
     },
     backContainer: {

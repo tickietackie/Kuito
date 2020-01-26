@@ -2,11 +2,7 @@ import React, {Component, useState} from 'react';
 import {
     Platform,
     StyleSheet,
-    Text,
-    TouchableHighlight,
-    TouchableOpacity,
-    TouchableNativeFeedback,
-    TouchableWithoutFeedback,
+    SafeAreaView,
     Button,
     View
 } from 'react-native';
@@ -54,7 +50,7 @@ export default function Leaderboard(props) {
 
     return (
         <BackgroundContainer>
-            <View style={styles.container}>
+            <SafeAreaView style={styles.container}>
                 <HeaderText text="Leaderboard"></HeaderText>
                 <Button
                     title="Linking"
@@ -69,7 +65,7 @@ export default function Leaderboard(props) {
                 <Button
                     title="Result"
                     onPress={() => props.navigation.navigate("Result", navigationPropertiesResult)}/>
-            </View>
+            </SafeAreaView>
             <GameHistory></GameHistory>
         </BackgroundContainer>
 
@@ -79,7 +75,7 @@ export default function Leaderboard(props) {
 
 const styles = StyleSheet.create({
     container: {
-        paddingTop: 45
+        paddingTop: "0%"
     },
     button: {
         marginBottom: 30,

@@ -165,7 +165,8 @@ export default function App(props) {
 const styles = StyleSheet.create({
     container: {
         //backgroundColor: '#CEF6CE',
-        flex: 1
+        flex: 1,
+        alignItems: "center"
     },
     GameHistory: {
         flex: 5
@@ -178,9 +179,14 @@ const styles = StyleSheet.create({
         marginTop: 10,
         color: "white"
     },
+    buttonText: {
+        padding: "5%",
+    },
     startButton: {
+        margin: 15,
         borderRadius: 10,
-        margin: 25,
+        minWidth: "85%",
+        aspectRatio: 1/4,
         flex: 1,
         backgroundColor: 'forestgreen',
         alignItems: 'center',

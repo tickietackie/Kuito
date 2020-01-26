@@ -174,14 +174,16 @@ export default function App(props) {
 
     return (
         <BackgroundContainer >
-            <View style={styles.container}>
-                <HeaderText style={headerColor} text="Linking Game"></HeaderText>
-                <DragableLink text="text"></DragableLink>
-            </View>
-            <NextButton
-                navigateFunction={evaluateAnswer}
-                nextButtonTitle={"Next"}
-                visible={showNextButton}></NextButton>
+            <SafeAreaView>
+                <View style={styles.container}>
+                    <HeaderText style={headerColor} text="Linking Game"></HeaderText>
+                    <DragableLink text="text"></DragableLink>
+                </View>
+                <NextButton
+                    navigateFunction={evaluateAnswer}
+                    nextButtonTitle={"Next"}
+                    visible={showNextButton}></NextButton>
+            </SafeAreaView>
         </BackgroundContainer>
     );
 }

@@ -1,4 +1,4 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useLayoutEffect, useEffect} from 'react';
 import {
     StyleSheet,
     FlatList,
@@ -15,7 +15,12 @@ import HistoryEntryAfterOpp from "./HistoryEntryAfterOpp"
 import firebase from "../../../config/firebase";
 import BackgroundContainer from '../BackgroundContainer';
 
-export default function block(props) {
+import { withNavigation } from 'react-navigation';
+
+
+const GameHistory = (props) => {
+
+    const navigation = props.navigation
 
     const [games, //contains pressed button numbers of user, all pressed: [2,3,4,5]
         setGames] = useState({started: 0, finished: 0, userId: "", games_played: []});
@@ -25,7 +30,7 @@ export default function block(props) {
 
     const _fetchData = async() => {
 
-        //fetch()
+        setIsLoading(true)
         const db = firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
@@ -128,11 +133,30 @@ export default function block(props) {
         }
     }
 
-    useEffect(() => { // code to run on component mount
+    //const isFocused = props.navigation.isFocused();
 
-        _fetchData()
+        useLayoutEffect(() => {
+            const isFocused = props.navigation.isFocused();
 
-    }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
+          // manually judge if the screen is focused
+          // if did, fire api call
+          if (isFocused) {
+             // do the same API calls here
+             _fetchData()
+             console.log('focused section');
+          }
+
+          const navFocusListener = navigation.addListener('didFocus', () => {
+              // do some API calls here
+              _fetchData()
+              console.log('listener section');
+          });
+
+          return () => {
+              navFocusListener.remove();
+          };
+      }, []);
+    //pass an empty array to call it just with the first call --> }, [])
 
     if (isLoading === true) { //return loading screen, if data is loading
         return (
@@ -255,5 +279,7 @@ const styles = StyleSheet.create({
         flex: 1
     }
 });
+
+export default withNavigation(GameHistory)
 
 const style = {};

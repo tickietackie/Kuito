@@ -37,7 +37,7 @@ export default function block(props) {
 
     const _fetchData = async() => {
 
-        //fetch()
+        //setIsLoading(true);
         const db = firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
@@ -94,8 +94,8 @@ export default function block(props) {
     }
 
     useEffect(() => { // code to run on component mount
-
         _fetchData()
+        props.navigation.addListener('didFocus', _fetchData())
 
     }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
 

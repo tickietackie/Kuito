@@ -34,10 +34,16 @@ export default function block(props) {
 
         const GetUserId = async() => {
             //return await AsyncStorage.getItem('username');
-            return await AsyncStorage.getItem('userToken');
+            return await AsyncStorage.getItem('userId');
+        };
+        const userId = await GetUserId()
+
+        const GetUsername = async() => {
+            //return await AsyncStorage.getItem('username');
+            return await AsyncStorage.getItem('username');
         };
 
-        const userId = await GetUserId()
+        const username = await GetUserId()
 
         //Rewrite with onsnapshot --> just fetch changes
         async function GetStartedGames(db) {

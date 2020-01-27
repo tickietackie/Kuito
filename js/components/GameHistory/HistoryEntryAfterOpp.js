@@ -45,7 +45,7 @@ const CategoryComponent = function Category(props) {
 
     const _GetUserId = async() => {
 
-        const userId = await AsyncStorage.getItem('userToken');
+        const userId = await AsyncStorage.getItem('userId');
         setUserId(userId);
     }
 

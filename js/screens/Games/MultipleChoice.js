@@ -175,17 +175,25 @@ export default function App(props) {
     let gameUser2 = props //set the played game (MultipleChoice = 0) in the array with the round
         .navigation
         .getParam("GameUser2", '')
+    
+    let userName = props
+    .navigation
+    .getParam('username', 0);
+    let userName2 = props
+    .navigation
+    .getParam('username2', 0);
 
     if (!props.navigation.getParam("playAfterOpponent", 0)) { //set played games for the first player
         if (!game[round - 1]) {
             if (round != '' && game != '') {
-                game.push({gameType: gameType, UserWins: 0, userId: userId})
+                game.push({gameType: gameType, UserWins: 0, userId: userId, userName: userName})
             } else {
                 game = [
                     {
                         gameType: gameType,
                         UserWins: 0,
-                        userId: userId
+                        userId: userId,
+                        userName: userName
                     }
                 ]; //if round is not, set set it to 0
             }
@@ -193,13 +201,14 @@ export default function App(props) {
     } else {
         if (!gameUser2[round - 1]) { //set games for the player, playing second
             if (round != '' && gameUser2 != '') {
-                gameUser2.push({gameType: gameType, UserWins: 0, userId2: userId2})
+                gameUser2.push({gameType: gameType, UserWins: 0, userId2: userId2, userName2: userName2})
             } else {
                 gameUser2 = [
                     {
                         gameType: gameType,
                         UserWins: 0,
-                        userId2: userId2
+                        userId2: userId2,
+                        userName2: userName2
                     }
                 ]; //if round is not, set set it to 0
             }
@@ -220,6 +229,9 @@ export default function App(props) {
         GameUser2: gameUser2,
         userId: userId,
         userId2: userId2,
+        username: props
+        .navigation
+        .getParam('username', 0),
         playAfterOpponent: props
             .navigation
             .getParam("playAfterOpponent", 0),

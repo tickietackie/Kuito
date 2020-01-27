@@ -170,12 +170,15 @@ export default function App(props) {
             userId2: props
                 .navigation
                 .getParam('userId2', 0),
+            username: props
+                .navigation
+                .getParam('username', 0),
             playAfterOpponent: props
                 .navigation
                 .getParam('playAfterOpponent', 0),
             playedGameDocId: props
                 .navigation
-                .getParam("playedGameDocId", 0)
+                .getParam("playedGameDocId", 0),
         };
 
         let RandomScreen = "";

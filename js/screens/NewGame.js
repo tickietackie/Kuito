@@ -27,12 +27,18 @@ export default function App(props) {
         setIsLoading(true);
 
         const GetUserId = async() => {
-            //return await AsyncStorage.getItem('username');
-            return await AsyncStorage.getItem('userToken');
+            return await AsyncStorage.getItem('userId');
         };
+
+        const GetUsername = async() => {
+            return await AsyncStorage.getItem('username');
+        };
+
+        const username = await GetUsername()
 
         const GetRandomUser = async(db, userIdRandom) => { //Get a random opponent => get random second user id, but ignore own userid
             let campaignsRef = db.collection('users')
+            console.log("test: " + userIdRandom)
             let activeRef = await campaignsRef
                 .where('random', '>=', random)
                 .where('random', '>', userIdRandom) //("not" queries are not supported by firestore, therefore > and <)
@@ -63,15 +69,20 @@ export default function App(props) {
         let randomUserId = 0;
         let userId = 0;
         const userIdRandom = await AsyncStorage.getItem('userRandom'); 
+        console.log("userId2: " + userIdRandom)
         try {
 
             let x=0;
+            console.log("test2")
             while (randomUserId === 0) {
                 userId = await GetUserId()
                 const db = firebase.firestore();
                 const fetchedRandomUserId = await GetRandomUser(db, userIdRandom) //Get random user id
                 //If user id is the same perform another query, to complete the "not same user id" logic
                 const fetchedRandomUserId2 = await GetRandomUser2(db, userIdRandom)
+                console.log("test")
+                console.log(fetchedRandomUserId)
+                console.log(fetchedRandomUserId2)
                 if (fetchedRandomUserId !== userId && fetchedRandomUserId) {
                     randomUserId = fetchedRandomUserId
                 } else if (fetchedRandomUserId2 !== userId && fetchedRandomUserId2) {
@@ -101,7 +112,8 @@ export default function App(props) {
             round: 1,
             playStyle: 'competetive',
             userId: userId,
-            userId2: randomUserId
+            userId2: randomUserId,
+            username: username
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;

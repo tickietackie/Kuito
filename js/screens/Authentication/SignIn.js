@@ -56,7 +56,7 @@ const SignInScreen = function SignInScreen(props) {
         }
 
         try {
-            await AsyncStorage.setItem('userToken', "LoAfTCync6YsRoSWGTSd"); //LoAfTCync6YsRoSWGTSd
+            await AsyncStorage.setItem('userToken', "3HqKXEByGlt7DQ2UNDJc"); //LoAfTCync6YsRoSWGTSd
             // //3HqKXEByGlt7DQ2UNDJc await
             await AsyncStorage.setItem('email', email); //LoAfTCync6YsRoSWGTSd
             await AsyncStorage.setItem('userId', userData.user.uid); //LoAfTCync6YsRoSWGTSd

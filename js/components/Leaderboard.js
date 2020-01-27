@@ -46,7 +46,7 @@ export default function block(props) {
 
         GetUserId = async() => {
             //return await AsyncStorage.getItem('username');
-            return await AsyncStorage.getItem('userToken');
+            return await AsyncStorage.getItem('userId');
         };
 
         const userId = await GetUserId()

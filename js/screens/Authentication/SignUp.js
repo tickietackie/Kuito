@@ -43,8 +43,8 @@ const SignInScreen = function SignInScreen(props) {
                 username: username,
                 random: userRandom
             }
-            let usersRef = db.collection('users');
-            let savedGame = await usersRef.add(user)
+            let usersRef = db.collection('users').doc(userData.user.uid);
+            let savedGame = await usersRef.set(user)
         }
 
         const auth = firebase.auth();

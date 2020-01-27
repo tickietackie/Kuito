@@ -45,6 +45,15 @@ export default function App(props) {
         ? true
         : false;
 
+    const username = props.navigation.getParam('username', 0);
+    const username2 = props.navigation.getParam('username2', 0);
+    const userId = props
+        .navigation
+        .getParam("userId", '1')
+    const userId2 = props
+        .navigation
+        .getParam("userId2", '1');
+
     async function PersistGameData() { //fetch()
         const db = firebase.firestore()
 
@@ -57,14 +66,14 @@ export default function App(props) {
             const navigation = props.navigation
 
             const gameRounds = navigation.getParam('Game', '');
-            const userId = navigation.getParam('userId', 0);
-            const userId2 = navigation.getParam('userId2', 0);
-    
+
             let game = {
                 userId: userId,
                 games_played: gameRounds,
                 finished: 0,
-                userId2: userId2
+                userId2: userId2,
+                username: username,
+                username2: username2
             }
 
             if (!game.created) {
@@ -97,18 +106,19 @@ export default function App(props) {
         console.log(random)
 
         async function UpdateGameDataInDb(db) { //Update existing properties of the played game
-        
+
             const navigation = props.navigation
 
             const gameRounds = navigation.getParam('Game', '');
-            const userId = navigation.getParam('userId', 0);
-            const userId2 = navigation.getParam('userId2', 0);
-    
+
             let game = {
                 userId: userId,
                 games_played: gameRounds,
                 finished: 0,
-                userId2: userId2
+                userId2: userId2,
+                username: username,
+                username2: username2
+
             }
 
             if (!game.finished) {
@@ -164,21 +174,16 @@ export default function App(props) {
             Game: props //Set playStyle again to the last playstyle for next screen
                 .navigation
                 .getParam('Game', ''),
-            userId: props
-                .navigation
-                .getParam('userId', 0),
-            userId2: props
-                .navigation
-                .getParam('userId2', 0),
-            username: props
-                .navigation
-                .getParam('username', 0),
+            userId: userId,
+            userId2: userId2,
+            username: username,
+            username2: username2,
             playAfterOpponent: props
                 .navigation
                 .getParam('playAfterOpponent', 0),
             playedGameDocId: props
                 .navigation
-                .getParam("playedGameDocId", 0),
+                .getParam("playedGameDocId", 0)
         };
 
         let RandomScreen = "";
@@ -224,7 +229,7 @@ export default function App(props) {
                 }
             }
 
-        } else { //Replace last route with the the solution screen, to avoid endless stacking in traing mode
+        } else { //Replace last route with the solution screen, to avoid endless stacking in traing mode
             RandomScreen = StackActions.replace({
                 index: 0,
                 params: navigationParams,

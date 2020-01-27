@@ -35,17 +35,16 @@ export default function App(props) {
         };
 
         const username = await GetUsername()
+        let username2 = "";
 
         const GetRandomUser = async(db, userIdRandom) => { //Get a random opponent => get random second user id, but ignore own userid
             let campaignsRef = db.collection('users')
-            console.log("test: " + userIdRandom)
             let activeRef = await campaignsRef
-                .where('random', '>=', random)
-                .where('random', '>', userIdRandom) //("not" queries are not supported by firestore, therefore > and <)
-                .orderBy('random')
-                .limit(1)
+                .where('random', '>', random)
                 .get();
             for (doc of activeRef.docs) {
+                data = doc.data()
+                username2 = data.username
                 return doc.id;
             }
         }
@@ -53,18 +52,19 @@ export default function App(props) {
         const GetRandomUser2 = async(db, userIdRandom) => { //Get a random opponent => get random second user id, but ignore own userid
             let campaignsRef = db.collection('users')
             let activeRef = await campaignsRef
-                .where('random', '>=', random)
-                .where('random', '<', userIdRandom) //("not" queries are not supported by firestore, therefore > and <)
+                .where('random', '<=', random)
+                //.where('random', '<', userIdRandom) //("not" queries are not supported by firestore, therefore > and <)
                 .orderBy('random')
                 .limit(1)
                 .get();
             for (doc of activeRef.docs) {
+                data = doc.data()
+                username2 = data.username
                 return doc.id;
             }
         }
 
-        const random = Math.floor(Math.random() * 100000) + 1;
-        console.log("random:" + random)
+        const random = 88926;//Math.floor(Math.random() * 100000) + 1;
 
         let randomUserId = 0;
         let userId = 0;
@@ -73,16 +73,12 @@ export default function App(props) {
         try {
 
             let x=0;
-            console.log("test2")
             while (randomUserId === 0) {
                 userId = await GetUserId()
                 const db = firebase.firestore();
                 const fetchedRandomUserId = await GetRandomUser(db, userIdRandom) //Get random user id
                 //If user id is the same perform another query, to complete the "not same user id" logic
                 const fetchedRandomUserId2 = await GetRandomUser2(db, userIdRandom)
-                console.log("test")
-                console.log(fetchedRandomUserId)
-                console.log(fetchedRandomUserId2)
                 if (fetchedRandomUserId !== userId && fetchedRandomUserId) {
                     randomUserId = fetchedRandomUserId
                 } else if (fetchedRandomUserId2 !== userId && fetchedRandomUserId2) {
@@ -113,7 +109,8 @@ export default function App(props) {
             playStyle: 'competetive',
             userId: userId,
             userId2: randomUserId,
-            username: username
+            username: username,
+            username2: username2
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;

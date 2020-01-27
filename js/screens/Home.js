@@ -23,7 +23,6 @@ export default function App(props) {
                     <Button
                         title="Start Game"
                         onPress={() => props.navigation.navigate('NewGame')}/>
-                    <Button title="Sign Out" onPress={() => _signOutAsync()}/>
                 </View>
                 {/*<Settings visible={showSettingsScreen}></Settings>*/}
                 <View style={styles.settingsButton}>

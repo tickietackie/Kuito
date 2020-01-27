@@ -43,7 +43,7 @@ export default function block(props) {
             return await AsyncStorage.getItem('username');
         };
 
-        const username = await GetUserId()
+        const username = await GetUsername()
 
         //Rewrite with onsnapshot --> just fetch changes
         async function GetStartedGames(db) {
@@ -61,6 +61,7 @@ export default function block(props) {
                 const started = new Date(startedGames[i].started)
                 startedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
                 startedGames[i].startedGame = 1
+                startedGames[i].username1 = username
                 i++;
             }
 
@@ -80,6 +81,7 @@ export default function block(props) {
                 startedGames.push(doc.data())
                 startedGames[i].id = doc.id
                 const started = new Date(startedGames[i].started)
+                startedGames[i].username1 = username
                 startedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
                 i++;
             }
@@ -102,6 +104,7 @@ export default function block(props) {
                 finishedGames[i].id = doc.id
                 const started = new Date(finishedGames[i].started)
                 const finished = new Date(finishedGames[i].finished)
+                finishedGames[i].username1 = username
                 finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
                 finishedGames[i].finished = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + finished.getDay()).slice(-2) + "/" + (finished.getUTCFullYear().toString().substr(-2))
                 i++;
@@ -144,11 +147,12 @@ export default function block(props) {
         )
     }
 
-    function Item({     //return different History Items
+    function Item({ //return different History Items
         started,
         userId2,
+        username1,
+        username,
         result,
-        resultAbbr,
         finished,
         startedGame,
         games_played,
@@ -160,34 +164,37 @@ export default function block(props) {
                 <HistoryEntryFinishedGame
                     started={started}
                     userId2={userId2}
+                    username1={username1}
+                    username={username}
                     result={result}
                     finished={finished}
                     games_played={games_played}
                     games_playedUser2={games_playedUser2}
-                    playedGameDocId={playedGameDocId}
-                    resultAbbr={resultAbbr}></HistoryEntryFinishedGame>
+                    playedGameDocId={playedGameDocId}></HistoryEntryFinishedGame>
             );
         } else if (startedGame) {
             return (
                 <HistoryEntryStartedGame
                     started={started}
                     userId2={userId2}
+                    username1={username1}
+                    username={username}
                     result={result}
                     finished={finished}
                     games_played={games_played}
-                    playedGameDocId={playedGameDocId}
-                    resultAbbr={resultAbbr}></HistoryEntryStartedGame>
+                    playedGameDocId={playedGameDocId}></HistoryEntryStartedGame>
             );
         } else {
             return (
                 <HistoryEntryAfterOpp
                     started={started}
                     userId2={userId2}
+                    username1={username1}
+                    username={username}
                     result={result}
                     finished={finished}
                     games_played={games_played}
-                    playedGameDocId={playedGameDocId}
-                    resultAbbr={resultAbbr}></HistoryEntryAfterOpp>
+                    playedGameDocId={playedGameDocId}></HistoryEntryAfterOpp>
             );
         }
 
@@ -202,14 +209,16 @@ export default function block(props) {
                     renderItem={({item}) => <Item
                     started={item.started}
                     userId2={item.userId2}
+                    username1={item.username1}
+                    username={item.username}
                     result={item.result}
                     finished={item.finished}
                     startedGame={item.startedGame}
                     games_played={item.games_played}
                     games_playedUser2={item.games_playedUser2}
-                    playedGameDocId ={item.id}
-                    id={item.id}
-                    resultAbbr={item.resultAbbr}/>}
+                    playedGameDocId
+                    ={item.id}
+                    id={item.id}/>}
                     keyExtractor={item => item.id}/>
             </SafeAreaView>
         </View>

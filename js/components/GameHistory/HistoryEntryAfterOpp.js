@@ -17,6 +17,8 @@ const CategoryComponent = function Category(props) {
             playStyle: 'competetive',
             userId: props.userId,
             userId2: props.userId2,
+            username: props.username1,
+            username2: props.username,
             playAfterOpponent: 1,
             playedGameDocId: props.playedGameDocId
         };
@@ -71,7 +73,7 @@ const CategoryComponent = function Category(props) {
                         }
                     ]}>
                         <View style={styles.userId}>
-                            <Text style={[material.button, styles.buttonText]}>{props.userId2}</Text>
+                            <Text style={[material.button, styles.buttonText]}>{props.username}</Text>
                         </View>
                         <View style={styles.waiting}>
                             <Text style={[material.button, styles.buttonText]}>is waiting ..</Text>

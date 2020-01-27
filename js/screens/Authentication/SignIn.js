@@ -1,24 +1,31 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     View,
     TextInput,
     StyleSheet,
     Button,
     AsyncStorage,
-    Text
+    Text,
+    ActivityIndicator
 } from 'react-native';
 import BackgroundContainer from '../../components/BackgroundContainer';
 import firebase from "../../../config/firebase";
+import Loading from "../../components/Loading";
 
 const SignInScreen = function SignInScreen(props) {
     let navigationOptions = {
         title: 'Please sign in'
     };
 
+    const [isLoading,
+        setIsLoading] = useState(false);
+
     const [error,
         setError] = React.useState("");
 
     const _signInAsync = async(email, password) => {
+
+        setIsLoading(true)
 
         const auth = firebase.auth();
         const SignInFb = async() => {
@@ -45,13 +52,18 @@ const SignInScreen = function SignInScreen(props) {
         try {
             userData = await SignInFb()
             const userDataFs = await GetUserDataFormFs(userData.user.uid)
-            username = userDataFs.userId.toString();
-            userRandom = userDataFs.random.toString();
+            username = userDataFs
+                .username
+                .toString();
+            userRandom = userDataFs
+                .random
+                .toString();
         } catch (error) {
             var errorCode = error.code;
             var errorMessage = error.message;
             setError(error.message)
             console.log(error)
+            setIsLoading(false);
             return;
         }
 
@@ -60,13 +72,16 @@ const SignInScreen = function SignInScreen(props) {
             // //3HqKXEByGlt7DQ2UNDJc await
             await AsyncStorage.setItem('email', email); //LoAfTCync6YsRoSWGTSd
             await AsyncStorage.setItem('userId', userData.user.uid); //LoAfTCync6YsRoSWGTSd
-            await AsyncStorage.setItem('userName', username);
+            await AsyncStorage.setItem('username', username);
             await AsyncStorage.setItem('userRandom', userRandom.toString());
         } catch (error) {
             setError(error.message)
             console.log(error)
+            setIsLoading(false);
             return;
         }
+
+        setIsLoading(false)
 
         props
             .navigation
@@ -90,6 +105,12 @@ const SignInScreen = function SignInScreen(props) {
 
     const [pw,
         setPw] = React.useState('Enter your password');
+
+    if (isLoading === true) { //return loading screen, if data is loading
+        return (
+            <Loading></Loading>
+        )
+    }
 
     return (
         <BackgroundContainer>

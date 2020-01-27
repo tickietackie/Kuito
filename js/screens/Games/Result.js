@@ -14,7 +14,6 @@ import {material} from 'react-native-typography';
 import HeaderText from '../../components/HeaderText';
 import ResultEntry from '../../components/ResultEntry';
 
-
 export default function App(props) {
     if (props.visible === false) {
         //return null;
@@ -38,19 +37,19 @@ export default function App(props) {
         );
     }
 
-    const userId = props
+    const username = props
         .navigation
-        .getParam("userId", 'Player 1')
+        .getParam("username", 'Player 1')
         ? props
             .navigation
-            .getParam("userId", 'Player 1')
+            .getParam("username", 'Player 1')
         : "Player 1"
-    const userId2 = props
+    const username2 = props
         .navigation
-        .getParam("userId2", 'Player 2')
+        .getParam("username2", 'Player 2')
         ? props
             .navigation
-            .getParam("userId2", 'Player 2')
+            .getParam("username2", 'Player 2')
         : "Player 2"
 
     const DATA = props
@@ -81,10 +80,10 @@ export default function App(props) {
                             <Text style={[styles.roundText, material.body2]}>Round</Text>
                         </View>
                         <View style={styles.resultHeadingContainer}>
-                            <Text style={[styles.resultText, material.body2]}>{userId}</Text>
+                            <Text style={[styles.resultText, material.body2]}>{username}</Text>
                         </View>
                         <View style={styles.resultHeadingContainer}>
-                            <Text style={[styles.resultText, material.body2]}>{userId2}</Text>
+                            <Text style={[styles.resultText, material.body2]}>{username2}</Text>
                         </View>
                     </View>
 
@@ -153,10 +152,10 @@ const styles = StyleSheet.create({
     },
     roundText: {
         color: 'black',
-        textAlign: "center",
+        textAlign: "center"
     },
     resultText: {
         color: 'black',
-        textAlign: "center",
+        textAlign: "center"
     }
 });

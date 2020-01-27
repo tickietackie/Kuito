@@ -7,11 +7,15 @@ import {material} from 'react-native-typography';
 const HomeButtonComponent = function HomeButton(props) {
 
     const {visible, style} = props;
+
+    const navigationParams = { //Get round and playstyle from last screen
+        finished: 1
+    };
     
     if (visible === false) return null; //Not visible if param visible is false
     return (
         <View style={[styles.nextContainer, style]}>
-            <Button title={"Home"} onPress={() => props.navigation.navigate("NewGame")} />
+            <Button title={"Home"} onPress={() => props.navigation.navigate("NewGame", navigationParams)} />
         </View>
     );
 }

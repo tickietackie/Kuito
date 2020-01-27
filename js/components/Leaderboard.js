@@ -45,11 +45,16 @@ export default function block(props) {
         console.log(random)
 
         GetUserId = async() => {
-            //return await AsyncStorage.getItem('username');
             return await AsyncStorage.getItem('userId');
         };
 
         const userId = await GetUserId()
+
+        GetUsername= async() => {
+            return await AsyncStorage.getItem('username');
+        };
+
+        const username = await GetUsername()
 
         async function GetStartedGames(db) {
             let campaignsRef = db.collection('PlayedGames')

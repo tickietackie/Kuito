@@ -60,6 +60,8 @@ const CategoryComponent = function Category(props) {
             Game: props.games_played,
             userId: props.userId,
             userId2: props.userId2,
+            username: props.username1,
+            username2: props.username,
             round: 1
         };
 
@@ -75,7 +77,7 @@ const CategoryComponent = function Category(props) {
         }
 
         // Works on both Android and iOS
-        await Alert.alert('Play again', 'Do you want to challenge ' + props.userId2 + " again?", [
+        await Alert.alert('Play again', 'Do you want to challenge ' + props.username + " again?", [
             {
                 text: 'Go!',
                 onPress: () => 
@@ -111,7 +113,7 @@ const CategoryComponent = function Category(props) {
                 <TouchableHighlight onPress={() => PlayAgain()} underlayColor="white">
                     <View style={styles.button}>
                         <View style={styles.userId}>
-                            <Text style={[material.button, styles.buttonText]}>{props.userId2}</Text>
+                            <Text style={[material.button, styles.buttonText]}>{props.username}</Text>
                         </View>
                         <View style={styles.Date}>
                             <Text style={[material.button, styles.buttonText]}>{props.started}</Text>

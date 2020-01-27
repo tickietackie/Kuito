@@ -18,7 +18,9 @@ const CategoryComponent = function Category(props) {
         const navigationParams = { //Get round and playstyle from last screen
             Game: props.games_played,
             userId: userId,
-            userId2: props.userId2
+            userId2: props.userId2,
+            username: props.username1,
+            username2: props.username
         };
 
         const resultScreen = StackActions.push({routeName: 'Result', params: navigationParams});
@@ -52,7 +54,7 @@ const CategoryComponent = function Category(props) {
                             <Text style={[material.button, styles.buttonText]}>Waiting for</Text>
                         </View>
                         <View style={styles.userId}>
-                            <Text style={[material.button, styles.buttonText]}>{props.userId2}</Text>
+                            <Text style={[material.button, styles.buttonText]}>{props.username}</Text>
                         </View>
                         <View style={styles.date}>
                             <Ionicons name="ios-arrow-dropright" size={25} color="gold"/>

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     View,
     TextInput,
@@ -6,10 +6,12 @@ import {
     Button,
     Text,
     Alert,
-    AsyncStorage
+    AsyncStorage,
+    ActivityIndicator
 } from 'react-native';
 import BackgroundContainer from '../../components/BackgroundContainer';
 import firebase from "../../../config/firebase";
+import Loading from "../../components/Loading";
 
 const SignInScreen = function SignInScreen(props) {
     let navigationOptions = {
@@ -19,7 +21,12 @@ const SignInScreen = function SignInScreen(props) {
     const [error,
         setError] = React.useState("");
 
+    const [isLoading,
+        setIsLoading] = useState(false);
+
     const _signUpAsync = async(email, username, password) => {
+
+        setIsLoading(true)
 
         setError("");
         const db = firebase.firestore()
@@ -43,7 +50,9 @@ const SignInScreen = function SignInScreen(props) {
                 username: username,
                 random: userRandom
             }
-            let usersRef = db.collection('users').doc(userData.user.uid);
+            let usersRef = db
+                .collection('users')
+                .doc(userData.user.uid);
             let savedGame = await usersRef.set(user)
         }
 
@@ -61,6 +70,7 @@ const SignInScreen = function SignInScreen(props) {
             } else {
                 setError("Username already taken.")
                 console.log("username already taken")
+                setIsLoading(false);
                 return
             }
 
@@ -69,22 +79,25 @@ const SignInScreen = function SignInScreen(props) {
             var errorMessage = error.message;
             setError(error.message)
             console.log(error)
+            setIsLoading(false);
             return;
         }
 
         try {
-            //await AsyncStorage.setItem('userToken', username);
-            // //LoAfTCync6YsRoSWGTSd      //3HqKXEByGlt7DQ2UNDJc await
+            // await AsyncStorage.setItem('userToken', username); //LoAfTCync6YsRoSWGTSd
+            // //3HqKXEByGlt7DQ2UNDJc await
             await AsyncStorage.setItem('userToken', "LoAfTCync6YsRoSWGTSd"); //LoAfTCync6YsRoSWGTSd
             await AsyncStorage.setItem('email', email); //LoAfTCync6YsRoSWGTSd
             await AsyncStorage.setItem('userId', userData.user.uid); //LoAfTCync6YsRoSWGTSd
-            await AsyncStorage.setItem('userName', username);
+            await AsyncStorage.setItem('username', username);
             await AsyncStorage.setItem('userRandom', userRandom.toString());
         } catch (error) {
             setError(error.message)
             console.log(error)
             return;
         }
+
+        setIsLoading(false);
 
         await Alert.alert('Sign up succesfull', 'Welcome ' + username + ". You're now getting signed in.", [
             {
@@ -93,7 +106,7 @@ const SignInScreen = function SignInScreen(props) {
                     .navigation
                     .navigate("App")
             }
-        ], {cancelable: false}) 
+        ], {cancelable: false})
 
     };
 
@@ -103,6 +116,13 @@ const SignInScreen = function SignInScreen(props) {
         setUsername] = React.useState("");
     const [pw,
         setPw] = React.useState("");
+
+    if (isLoading === true) { //return loading screen, if data is loading
+        return (
+            <Loading></Loading>
+        )
+    }
+
     return (
         <BackgroundContainer>
             <View style={styles.container}>
@@ -159,5 +179,5 @@ const styles = StyleSheet.create({
         color: "red"
     }
 });
-export
-default SignInScreen;
+
+export default SignInScreen;

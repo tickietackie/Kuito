@@ -1,6 +1,6 @@
 //https://de.wikipedia.org/wiki/Elo-Zahl
 
-//NewElo for user = 1000
+//NewElo for user = 500
 
 const CalculateNewElo = (EloUser1, EloUser2, user1Win, user2Win) => {
     Ea = 1 / (1 + 10 ^ ((EloUser1 - EloUser2) / 400))
@@ -31,6 +31,7 @@ const CalculateNewElo = (EloUser1, EloUser2, user1Win, user2Win) => {
         NewElo.EloGainUser1 = 10 * (0,5 - Eb) 
         NewElo.NewEloUser1 = EloUser1 + NewElo.EloGainUser1
     }
+    return NewElo;
 }
 
-export default CalculateElo
+export default CalculateNewElo;

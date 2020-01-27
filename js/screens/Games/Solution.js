@@ -6,6 +6,7 @@ import HomeButton from '../../components/HomeButton';
 import BackgroundContainer from "../../components/BackgroundContainer"
 import {material} from 'react-native-typography';
 import HeaderText from '../../components/HeaderText';
+import CalculateElo from '../../components/Games/EloSystem/CalculateElo'
 
 import firebase from "../../../config/firebase";
 
@@ -45,8 +46,12 @@ export default function App(props) {
         ? true
         : false;
 
-    const username = props.navigation.getParam('username', 0);
-    const username2 = props.navigation.getParam('username2', 0);
+    const username = props
+        .navigation
+        .getParam('username', 0);
+    const username2 = props
+        .navigation
+        .getParam('username2', 0);
     const userId = props
         .navigation
         .getParam("userId", '1')
@@ -104,6 +109,33 @@ export default function App(props) {
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
         console.log(random)
+
+        let user1Wins = 0;
+        let user2Wins = 0;
+
+        let i = 0;
+        games_playedUser2.forEach(element => {
+            if (games_playedUser2[i].UserWins) {
+                user1Wins++;
+            }
+            if (games_played[i].UserWins) {
+                user2Wins++;
+            }
+            i++;
+        });
+
+        if (user1Wins > user2Wins) {
+            user1Wins = 1
+            user2Wins = 0
+        } else if (user1Wins < user2Wins) {
+            user1Wins = 0
+            user2Wins = 1
+        } else {
+            user1Wins = 0
+            user2Wins = 0
+        }
+
+        //const NewElo = CalculateNewElo(eloUser1, eloUser2, user1Wins,user2Wins);
 
         async function UpdateGameDataInDb(db) { //Update existing properties of the played game
 

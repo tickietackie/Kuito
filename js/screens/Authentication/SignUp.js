@@ -48,7 +48,8 @@ const SignInScreen = function SignInScreen(props) {
             const user = {
                 userId: userData.user.uid,
                 username: username,
-                random: userRandom
+                random: userRandom,
+                elo: 500
             }
             let usersRef = db
                 .collection('users')

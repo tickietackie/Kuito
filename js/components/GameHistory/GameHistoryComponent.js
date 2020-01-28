@@ -30,7 +30,7 @@ const GameHistory = (props) => {
 
     const _fetchData = async() => {
 
-        setIsLoading(true)
+        //setIsLoading(true)
         const db = firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
@@ -66,7 +66,6 @@ const GameHistory = (props) => {
                 const started = new Date(startedGames[i].started)
                 startedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
                 startedGames[i].startedGame = 1
-                startedGames[i].username1 = username
                 i++;
             }
 
@@ -86,7 +85,6 @@ const GameHistory = (props) => {
                 startedGames.push(doc.data())
                 startedGames[i].id = doc.id
                 const started = new Date(startedGames[i].started)
-                startedGames[i].username1 = username
                 startedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
                 i++;
             }
@@ -109,7 +107,6 @@ const GameHistory = (props) => {
                 finishedGames[i].id = doc.id
                 const started = new Date(finishedGames[i].started)
                 const finished = new Date(finishedGames[i].finished)
-                finishedGames[i].username1 = username
                 finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
                 finishedGames[i].finished = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + finished.getDay()).slice(-2) + "/" + (finished.getUTCFullYear().toString().substr(-2))
                 i++;
@@ -143,13 +140,11 @@ const GameHistory = (props) => {
           if (isFocused) {
              // do the same API calls here
              _fetchData()
-             console.log('focused section');
           }
 
           const navFocusListener = navigation.addListener('didFocus', () => {
               // do some API calls here
               _fetchData()
-              console.log('listener section');
           });
 
           return () => {
@@ -174,8 +169,8 @@ const GameHistory = (props) => {
     function Item({ //return different History Items
         started,
         userId2,
-        username1,
         username,
+        username2,
         result,
         finished,
         startedGame,
@@ -188,8 +183,8 @@ const GameHistory = (props) => {
                 <HistoryEntryFinishedGame
                     started={started}
                     userId2={userId2}
-                    username1={username1}
                     username={username}
+                    username2={username2}
                     result={result}
                     finished={finished}
                     games_played={games_played}
@@ -201,8 +196,8 @@ const GameHistory = (props) => {
                 <HistoryEntryStartedGame
                     started={started}
                     userId2={userId2}
-                    username1={username1}
                     username={username}
+                    username2={username2}
                     result={result}
                     finished={finished}
                     games_played={games_played}
@@ -213,8 +208,8 @@ const GameHistory = (props) => {
                 <HistoryEntryAfterOpp
                     started={started}
                     userId2={userId2}
-                    username1={username1}
                     username={username}
+                    username2={username2}
                     result={result}
                     finished={finished}
                     games_played={games_played}
@@ -233,8 +228,8 @@ const GameHistory = (props) => {
                     renderItem={({item}) => <Item
                     started={item.started}
                     userId2={item.userId2}
-                    username1={item.username1}
                     username={item.username}
+                    username2={item.username2}
                     result={item.result}
                     finished={item.finished}
                     startedGame={item.startedGame}

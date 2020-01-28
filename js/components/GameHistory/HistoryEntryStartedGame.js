@@ -19,8 +19,8 @@ const CategoryComponent = function Category(props) {
             Game: props.games_played,
             userId: userId,
             userId2: props.userId2,
-            username: props.username1,
-            username2: props.username
+            username: props.username,
+            username2: props.username2
         };
 
         const resultScreen = StackActions.push({routeName: 'Result', params: navigationParams});

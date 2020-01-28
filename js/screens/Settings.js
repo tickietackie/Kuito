@@ -12,10 +12,38 @@ import {SettingsScreen} from "react-native-settings-screen"
 //import component
 
 export default function App(props) {
-    const text = "These are my settings";
+
     if (props.visible === false) {
         //return null;
     }
+
+    const [username,
+        setUsername] = useState("");
+
+    const [id,
+        setId] = useState(0);
+
+    const _fetchData = async() => {
+        const GetUserId = async() => {
+            return await AsyncStorage.getItem('userId');
+        };
+
+        const GetUsername = async() => {
+            return await AsyncStorage.getItem('username');
+        };
+        const username = await GetUsername()
+        console.log("test")
+        setUsername(username)
+        const id = await GetUserId()
+        setId(id)
+
+    }
+
+    useEffect(() => { // code to run on component mount
+
+        _fetchData()
+
+    },) //pass an empty array to call it just with the first call --> }, [])
 
     const _signOutAsync = async() => {
         try {
@@ -31,9 +59,10 @@ export default function App(props) {
 
     return (
         <View style={styles.container}>
-            <SafeAreaView style={styles.friendsList}>
-                <ScrollView>
-                    <Text>{text}</Text>
+            <SafeAreaView style={styles.settingsContainer}>
+                <ScrollView >
+                    <Text style={styles.ScrollView}>Username: {username}</Text>
+                    <Text style={styles.ScrollView}>User id: {id}</Text>
                     <View style={styles.startButton}>
                         <Button title="Sign Out" onPress={() => _signOutAsync()}/>
                     </View>
@@ -44,11 +73,11 @@ export default function App(props) {
 }
 
 const styles = StyleSheet.create({
-    container: {
-        flex: 1,
-        backgroundColor: '#F2F2F2',
-        alignItems: 'center',
-        justifyContent: 'center'
+    settingsContainer: {
+        margin: "4%"
+    },
+    ScrollView: {
+        padding: "4%"
     },
     backContainer: {
         position: "absolute",

@@ -1,216 +1,113 @@
-import React from 'react';
+import React, {Component, useState} from 'react';
 import {
+    Platform,
     StyleSheet,
+    SafeAreaView,
+    Button,
     View,
-    Text,
-    Dimensions,
-    Animated,
-    PanResponder
+    Text
 } from 'react-native';
 
-export default function Drag() {
-    const dropZoneValues = React.useRef(null);
+import {material} from 'react-native-typography';
 
-    const [bgColor,
-        setBgColor] = React.useState('#2c3e50');
-    const [bgColorRight,
-        setBgColorRight] = React.useState('#2c3e50');
-    const [circleColor,
-        setCircleColor] = React.useState('#1abc9c');
-    const [shadow,
-        setShadow] = React.useState({});
+import BackgroundContainer from '../components/BackgroundContainer';
+import HeaderText from '../components/HeaderText';
 
-    const pan = React.useRef(new Animated.ValueXY({x: 0, y: 0}));
+import GameHistory from '../components/GameHistory/GameHistoryComponent'
 
-    const isDropZone = React.useCallback((gesture) => {
-        const dz = dropZoneValues.current;
-        return gesture.moveY > dz.y && gesture.moveY < dz.y + dz.height && gesture.moveX < dz.width;
-    }, []);
+export default function Leaderboard(props) {
 
-    const isDropZone2 = React.useCallback((gesture) => {
-        const dz = dropZoneValues.current;
-        return gesture.moveY > dz.y && gesture.moveY < dz.y + dz.height && gesture.moveX > dz.width;
-    }, []);
+    const [random,
+        setRandom] = useState(Math.floor(Math.random() * 100000) + 1);
 
-    const onMove = React.useCallback((_, gesture) => {
-        //console.log(gesture);
-        if (isDropZone(gesture)) {
-            setBgColor('red');
-            setBgColorRight('#2c3e50');
-        } else if (isDropZone2(gesture)) {
-            setBgColorRight('blue');
-            setBgColor('#2c3e50');
-        } else {
-            setBgColorRight('#2c3e50');
-            setBgColor('#2c3e50');
+    //var random = Math.floor(Math.random() * 100000) + 1;
+
+    const navigationProperties = {
+        round: 1,
+        playStyle: 'competetive',
+        randomId: random,
+        userId: "abc"
+    };
+
+    const game = [
+        {
+            1: 1,
+            UserWins: 1,
+            userId: "abc",
+            gameId: "OJjrseCfzKXo77BdDKVg"
+        }, {
+            2: 0,
+            UserWins: 0,
+            userId: "abc",
+            gameId: "HSiwNxBCMSmS0kRgR7LD"
+        }, {
+            3: 1,
+            UserWins: 1,
+            userId: "abc",
+            gameId: "O4qZ90l3qIbEvlebuev3"
         }
+    ]
 
-    }, [isDropZone, isDropZone2]);
+    const navigationPropertiesResult = {
+        round: 3,
+        playStyle: 'competetive',
+        randomId: random,
+        Game: game,
+        userId: "abc"
+    };
 
-    const setDropZoneValuesLeft = React.useCallback((event) => {
-        dropZoneValues.current = event.nativeEvent.layout;
-    });
+    const navigate = () => {
+        setRandom(Math.floor(Math.random() * 100000) + 1);
+        props
+            .navigation
+            .navigate("MultipleChoice", navigationProperties)
+    }
 
-    const setDropZoneValuesRight = React.useCallback((event) => {
-        dropZoneValues.current = event.nativeEvent.layout;
-    });
-
-    const panResponder = React.useMemo(() => PanResponder.create({
-        // Ask to be the responder:
-        onStartShouldSetPanResponder: () => true,
-        onMoveShouldSetPanResponderCapture: () => true,
-
-        onPanResponderGrant: (evt, gestureState) => {
-            pan
-                .current
-                .setOffset({x: pan.current.x._value, y: pan.current.y._value});
-            pan
-                .current
-                .setValue({x: 0, y: 0});
-
-            console.log("start");
-            setBgColorRight('#2c3e50');
-            setBgColor('#2c3e50');
-            setShadow({
-                shadowOpacity: 0.75,
-                shadowRadius: 5,
-                shadowColor: "white",
-                shadowColor: '#000',
-                shadowOffset: {
-                    width: 1,
-                    height: 2
-                },
-                elevation: 2
-            })
-        },
-
-        // The most recent move distance is gestureState.move{X,Y} The accumulated
-        // gesture distance since becoming responder is gestureState.d{x,y}
-        onPanResponderMove: Animated.event([
-            null, {
-                dx: pan.current.x,
-                dy: pan.current.y
-            }
-        ], {listener: onMove}),
-        // The user has released all touches while this view is the responder. This
-        // typically means a gesture has succeeded
-        onPanResponderRelease: (e, gesture) => {
-            setCircleColor('#1abc9c')
-            setShadow({})
-            if (isDropZone(gesture)) {
-                setBgColor('red');
-            } else if (isDropZone2(gesture)) {
-                setBgColorRight('blue');
-            } else {
-                setBgColorRight('#2c3e50');
-                setBgColor('#2c3e50');
-            }
-            if (!isDropZone(gesture) && !isDropZone2(gesture)) {
-                setBgColor('#2c3e50');
-
-                Animated
-                    .spring(pan.current, {
-                    toValue: {
-                        x: 0 - pan.current.x._offset,
-                        y: 0 - pan.current.y._offset
-                    }
-                })
-                    .start(() => {
-                        pan
-                            .current
-                            .setValue({x: 0, y: 0})
-                        pan
-                            .current
-                            .setOffset({x: 0, y: 0})
-                    }); //After animation set value to 0
-
-            } else {
-                pan
-                    .current
-                    .flattenOffset()
-            }
-        },
-        onPanResponderTerminate: (evt, gestureState) => {
-            // Another component has become the responder, so this gesture should be
-            pan
-                .current
-                .flattenOffset();
-        }
-    }), []);
+    const elo = 500;
 
     return (
-        <View style={styles.mainContainer}>
-            <View
-                onLayout={setDropZoneValuesLeft}
-                style={[
-                styles.dropZone, {
-                    backgroundColor: bgColor,
-                    borderRightWidth: 1
-                }
-            ]}>
+        <BackgroundContainer>
+            <SafeAreaView style={styles.container}>
+                <HeaderText text="Statistics"></HeaderText>
+                <View style={styles.eloContainer}>
+                    <Text>Current Elo: {elo}</Text>
+                </View>
+            </SafeAreaView>
+        </BackgroundContainer>
 
-                <Text style={styles.text}>Drop me there!</Text>
-            </View>
-            <View
-                onLayout={setDropZoneValuesRight}
-                style={[
-                styles.dropZone, {
-                    backgroundColor: bgColorRight,
-                    borderLeftWidth: 1
-                }
-            ]}>
-
-                <Text style={styles.text}>Drop me here!</Text>
-            </View>
-            <View style={[styles.draggableContainer]}>
-                <Animated.View
-                    {...panResponder.panHandlers}
-                    style={[
-                    pan
-                        .current
-                        .getLayout(),
-                    styles.circle, {
-                        backgroundColor: circleColor
-                    },
-                    shadow
-                ]}>
-                    <Text style={styles.text}>Drag me!</Text>
-                </Animated.View>
-            </View>
-        </View>
     );
+
 }
 
-let CIRCLE_RADIUS = 36;
-let Window = Dimensions.get('window');
-let styles = StyleSheet.create({
-    mainContainer: {
-        flex: 1,
-        flexDirection: "row"
+const styles = StyleSheet.create({
+    container: {
+        paddingTop: "0%"
     },
-    dropZone: {
-        backgroundColor: '#2c3e50',
-        justifyContent: "center",
+    button: {
+        marginBottom: 30,
+        width: 260,
+        alignItems: 'center',
+        backgroundColor: '#2196F3'
+    },
+    buttonText: {
+        textAlign: 'center',
+        padding: 20,
+        color: 'white'
+    },
+    container2: {
         flex: 1,
-        height: 300,
-        borderColor: "white"
+        backgroundColor: '#EFFBEF',
+        alignItems: 'center',
+        justifyContent: 'center'
     },
     text: {
-        marginTop: 25,
-        marginLeft: 5,
-        marginRight: 5,
-        textAlign: 'center',
-        color: '#fff'
+        fontSize: 42,
+        color: "black",
+        padding: 5,
+        margin: 10,
+        backgroundColor: "red"
     },
-    draggableContainer: {
-        position: 'absolute',
-        top: Window.height / 2 - CIRCLE_RADIUS,
-        left: Window.width / 2 - CIRCLE_RADIUS
-    },
-    circle: {
-        backgroundColor: '#1abc9c',
-        width: 2 *CIRCLE_RADIUS,
-        height: 2 *CIRCLE_RADIUS,
-        borderRadius: CIRCLE_RADIUS
+    eloContainer: {
+        alignItems: 'center',
     }
 });

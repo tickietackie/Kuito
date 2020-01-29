@@ -1,12 +1,11 @@
 import React, {useState} from 'react';
 import {StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
 import {StackActions, NavigationActions} from 'react-navigation';
-import NextButton from '../../components/NextButton';
-import HomeButton from '../../components/HomeButton';
+import NextButton from '../../components/Buttons/NextButton';
+import HomeButton from '../../components/Buttons/HomeButton';
 import BackgroundContainer from "../../components/BackgroundContainer"
 import {material} from 'react-native-typography';
 import HeaderText from '../../components/HeaderText';
-import CalculateElo from '../../components/Games/EloSystem/CalculateElo'
 
 import firebase from "../../../config/firebase";
 
@@ -59,6 +58,8 @@ export default function App(props) {
         .navigation
         .getParam("userId2", '1');
 
+    let navigationParams = "";
+
     async function PersistGameData() { //fetch()
         const db = firebase.firestore()
 
@@ -106,6 +107,8 @@ export default function App(props) {
     async function UpdateGameData() {
         const db = firebase.firestore()
 
+        const navigation = props.navigation
+
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
         console.log(random)
@@ -114,12 +117,74 @@ export default function App(props) {
         let user2Wins = 0;
 
         let i = 0;
-        games_playedUser2.forEach(element => {
-            if (games_playedUser2[i].UserWins) {
-                user1Wins++;
+
+        let eloUser = 0;
+
+        navigationParams
+
+        async function GetUser1Data() {
+            let campaignsRef = db.collection('users')
+            let activeRef = await campaignsRef
+                .where('userId', '==', userId)
+                .get();
+            for (doc of activeRef.docs) {
+                const data = doc.data()
+                eloUser = data.elo
             }
-            if (games_played[i].UserWins) {
+        }
+
+        let eloUser2 = 0;
+
+        async function GetUser2Data() {
+            let campaignsRef = db.collection('users')
+            let activeRef = await campaignsRef
+                .where('userId', '==', userId2)
+                .get();
+            for (doc of activeRef.docs) {
+                const data = doc.data()
+                eloUser2 = data.elo
+            }
+        }
+
+        const CalculateNewElo = async(EloUser1, EloUser2, user1Win, user2Win) => {
+            const Eb = 1 / (1 + 10 ^ ((EloUser1 - EloUser2) / 400))
+            const Ea = 1 - Eb
+
+            let NewElo = {
+                NewEloUser1: 0,
+                NewEloUser2: 0,
+                EloGainUser1: 0,
+                EloGainUser2: 0
+            }
+
+            if (user1Win === 1) { //player 1 won
+                NewElo.EloGainUser2 = Math.floor(10 * (0 - Ea))
+                NewElo.NewEloUser2 = EloUser2 + NewElo.EloGainUser2
+                NewElo.EloGainUser1 = Math.ceil(10 * (1 - Eb))
+                NewElo.NewEloUser1 = EloUser1 + NewElo.EloGainUser1
+            } else if (user2Win === 1) { //player 2 won
+                NewElo.EloGainUser2 = Math.ceil(10 * (1 - Ea))
+                NewElo.NewEloUser2 = EloUser2 + NewElo.EloGainUser2
+                NewElo.EloGainUser1 = Math.floor(10 * (0 - Eb))
+                NewElo.NewEloUser1 = EloUser1 + NewElo.EloGainUser1
+            } else { //remi
+                NewElo.EloGainUser2 = Math.round(10 * (0, 5 - Ea))
+                NewElo.NewEloUser2 = EloUser2 + NewElo.EloGainUser2
+                NewElo.EloGainUser1 = Math.round(10 * (0, 5 - Eb))
+                NewElo.NewEloUser1 = EloUser1 + NewElo.EloGainUser1
+            }
+            return NewElo;
+        }
+
+        const gameUser2Rounds = navigation.getParam('GameUser2', '');
+        const gameRounds = navigation.getParam('Game', '');
+
+        gameUser2Rounds.forEach(element => {
+            if (gameUser2Rounds[i].UserWins) {
                 user2Wins++;
+            }
+            if (gameRounds[i].UserWins) {
+                user1Wins++;
             }
             i++;
         });
@@ -135,13 +200,9 @@ export default function App(props) {
             user2Wins = 0
         }
 
-        //const NewElo = CalculateNewElo(eloUser1, eloUser2, user1Wins,user2Wins);
-
         async function UpdateGameDataInDb(db) { //Update existing properties of the played game
 
             const navigation = props.navigation
-
-            const gameRounds = navigation.getParam('Game', '');
 
             let game = {
                 userId: userId,
@@ -150,7 +211,6 @@ export default function App(props) {
                 userId2: userId2,
                 username: username,
                 username2: username2
-
             }
 
             if (!game.finished) {
@@ -168,23 +228,47 @@ export default function App(props) {
 
         }
 
-        async function AddGameUser2DataToDb(db) {
-            // Add second played games of user 2 to the existing game
-            const navigation = props.navigation
+        async function UpdateUser1Data(db, NewElo) { //Update existing properties of the played game
 
-            const gameUser2Rounds = navigation.getParam('GameUser2', '');
+            let userRef = db
+                .collection('users')
+                .doc(userId)
+            const newElo = NewElo.NewEloUser1
+            let savedGame = await userRef.update({elo: newElo});
+        }
+
+        async function UpdateUser2Data(db, NewElo) { //Update existing properties of the played game
+
+            let userRef = db
+                .collection('users')
+                .doc(userId2)
+            const newElo2 = NewElo.NewEloUser2
+            let savedGame = await userRef.update({elo: newElo2});
+        }
+
+        async function AddGameUser2DataToDb(db, NewElo) {
+            // Add second played games of user 2 to the existing game
 
             let playedGamesRef = db
                 .collection('PlayedGames')
                 .doc(playedGameDocId)
             let savedGame = await playedGamesRef.set({
-                games_playedUser2: gameUser2Rounds
+                games_playedUser2: gameUser2Rounds,
+                eloGainUser1: NewElo.EloGainUser1,
+                eloGainUser2: NewElo.EloGainUser2
             }, {merge: true});
 
         }
         try {
-            await UpdateGameDataInDb(db);
-            await AddGameUser2DataToDb(db);
+            await GetUser1Data()
+            await GetUser2Data()
+            const NewElo = await CalculateNewElo(eloUser, eloUser2, user1Wins, user2Wins);
+            await UpdateGameDataInDb(db, NewElo);
+            await UpdateUser1Data(db, NewElo)
+            await UpdateUser2Data(db, NewElo)
+            await AddGameUser2DataToDb(db, NewElo);
+
+            navigationParams.NewElo = NewElo;
             setIsLoading(false);
 
         } catch (err) {
@@ -195,7 +279,7 @@ export default function App(props) {
 
     const NavigateToNextScreen = async() => {
 
-        const navigationParams = { //Get round and playstyle from last screen
+        navigationParams = { //Get round and playstyle from last screen
             round: Number.parseInt(props.navigation.getParam('round', ''), 10) + 1, //inc round
             playStyle: props //Set playStyle again to the last playstyle for next screen
                 .navigation
@@ -225,6 +309,7 @@ export default function App(props) {
             if (props.navigation.getParam("playAfterOpponent", 0)) { //check if played as the second player
                 if (round >= roundLength) { //if round is finished as the second player-> navigate to result screen and update game data
                     await UpdateGameData()
+                    console.log("updated gamedata")
                     RandomScreen = StackActions.push({routeName: 'Result', params: navigationParams});
                 } else {
 

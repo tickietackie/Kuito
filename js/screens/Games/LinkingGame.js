@@ -11,8 +11,8 @@ import {
 } from 'react-native';
 
 import {StackActions} from 'react-navigation';
-import HomeButton from '../../components/HomeButton';
-import NextButton from '../../components/NextButton';
+import HomeButton from '../../components/Buttons/HomeButton';
+import NextButton from '../../components/Buttons/NextButton';
 import DragableLink from '../../components/Games/DragableLink';
 import HeaderText from '../../components/HeaderText';
 import BackgroundContainer from "../../components/BackgroundContainer"

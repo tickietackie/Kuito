@@ -44,25 +44,34 @@ const CategoryComponent = function Category(props) {
 
     }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
 
-
     //else if (!props.finished && userId !== props.userId2) {     //if I played first and have to wait for opponent
-        return (
-            <View style={[styles.container, {borderColor: "darkblue"}]}>
-                <TouchableHighlight onPress={() => NavigateToResult()} underlayColor="white">
-                    <View style={[styles.button, {backgroundColor: "darkblue"}]}>
-                        <View style={styles.waiting}>
-                            <Text style={[material.button, styles.buttonText]}>Waiting for</Text>
-                        </View>
-                        <View style={styles.userId}>
-                            <Text style={[material.button, styles.buttonText]}>{props.username}</Text>
-                        </View>
-                        <View style={styles.date}>
-                            <Ionicons name="ios-arrow-dropright" size={25} color="gold"/>
-                        </View>
+    return (
+        <View
+            style={[
+            styles.container, {
+                borderColor: "darkblue"
+            }
+        ]}>
+            <TouchableHighlight onPress={() => NavigateToResult()} underlayColor="white">
+                <View
+                    style={[
+                    styles.button, {
+                        backgroundColor: "darkblue"
+                    }
+                ]}>
+                    <View style={styles.waiting}>
+                        <Text style={[material.button, styles.buttonText]}>Waiting for</Text>
                     </View>
-                </TouchableHighlight>
-            </View>
-        )
+                    <View style={styles.userId}>
+                        <Text style={[material.button, styles.buttonText]}>{props.username2}</Text>
+                    </View>
+                    <View style={styles.date}>
+                        <Ionicons name="ios-arrow-dropright" size={25} color="gold"/>
+                    </View>
+                </View>
+            </TouchableHighlight>
+        </View>
+    )
     //}
 
 }

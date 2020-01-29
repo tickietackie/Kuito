@@ -17,8 +17,8 @@ const CategoryComponent = function Category(props) {
             playStyle: 'competetive',
             userId: props.userId,
             userId2: props.userId2,
-            username: props.username1,
-            username2: props.username,
+            username: props.username,
+            username2: props.username2,
             playAfterOpponent: 1,
             playedGameDocId: props.playedGameDocId
         };

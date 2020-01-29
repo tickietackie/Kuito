@@ -8,7 +8,7 @@ import {
     FlatList
 } from 'react-native';
 import {StackActions, NavigationActions} from 'react-navigation';
-import HomeButton from '../../components/HomeButton';
+import HomeButton from '../../components/Buttons/HomeButton';
 import BackgroundContainer from "../../components/BackgroundContainer"
 import {material} from 'react-native-typography';
 import HeaderText from '../../components/HeaderText';
@@ -56,6 +56,10 @@ export default function App(props) {
         .navigation
         .getParam("Game", '');
 
+    const DATA2 = props
+        .navigation
+        .getParam("GameUser2", '');
+
     var results = []
     var i = 1;
     //obj = {...obj, ...pair};  add object key : value pair
@@ -63,7 +67,16 @@ export default function App(props) {
         let gameResult = DATA[i - 1].UserWins === 0
             ? "lose"
             : "win"
-        results.push({round: `${i}`, result: gameResult}); //spread operator
+            let gameResult2 = ""
+        if (DATA2) {
+            gameResult2 = DATA2[i - 1].UserWins === 0
+                ? "lose"
+                : "win"
+        }
+        
+
+        results.push({round: `${i}`, result: gameResult, result2: gameResult2}); //spread operator
+
         i++;
     });
 
@@ -91,7 +104,7 @@ export default function App(props) {
                     <SafeAreaView >
                         <FlatList
                             data={results}
-                            renderItem={({item}) => <Item result={item.result} round={item.round}/>}
+                            renderItem={({item}) => <Item result={item.result} result2={item.result2} round={item.round}/>}
                             keyExtractor={item => item.round}/>
                     </SafeAreaView>
                 </View>

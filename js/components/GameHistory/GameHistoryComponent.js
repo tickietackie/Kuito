@@ -15,8 +15,8 @@ import HistoryEntryAfterOpp from "./HistoryEntryAfterOpp"
 import firebase from "../../../config/firebase";
 import BackgroundContainer from '../BackgroundContainer';
 
-import { withNavigation } from 'react-navigation';
-
+import {withNavigation} from 'react-navigation';
+import HistoryEntryFinishedGameOpp from './HistoryEntryFinishedGameOpp';
 
 const GameHistory = (props) => {
 
@@ -43,12 +43,7 @@ const GameHistory = (props) => {
         };
         const userId = await GetUserId()
 
-        const GetUsername = async() => {
-            //return await AsyncStorage.getItem('username');
-            return await AsyncStorage.getItem('username');
-        };
-
-        const username = await GetUsername()
+        const navToResult = props.navigation.getParam("showResult", 0) 
 
         //Rewrite with onsnapshot --> just fetch changes
         async function GetStartedGames(db) {
@@ -96,6 +91,30 @@ const GameHistory = (props) => {
             let finishedGames = [];
             let campaignsRef = db.collection('PlayedGames')
             let activeRef = await campaignsRef
+                .where('userId', '==', userId)
+                .where('finished', '>', '0')
+                .orderBy('finished')
+                .limit(20)
+                .get();
+            var i = 0;
+            for (doc of activeRef.docs) {
+                finishedGames.push(doc.data())
+                finishedGames[i].id = doc.id
+                const started = new Date(finishedGames[i].started)
+                const finished = new Date(finishedGames[i].finished)
+                finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
+                finishedGames[i].finished = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + finished.getDay()).slice(-2) + "/" + (finished.getUTCFullYear().toString().substr(-2))
+                finishedGames[i].showResult = navToResult
+                i++;
+                console.log("test")
+            }
+            return finishedGames;
+        }
+
+        async function GetFinishedGamesOpp(db) {
+            let finishedGames = [];
+            let campaignsRef = db.collection('PlayedGames')
+            let activeRef = await campaignsRef
                 .where('userId2', '==', userId)
                 .where('finished', '>', '0')
                 .orderBy('finished')
@@ -109,6 +128,8 @@ const GameHistory = (props) => {
                 const finished = new Date(finishedGames[i].finished)
                 finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
                 finishedGames[i].finished = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + finished.getDay()).slice(-2) + "/" + (finished.getUTCFullYear().toString().substr(-2))
+                finishedGames[i].finishedGameOpp = true
+                finishedGames[i].showResult = navToResult
                 i++;
                 console.log("test")
             }
@@ -119,7 +140,8 @@ const GameHistory = (props) => {
             const startedGamesByOpp = await GetStartedGamesByOpp(db);
             const startedGames = await GetStartedGames(db);
             const finishedGames = await GetFinishedGames(db);
-            const fetchedGames = startedGamesByOpp.concat(startedGames, finishedGames);
+            const finishedGamesOpp = await GetFinishedGamesOpp(db);
+            const fetchedGames = startedGamesByOpp.concat(startedGames, finishedGames, finishedGamesOpp);
             setGames(fetchedGames);
             setIsLoading(false);
             //let i = 100000* 1000000/3 /9/8;
@@ -132,25 +154,27 @@ const GameHistory = (props) => {
 
     //const isFocused = props.navigation.isFocused();
 
-        useLayoutEffect(() => {
-            const isFocused = props.navigation.isFocused();
+    useLayoutEffect(() => {
+        const isFocused = props
+            .navigation
+            .isFocused();
 
-          // manually judge if the screen is focused
-          // if did, fire api call
-          if (isFocused) {
-             // do the same API calls here
-             _fetchData()
-          }
+        // manually judge if the screen is focused if did, fire api call
+        if (isFocused) {
+            // do the same API calls here
+            _fetchData()
+        }
 
-          const navFocusListener = navigation.addListener('didFocus', () => {
-              // do some API calls here
-              _fetchData()
-          });
+        const navFocusListener = navigation.addListener('didFocus', () => {
+            // do some API calls here
 
-          return () => {
-              navFocusListener.remove();
-          };
-      }, []);
+            _fetchData()
+        });
+
+        return () => {
+            navFocusListener.remove();
+        };
+    }, []);
     //pass an empty array to call it just with the first call --> }, [])
 
     if (isLoading === true) { //return loading screen, if data is loading
@@ -168,6 +192,7 @@ const GameHistory = (props) => {
 
     function Item({ //return different History Items
         started,
+        userId,
         userId2,
         username,
         username2,
@@ -176,12 +201,15 @@ const GameHistory = (props) => {
         startedGame,
         games_played,
         playedGameDocId,
-        games_playedUser2
+        games_playedUser2,
+        finishedGameOpp,
+        showResult
     }) { //Each item in the list will be render like this item
-        if (finished) {
+        if (finishedGameOpp) {
             return (
-                <HistoryEntryFinishedGame
+                <HistoryEntryFinishedGameOpp
                     started={started}
+                    userId={userId}
                     userId2={userId2}
                     username={username}
                     username2={username2}
@@ -189,11 +217,27 @@ const GameHistory = (props) => {
                     finished={finished}
                     games_played={games_played}
                     games_playedUser2={games_playedUser2}
-                    playedGameDocId={playedGameDocId}></HistoryEntryFinishedGame>
+                    showResult={showResult}
+                    playedGameDocId={playedGameDocId}></HistoryEntryFinishedGameOpp>
+            );
+        } else if (finished) {
+            return (
+                <HistoryEntryFinishedGameOpp
+                    userId={userId}
+                    started={started}
+                    userId2={userId2}
+                    username={username}
+                    username2={username2}
+                    result={result}
+                    finished={finished}
+                    games_played={games_played}
+                    showResult={showResult}
+                    playedGameDocId={playedGameDocId}></HistoryEntryFinishedGameOpp>
             );
         } else if (startedGame) {
             return (
                 <HistoryEntryStartedGame
+                    userId={userId}
                     started={started}
                     userId2={userId2}
                     username={username}
@@ -207,6 +251,7 @@ const GameHistory = (props) => {
             return (
                 <HistoryEntryAfterOpp
                     started={started}
+                    userId={userId}
                     userId2={userId2}
                     username={username}
                     username2={username2}
@@ -216,7 +261,6 @@ const GameHistory = (props) => {
                     playedGameDocId={playedGameDocId}></HistoryEntryAfterOpp>
             );
         }
-
     }
 
     return (
@@ -227,6 +271,7 @@ const GameHistory = (props) => {
                     data={games}
                     renderItem={({item}) => <Item
                     started={item.started}
+                    userId={item.userId}
                     userId2={item.userId2}
                     username={item.username}
                     username2={item.username2}
@@ -235,6 +280,8 @@ const GameHistory = (props) => {
                     startedGame={item.startedGame}
                     games_played={item.games_played}
                     games_playedUser2={item.games_playedUser2}
+                    finishedGameOpp={item.finishedGameOpp}
+                    showResult={item.showResult}
                     playedGameDocId
                     ={item.id}
                     id={item.id}/>}

@@ -25,7 +25,7 @@ export default function App(props) {
     async function NavigateToRandomGame() {
 
         setIsLoading(true);
-
+        const db = firebase.firestore();
         const GetUserId = async() => {
             return await AsyncStorage.getItem('userId');
         };
@@ -37,14 +37,42 @@ export default function App(props) {
         const username = await GetUsername()
         let username2 = "";
 
+        let eloUser = 0;
+        //let username = "";
+        async function GetUser1Data () {
+            let campaignsRef = db.collection('users')
+            let activeRef = await campaignsRef
+                .where('userId', '==', userId)
+                .get();
+            for (doc of activeRef.docs) {
+                const data = doc.data()
+                eloUser = data.elo
+               //username = data.username
+            }
+        }
+
+        let eloUser2 = 0;
+
+        async function GetUser2Data () {
+            let campaignsRef = db.collection('users')
+            let activeRef = await campaignsRef
+                .where('userId', '==', userId2)
+                .get();
+            for (doc of activeRef.docs) {
+                const data = doc.data()
+                eloUser2 = data.elo
+            }
+        }
+
         const GetRandomUser = async(db, userIdRandom) => { //Get a random opponent => get random second user id, but ignore own userid
             let campaignsRef = db.collection('users')
             let activeRef = await campaignsRef
                 .where('random', '>', random)
                 .get();
             for (doc of activeRef.docs) {
-                data = doc.data()
+                const data = doc.data()
                 username2 = data.username
+                eloUser2 = data.elo
                 return doc.id;
             }
         }
@@ -58,8 +86,9 @@ export default function App(props) {
                 .limit(1)
                 .get();
             for (doc of activeRef.docs) {
-                data = doc.data()
+                const data = doc.data()
                 username2 = data.username
+                eloUser2 = data.elo
                 return doc.id;
             }
         }
@@ -67,7 +96,7 @@ export default function App(props) {
         const random = 88926;//Math.floor(Math.random() * 100000) + 1;
 
         let randomUserId = 0;
-        let userId = 0;
+        let userId = 0
         const userIdRandom = await AsyncStorage.getItem('userRandom'); 
         console.log("userId2: " + userIdRandom)
         try {
@@ -75,7 +104,6 @@ export default function App(props) {
             let x=0;
             while (randomUserId === 0) {
                 userId = await GetUserId()
-                const db = firebase.firestore();
                 const fetchedRandomUserId = await GetRandomUser(db, userIdRandom) //Get random user id
                 //If user id is the same perform another query, to complete the "not same user id" logic
                 const fetchedRandomUserId2 = await GetRandomUser2(db, userIdRandom)
@@ -91,6 +119,7 @@ export default function App(props) {
                 }
                 x++;
             }
+            await GetUser1Data()
         } catch (err) {
             console.log('Error getting userIds', err)
             alert("Failed to get your data. Please check your internet connection and retry!")
@@ -104,13 +133,16 @@ export default function App(props) {
             return;
         }
 
+
         const navigationProperties = {
             round: 1,
             playStyle: 'competetive',
             userId: userId,
             userId2: randomUserId,
             username: username,
-            username2: username2
+            username2: username2,
+            eloUser2: eloUser2,
+            eloUser: eloUser
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;

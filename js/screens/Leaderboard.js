@@ -66,7 +66,7 @@ export default function Leaderboard(props) {
                     title="Result"
                     onPress={() => props.navigation.navigate("Result", navigationPropertiesResult)}/>
             </SafeAreaView>
-            <GameHistory></GameHistory>
+            <GameHistory showResult={true}></GameHistory>
         </BackgroundContainer>
 
     );

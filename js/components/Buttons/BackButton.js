@@ -4,7 +4,7 @@ import { withNavigation } from 'react-navigation';  //navigation won't be provid
 import {StackActions, NavigationActions} from 'react-navigation';
 import {material} from 'react-native-typography';
 
-const HomeButtonComponent = function HomeButton(props) {
+const BackButton = function BackButton(props) {
 
     const {visible, style} = props;
 
@@ -15,7 +15,7 @@ const HomeButtonComponent = function HomeButton(props) {
     if (visible === false) return null; //Not visible if param visible is false
     return (
         <View style={[styles.nextContainer, style]}>
-            <Button title={"Home"} onPress={() => props.navigation.navigate("NewGame", navigationParams)} />
+            <Button title={"Back"} onPress={() => props.navigation.goBack()} />
         </View>
     );
 }
@@ -31,4 +31,4 @@ const styles = StyleSheet.create({
       }
 });
 
-export default withNavigation(HomeButtonComponent);
+export default withNavigation(BackButton);

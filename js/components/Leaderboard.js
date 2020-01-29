@@ -42,7 +42,6 @@ export default function block(props) {
 
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
-        console.log(random)
 
         GetUserId = async() => {
             return await AsyncStorage.getItem('userId');

@@ -11,8 +11,8 @@ import {
 
 import firebase from "../../../config/firebase";
 import {StackActions} from 'react-navigation';
-import HomeButton from '../../components/HomeButton';
-import NextButton from '../../components/NextButton';
+import HomeButton from '../../components/Buttons/HomeButton';
+import NextButton from '../../components/Buttons/NextButton';
 import HeaderText from '../../components/HeaderText';
 import ImageQuestionCard from '../../components/Games/ImageQuestionCard';
 import Block from '../../components/Games/Block';

@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { createAppContainer, createSwitchNavigator} from 'react-navigation';
+import { createAppContainer, createSwitchNavigator, NavigationActions} from 'react-navigation';
 import { createBottomTabNavigator } from 'react-navigation-tabs';
 import { createStackNavigator } from 'react-navigation-stack';
 import { StackActions } from 'react-navigation';
@@ -75,7 +75,6 @@ const AppStackModal = createStackNavigator(
     }
 )
 
-
 const TabNavigator = createBottomTabNavigator({
     Home: {
         screen: AppStackModal,
@@ -89,7 +88,7 @@ const TabNavigator = createBottomTabNavigator({
     Stats: {
         screen: Stats,
         navigationOptions: {
-            title: 'Stats',
+            title: 'Statistics',
             tabBarIcon: ({ tintColor }) => (
                 <Icon.Ionicons name="ios-stats" size={28} color={tintColor} />
             )
@@ -102,6 +101,9 @@ const TabNavigator = createBottomTabNavigator({
             tabBarIcon: ({ tintColor }) => (
                 <Icon.Foundation name="crown" size={32} color={tintColor} />
             )
+        },
+        params: {
+            showResult: 1
         }
     },
 }, {

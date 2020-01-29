@@ -14,6 +14,11 @@ import {Ionicons} from '@expo/vector-icons';
 
 const CategoryComponent = function Category(props) {
 
+    //const (player, dsf) = {props}
+    const result = props.result
+        ? props.result
+        : ""
+
     let pointsUser1 = 0;
     let pointsUser2 = 0;
     for (let index = 0; index < props.games_played.length; index++) {
@@ -25,21 +30,21 @@ const CategoryComponent = function Category(props) {
                 pointsUser2++;
             }
         }
+
     }
 
-    //as the other player finished the game i am user 1 here
     let resultBGColor = "";
     let resultAbbr = ""
     if (pointsUser1 < pointsUser2) {
         resultBGColor = {
-            backgroundColor: "red"
-        }
-        resultAbbr = "L";
-    } else if (pointsUser1 > pointsUser2) {
-        resultBGColor = {
             backgroundColor: "limegreen"
         }
         resultAbbr = "W";
+    } else if (pointsUser1 > pointsUser2) {
+        resultBGColor = {
+            backgroundColor: "red"
+        }
+        resultAbbr = "L";
     } else if (pointsUser1 == pointsUser2) {
         resultBGColor = {
             backgroundColor: "gold"
@@ -81,7 +86,7 @@ const CategoryComponent = function Category(props) {
             userId2: props.userId2,
             username: props.username,
             username2: props.username2,
-            round: 1
+            round: 1,
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;
@@ -108,6 +113,7 @@ const CategoryComponent = function Category(props) {
             }
         ])
     }
+
     const [userId,
         setUserId] = useState(0);
     const _GetUserId = async() => {
@@ -120,7 +126,9 @@ const CategoryComponent = function Category(props) {
 
     }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
 
-    const screenToNavigate = props.showResult ? NavigateToResult : PlayAgain
+    const screenToNavigate = props.showResult
+        ? NavigateToResult
+        : PlayAgain
 
     return (
         <View style={styles.container}>
@@ -133,8 +141,8 @@ const CategoryComponent = function Category(props) {
                         <Text style={[material.button, styles.buttonText]}>{props.started}</Text>
                     </View>
                     <View style={styles.result}>
-                        <Text style={[material.button, styles.buttonText]}>{pointsUser1}
-                            : {pointsUser2}</Text>
+                        <Text style={[material.button, styles.buttonText]}>{pointsUser2}
+                            : {pointsUser1}</Text>
                     </View>
                     <View style={[styles.resultAbbr, resultBGColor]}>
                         <Text style={[material.body2, styles.buttonText]}>{resultAbbr}</Text>

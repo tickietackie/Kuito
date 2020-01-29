@@ -8,15 +8,17 @@ import {
     AsyncStorage,
     ActivityIndicator
 } from 'react-native';
-import {human} from 'react-native-typography'
+
 import HistoryEntryFinishedGame from "./HistoryEntryFinishedGame"
 import HistoryEntryStartedGame from "./HistoryEntryStartedGame"
 import HistoryEntryAfterOpp from "./HistoryEntryAfterOpp"
+import HistoryEntryFinishedGameOpp from './HistoryEntryFinishedGameOpp';
+
 import firebase from "../../../config/firebase";
 import BackgroundContainer from '../BackgroundContainer';
-
+import {human} from 'react-native-typography'
 import {withNavigation} from 'react-navigation';
-import HistoryEntryFinishedGameOpp from './HistoryEntryFinishedGameOpp';
+
 
 const GameHistory = (props) => {
 

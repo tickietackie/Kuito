@@ -60,7 +60,9 @@ const CategoryComponent = function Category(props) {
     const NavigateToResult = () => {
 
         const navBack = () => {
-            props.navigation.navigate("Leaderboard")
+            props
+                .navigation
+                .navigate("Leaderboard")
         }
 
         const navigationParams = { //Get round and playstyle from last screen
@@ -86,7 +88,7 @@ const CategoryComponent = function Category(props) {
             userId2: props.userId2,
             username: props.username,
             username2: props.username2,
-            round: 1,
+            round: 1
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;
@@ -141,8 +143,7 @@ const CategoryComponent = function Category(props) {
                         <Text style={[material.button, styles.buttonText]}>{props.started}</Text>
                     </View>
                     <View style={styles.result}>
-                        <Text style={[material.button, styles.buttonText]}>{pointsUser2}
-                            : {pointsUser1}</Text>
+                        <Text style={[material.button, styles.buttonText]}>{pointsUser2} : {pointsUser1}</Text>
                     </View>
                     <View style={[styles.resultAbbr, resultBGColor]}>
                         <Text style={[material.body2, styles.buttonText]}>{resultAbbr}</Text>

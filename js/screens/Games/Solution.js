@@ -202,29 +202,16 @@ export default function App(props) {
 
         async function UpdateGameDataInDb(db) { //Update existing properties of the played game
 
-            const navigation = props.navigation
-
-            let game = {
-                userId: userId,
-                games_played: gameRounds,
-                finished: 0,
-                userId2: userId2,
-                username: username,
-                username2: username2
-            }
-
-            if (!game.finished) {
-                const today = new Date();
-                const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
-                const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
-                const dateTime = date + ' ' + time;
-                game.finished = dateTime;
-            }
-
+            const today = new Date();
+            const date = today.getFullYear() + '-' + (today.getMonth() + 1) + '-' + today.getDate();
+            const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
+            const dateTime = date + ' ' + time;
+            const finished = dateTime;
+            
             let playedGamesRef = db
                 .collection('PlayedGames')
                 .doc(playedGameDocId)
-            let savedGame = await playedGamesRef.update({finished: game.finished});
+            let savedGame = await playedGamesRef.update({finished: finished});
 
         }
 
@@ -255,7 +242,9 @@ export default function App(props) {
             let savedGame = await playedGamesRef.set({
                 games_playedUser2: gameUser2Rounds,
                 eloGainUser1: NewElo.EloGainUser1,
-                eloGainUser2: NewElo.EloGainUser2
+                eloGainUser2: NewElo.EloGainUser2,
+                user1Wins: user1Wins,
+                user2Wins, user2Wins
             }, {merge: true});
 
         }
@@ -266,7 +255,7 @@ export default function App(props) {
             await UpdateGameDataInDb(db, NewElo);
             await UpdateUser1Data(db, NewElo)
             await UpdateUser2Data(db, NewElo)
-            await AddGameUser2DataToDb(db, NewElo);
+            await AddGameUser2DataToDb(db, NewElo, user1Wins, user2Wins);
 
             navigationParams.NewElo = NewElo;
             setIsLoading(false);

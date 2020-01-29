@@ -15,12 +15,17 @@ const CategoryComponent = function Category(props) {
 
     const NavigateToResult = () => {
 
-        const navigationParams = { //Get round and playstyle from last screen
+        const navBack = () => {
+            props.navigation.navigate("Leaderboard")
+        }
+        
+        const navigationParams = { 
             Game: props.games_played,
             userId: userId,
             userId2: props.userId2,
             username: props.username,
-            username2: props.username2
+            username2: props.username2,
+            nav: navBack
         };
 
         const resultScreen = StackActions.push({routeName: 'Result', params: navigationParams});

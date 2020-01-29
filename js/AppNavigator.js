@@ -92,6 +92,9 @@ const TabNavigator = createBottomTabNavigator({
             tabBarIcon: ({ tintColor }) => (
                 <Icon.Ionicons name="ios-stats" size={28} color={tintColor} />
             )
+        },
+        params: {
+            showResult: 1
         }
     },
     Leaderboard: {

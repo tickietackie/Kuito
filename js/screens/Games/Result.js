@@ -1,11 +1,12 @@
-import React, {useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
     StyleSheet,
     Text,
     View,
     ScrollView,
     SafeAreaView,
-    FlatList
+    FlatList,
+    AsyncStorage
 } from 'react-native';
 import {StackActions, NavigationActions} from 'react-navigation';
 import HomeButton from '../../components/Buttons/HomeButton';
@@ -18,6 +19,24 @@ export default function App(props) {
     if (props.visible === false) {
         //return null;
     }
+
+    const [userId,
+        setUserId] = useState(0);
+
+    const _fetchData = async() => {
+        const GetUserId = async() => {
+            //return await AsyncStorage.getItem('username');
+            return await AsyncStorage.getItem('userId');
+        };
+        const asncUserId = await GetUserId()
+        setUserId(asncUserId);
+    }
+
+    useEffect(() => { // code to run on component mount
+
+        _fetchData()
+
+    }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
 
     const round = props
         .navigation
@@ -67,27 +86,39 @@ export default function App(props) {
         let gameResult = DATA[i - 1].UserWins === 0
             ? "lose"
             : "win"
-            let gameResult2 = ""
+        let gameResult2 = ""
         if (DATA2) {
             gameResult2 = DATA2[i - 1].UserWins === 0
                 ? "lose"
                 : "win"
         }
-        
 
         results.push({round: `${i}`, result: gameResult, result2: gameResult2}); //spread operator
 
         i++;
     });
 
+    let pointsGained = "-";
+    let newElo = "-";
+    if (props.navigation.getParam(userId,0) === userId) {
+        pointsGained = props.navigation.getParam("EloGainedUser1",0)
+        newElo = props.navigation.getParam("NewEloUser1",0)
+    }
+    else if (props.navigation.getParam("userId2", 0) === userId) {
+        pointsGained = props.navigation.getParam("EloGainedUser2",0)
+        newElo = props.navigation.getParam("NewEloUser2",0)
+    }
+
     return (
+
         <BackgroundContainer>
-            <View style={styles.container1}>
+
+            <SafeAreaView style={styles.container1}>
                 <View style={styles.container}>
                     <HeaderText text="Result"></HeaderText>
                 </View>
-                <View style={styles.resultsContainer}>
 
+                <View style={styles.resultsContainer}>
                     <View style={styles.HeadingContainer}>
                         <View style={styles.roundHeadingContainer}>
                             <Text style={[styles.roundText, material.body2]}>Round</Text>
@@ -101,15 +132,19 @@ export default function App(props) {
                     </View>
 
                     <View style={styles.hr}/>
-                    <SafeAreaView >
+                    <SafeAreaView style={styles.resultItemsContainer}>
                         <FlatList
                             data={results}
                             renderItem={({item}) => <Item result={item.result} result2={item.result2} round={item.round}/>}
                             keyExtractor={item => item.round}/>
                     </SafeAreaView>
+
                 </View>
+                <Text style={[material.display1, styles.eloText]}>Points: {pointsGained}</Text>
+                <Text style={[material.display1, styles.eloText]}>New rtgØ: {newElo}</Text>
                 <HomeButton visible={showHomeButton} style={homeButtonStyle}></HomeButton>
-            </View>
+            </SafeAreaView>
+
         </BackgroundContainer>
     );
 }
@@ -117,7 +152,6 @@ export default function App(props) {
 const styles = StyleSheet.create({
     container1: {
         alignItems: 'center',
-        paddingTop: 45,
         flex: 1
     },
     container: {
@@ -126,13 +160,9 @@ const styles = StyleSheet.create({
         //justifyContent: 'center', paddingBottom: 40
     },
     resultsContainer: {
-        paddingTop: 10,
-        alignItems: 'center'
-    },
-    backContainer: {
-        position: "absolute",
-        bottom: 10,
-        left: 3
+        //paddingTop: 10,
+        alignItems: 'center',
+        maxHeight: "55%"
     },
     hr: {
         borderBottomColor: 'black',
@@ -141,9 +171,8 @@ const styles = StyleSheet.create({
         alignSelf: 'stretch'
     },
     HeadingContainer: {
-        flex: 1,
         minWidth: "90%",
-        minHeight: 40,
+        minHeight: "5%",
         flexDirection: "row"
     },
     roundHeadingContainer: {
@@ -163,12 +192,18 @@ const styles = StyleSheet.create({
         flex: 2,
         overflow: "scroll"
     },
+    resultItemsContainer: {
+        marginTop: "1.5%",
+        width: "90%",
+        alignItems: "center"
+    },
     roundText: {
         color: 'black',
         textAlign: "center"
     },
-    resultText: {
-        color: 'black',
+    eloText: {
+        marginTop: "3%",
+        color: '#006666',
         textAlign: "center"
     }
 });

@@ -22,7 +22,7 @@ export default function App(props) {
                 <View style={styles.startButton}>
                     <Button
                         title="Start Game"
-                        onPress={() => props.navigation.navigate('NewGame')}/>
+                        onPress={() => props.navigation.navigate('NewGame', {showResult: 0})}/>
                 </View>
                 {/*<Settings visible={showSettingsScreen}></Settings>*/}
                 <View style={styles.settingsButton}>

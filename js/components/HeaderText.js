@@ -13,7 +13,7 @@ export default function header(props) {
 const styles = StyleSheet.create({
     container: {
         alignItems: "center",
-        paddingBottom: 15,
+        paddingBottom: 10,
     },
     text: {
         fontSize: 42,

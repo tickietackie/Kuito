@@ -55,11 +55,12 @@ const CategoryComponent = function Category(props) {
     const NavigateToResult = () => {
 
         const navBack = () => {
-            props.navigation.navigate("Leaderboard")
+            props.navigation.navigate("Stats")
         }
 
         const navigationParams = { //Get round and playstyle from last screen
             Game: props.games_played,
+            GameUser2: props.games_playedUser2,
             userId: userId,
             userId2: props.userId2,
             username: props.username,

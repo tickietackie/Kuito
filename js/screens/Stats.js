@@ -22,10 +22,14 @@ import GameHistory from '../components/GameHistory/GameHistoryComponent'
 export default function Leaderboard(props) {
 
     const [KDA,
-        setKDA] = useState(0);
+        setKDA] = useState({
+            wins: "-",
+            remis: "-",
+            losses: "-"
+        });
 
     const [elo,
-        setElo] = useState(0);
+        setElo] = useState("-");
 
     const navigation = props.navigation
 
@@ -122,9 +126,7 @@ export default function Leaderboard(props) {
         }
     }
 
-    //const isFocused = props.navigation.isFocused();
-
-    useLayoutEffect(() => {
+    useLayoutEffect(() => {     //useLayoutEffect to trigger every time the screen is navigated towards
         const isFocused = props
             .navigation
             .isFocused();
@@ -135,6 +137,7 @@ export default function Leaderboard(props) {
             _fetchData()
         }
 
+        //Workaround because react navigation doesn't support hooks yet, this should be updated with release of react navigation V5
         const navFocusListener = navigation.addListener('didFocus', () => {
             // do some API calls here
 
@@ -164,9 +167,8 @@ export default function Leaderboard(props) {
     return (
         <BackgroundContainer>
             <SafeAreaView style={styles.container}>
-                <HeaderText text="Statistics"></HeaderText>
                 <View style={styles.eloContainer}>
-                    <Text style={[material.display1, styles.eloText]}>Current Elo: {elo}</Text>
+                    <Text style={[material.display2, styles.eloText]}>Current rtgØ: {elo}</Text>
                 </View>
                 <View style={styles.kdaContainer}>
                     <View style={styles.win}>
@@ -191,13 +193,6 @@ const styles = StyleSheet.create({
     container: {
         alignItems: "center"
     },
-    text: {
-        fontSize: 42,
-        color: "black",
-        padding: 5,
-        margin: 10,
-        backgroundColor: "red"
-    },
     eloContainer: {
         minHeight: "0%",
         margin: "0%",
@@ -206,7 +201,8 @@ const styles = StyleSheet.create({
         justifyContent: "center"
     },
     eloText: {
-        color: "#006666"
+        color: "#006666",
+        textAlign: "center"
     },
     kdaContainer: {
         padding: "5%",

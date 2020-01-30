@@ -2,7 +2,7 @@ import React, {useState} from 'react';
 import {StyleSheet, Text, View} from 'react-native';
 import {withNavigation} from 'react-navigation'; //navigation won't be provided to childs automatically, therefore wrap it into with navigation before exporting it
 import {material} from 'react-native-typography';
-import { white } from 'ansi-colors';
+import {white} from 'ansi-colors';
 
 const ResultEntryComponent = function Category(props) {
 
@@ -48,27 +48,30 @@ const ResultEntryComponent = function Category(props) {
             backgroundColor: "gold"
         }
     } else {
-        resultBGColor2= {
+        resultBGColor2 = {
             backgroundColor: "dodgerblue"
         }
     }
 
     return (
+
         <View style={styles.container}>
+            <View style={styles.fakeContainer}></View>
             <View style={styles.roundContainer}>
                 <Text style={[material.display1, styles.roundText]}>{props.round}</Text>
             </View>
             <View style={styles.resultContainer}>
-                <View style={[styles.resultBorder, resultBGColor]} >
+                <View style={[styles.resultBorder, resultBGColor]}>
                     <Text style={[material.display1, styles.resultText, resultBGColor]}>{result}</Text>
                 </View>
             </View>
             <View style={styles.resultContainer}>
-                <View style={[styles.resultBorder, resultBGColor2]} >
+                <View style={[styles.resultBorder, resultBGColor2]}>
                     <Text style={[material.display1, styles.resultText, resultBGColor2]}>{result2}</Text>
                 </View>
             </View>
         </View>
+
     );
 }
 
@@ -87,13 +90,13 @@ const styles = StyleSheet.create({
         },
         elevation: 2,
         flexDirection: 'row',
-        margin: 20,
+
         borderRadius: 5,
         borderWidth: 2,
         borderColor: "navy",
-        minWidth: "90%",
+        minWidth: "100%",
         flex: 1,
-
+        marginBottom: 20
     },
     roundContainer: {
         //marginBottom: 30,
@@ -103,7 +106,11 @@ const styles = StyleSheet.create({
         flex: 1,
         justifyContent: "center",
         //borderRightWidth:1,
-        borderColor: "white",
+        borderColor: "white"
+    },
+    fakeContainer: {    //Didn#t inf other solution for % padding, because padding in the containers itself would hinder justify content center 
+        paddingBottom: "10%",
+        paddingTop: "10%"
     },
     resultContainer: {
         //marginBottom: 30,
@@ -112,31 +119,29 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         //minWidth: 40,
         justifyContent: "center",
-        borderLeftWidth:2,
+        borderLeftWidth: 2,
         borderColor: "white",
         flex: 2,
-        padding: 10,
+        padding: "0%"
     },
     roundText: {
-        
+
         color: 'white',
 
-        textAlign: "center",
-
+        textAlign: "center"
     },
     resultBorder: {
         borderRadius: 5,
-        minWidth: 30,
-        //margin: 10,
+        minWidth: "1%"
     },
     resultText: {
         borderRadius: 5,
-        minWidth: 30,
-        margin: 5,
-        marginRight:15,
-        marginLeft: 15,
+        minWidth: "35%",
+        margin: "2%",
+        marginRight: "12%",
+        marginLeft: "12%",
         padding: 0,
         color: 'white',
-        textAlign: "center",
+        textAlign: "center"
     }
 });

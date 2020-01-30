@@ -65,7 +65,7 @@ export default function App(props) {
 
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
-        console.log(random)
+        //console.log(random)
 
         async function AddGameDataToDb(db) {
             // Add a new document with a generated id.
@@ -111,7 +111,7 @@ export default function App(props) {
 
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
-        console.log(random)
+        //console.log(random)
 
         let user1Wins = 0;
         let user2Wins = 0;

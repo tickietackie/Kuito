@@ -15,9 +15,14 @@ const CategoryComponent = function Category(props) {
 
     const NavigateToResult = () => {
 
-        const navBack = () => {
-            props.navigation.navigate("Leaderboard")
+        let navBack = 0;
+
+        if (props.showResult) {
+            navBack = () => {
+                props.navigation.navigate("Stats")
+            }
         }
+
         
         const navigationParams = { 
             Game: props.games_played,

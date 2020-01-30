@@ -19,7 +19,6 @@ import BackgroundContainer from '../BackgroundContainer';
 import {human} from 'react-native-typography'
 import {withNavigation} from 'react-navigation';
 
-
 const GameHistory = (props) => {
 
     const navigation = props.navigation
@@ -37,7 +36,6 @@ const GameHistory = (props) => {
 
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
-        console.log(random)
 
         const GetUserId = async() => {
             //return await AsyncStorage.getItem('username');
@@ -45,7 +43,9 @@ const GameHistory = (props) => {
         };
         const userId = await GetUserId()
 
-        const navToResult = props.navigation.getParam("showResult", 0) 
+        const navToResult = props
+            .navigation
+            .getParam("showResult", 0)
 
         //Rewrite with onsnapshot --> just fetch changes
         async function GetStartedGames(db) {
@@ -63,6 +63,7 @@ const GameHistory = (props) => {
                 const started = new Date(startedGames[i].started)
                 startedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
                 startedGames[i].startedGame = 1
+                startedGames[i].showResult = navToResult
                 i++;
             }
 
@@ -108,7 +109,6 @@ const GameHistory = (props) => {
                 finishedGames[i].finished = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + finished.getDay()).slice(-2) + "/" + (finished.getUTCFullYear().toString().substr(-2))
                 finishedGames[i].showResult = navToResult
                 i++;
-                console.log("test")
             }
             return finishedGames;
         }
@@ -133,7 +133,6 @@ const GameHistory = (props) => {
                 finishedGames[i].finishedGameOpp = true
                 finishedGames[i].showResult = navToResult
                 i++;
-                console.log("test")
             }
             return finishedGames;
         }
@@ -167,6 +166,8 @@ const GameHistory = (props) => {
             _fetchData()
         }
 
+        // Workaround because react navigation doesn't support hooks yet, this should be
+        // updated with release of react navigation V5
         const navFocusListener = navigation.addListener('didFocus', () => {
             // do some API calls here
 
@@ -233,6 +234,7 @@ const GameHistory = (props) => {
                     result={result}
                     finished={finished}
                     games_played={games_played}
+                    games_playedUser2={games_playedUser2}
                     showResult={showResult}
                     playedGameDocId={playedGameDocId}></HistoryEntryFinishedGameOpp>
             );
@@ -247,6 +249,7 @@ const GameHistory = (props) => {
                     result={result}
                     finished={finished}
                     games_played={games_played}
+                    showResult={showResult}
                     playedGameDocId={playedGameDocId}></HistoryEntryStartedGame>
             );
         } else {

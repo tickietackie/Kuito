@@ -14,6 +14,7 @@ import BackgroundContainer from "../../components/BackgroundContainer"
 import {material} from 'react-native-typography';
 import HeaderText from '../../components/HeaderText';
 import ResultEntry from '../../components/ResultEntry';
+import ResultElo from '../../components/ResultElo';
 
 export default function App(props) {
     if (props.visible === false) {
@@ -101,13 +102,14 @@ export default function App(props) {
     let pointsGained = "-";
     let newElo = "-";
     if (props.navigation.getParam(userId,0) === userId) {
-        pointsGained = props.navigation.getParam("EloGainedUser1",0)
-        newElo = props.navigation.getParam("NewEloUser1",0)
+        pointsGained = props.navigation.getParam("EloGainUser1","-")
+        newElo = props.navigation.getParam("NewEloUser1","-")
     }
     else if (props.navigation.getParam("userId2", 0) === userId) {
-        pointsGained = props.navigation.getParam("EloGainedUser2",0)
-        newElo = props.navigation.getParam("NewEloUser2",0)
+        pointsGained = props.navigation.getParam("EloGainUser2","-")
+        newElo = props.navigation.getParam("NewEloUser2","-")
     }
+    const showElo = props.navigation.getParam("showELo",1)
 
     return (
 
@@ -140,8 +142,7 @@ export default function App(props) {
                     </SafeAreaView>
 
                 </View>
-                <Text style={[material.display1, styles.eloText]}>Points: {pointsGained}</Text>
-                <Text style={[material.display1, styles.eloText]}>New rtgØ: {newElo}</Text>
+                <ResultElo pointsGained={pointsGained} newElo={newElo} visible={showElo} ></ResultElo>
                 <HomeButton visible={showHomeButton} style={homeButtonStyle}></HomeButton>
             </SafeAreaView>
 

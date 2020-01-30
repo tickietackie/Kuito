@@ -64,8 +64,7 @@ export default function App(props) {
         const db = firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
-        //const ref = db.collection('MultipleChoiceSets')
-        //console.log(random)
+        //const ref = db.collection('MultipleChoiceSets') console.log(random)
 
         async function AddGameDataToDb(db) {
             // Add a new document with a generated id.
@@ -110,8 +109,7 @@ export default function App(props) {
         const navigation = props.navigation
 
         var random = Math.floor(Math.random() * 100000) + 1;
-        //const ref = db.collection('MultipleChoiceSets')
-        //console.log(random)
+        //const ref = db.collection('MultipleChoiceSets') console.log(random)
 
         let user1Wins = 0;
         let user2Wins = 0;
@@ -119,8 +117,6 @@ export default function App(props) {
         let i = 0;
 
         let eloUser = 0;
-
-        navigationParams
 
         async function GetUser1Data() {
             let campaignsRef = db.collection('users')
@@ -168,9 +164,9 @@ export default function App(props) {
                 NewElo.EloGainUser1 = Math.floor(10 * (0 - Eb))
                 NewElo.NewEloUser1 = EloUser1 + NewElo.EloGainUser1
             } else { //remi
-                NewElo.EloGainUser2 = Math.round(10 * (0, 5 - Ea))
+                NewElo.EloGainUser2 = Math.round(10 * (0.5 - Ea))
                 NewElo.NewEloUser2 = EloUser2 + NewElo.EloGainUser2
-                NewElo.EloGainUser1 = Math.round(10 * (0, 5 - Eb))
+                NewElo.EloGainUser1 = Math.round(10 * (0.5 - Eb))
                 NewElo.NewEloUser1 = EloUser1 + NewElo.EloGainUser1
             }
             return NewElo;
@@ -207,7 +203,7 @@ export default function App(props) {
             const time = today.getHours() + ":" + today.getMinutes() + ":" + today.getSeconds();
             const dateTime = date + ' ' + time;
             const finished = dateTime;
-            
+
             let playedGamesRef = db
                 .collection('PlayedGames')
                 .doc(playedGameDocId)
@@ -244,7 +240,8 @@ export default function App(props) {
                 eloGainUser1: NewElo.EloGainUser1,
                 eloGainUser2: NewElo.EloGainUser2,
                 user1Wins: user1Wins,
-                user2Wins, user2Wins
+                user2Wins,
+                user2Wins
             }, {merge: true});
 
         }
@@ -259,6 +256,7 @@ export default function App(props) {
 
             navigationParams.NewElo = NewElo;
             setIsLoading(false);
+            return NewElo;
 
         } catch (err) {
             console.log('Error updating document', err)
@@ -293,12 +291,20 @@ export default function App(props) {
 
         let RandomScreen = "";
 
-        if (props.navigation.getParam('playStyle', 'competitive') === 'competetive') {
+        const playStyle = await props
+            .navigation
+            .getParam('playStyle', 'competitive');
 
-            if (props.navigation.getParam("playAfterOpponent", 0)) { //check if played as the second player
+        if (playStyle !== 'training') {
+
+            if (props.navigation.getParam("playAfterOpponent", 0)) { //check if played is the second player
                 if (round >= roundLength) { //if round is finished as the second player-> navigate to result screen and update game data
-                    await UpdateGameData()
+                    const NewElo = await UpdateGameData()
                     console.log("updated gamedata")
+                    navigationParams.EloGainedUser1 = NewElo.EloGainUser1
+                    navigationParams.EloGainUser2 = NewElo.EloGainUser2
+                    navigationParams.NewEloUser1 = NewElo.NewEloUser1
+                    navigationParams.NewEloUser2 = NewElo.NewEloUser2
                     RandomScreen = StackActions.push({routeName: 'Result', params: navigationParams});
                 } else {
 

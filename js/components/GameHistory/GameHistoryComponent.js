@@ -103,10 +103,23 @@ const GameHistory = (props) => {
             for (doc of activeRef.docs) {
                 finishedGames.push(doc.data())
                 finishedGames[i].id = doc.id
-                const started = new Date(finishedGames[i].started)
-                const finished = new Date(finishedGames[i].finished)
+
+                const started = new Date(finishedGames[i].started);
+                const year = finishedGames[i]
+                    .finished
+                    .split("-")[0];
+                const month = finishedGames[i]
+                    .finished
+                    .split("-")[1] - 1;
+                const day = finishedGames[i]
+                    .finished
+                    .split("-")[2]
+                    .split(" ")[0];
+
+                finishedGames[i].finished = (month + 1) + "/" + day + "/" + year
+
                 finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
-                finishedGames[i].finished = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + finished.getDay()).slice(-2) + "/" + (finished.getUTCFullYear().toString().substr(-2))
+            
                 finishedGames[i].showResult = navToResult
                 i++;
             }
@@ -126,11 +139,23 @@ const GameHistory = (props) => {
             for (doc of activeRef.docs) {
                 finishedGames.push(doc.data())
                 finishedGames[i].id = doc.id
+
+                const year = finishedGames[i]
+                    .finished
+                    .split("-")[0];
+                const month = finishedGames[i]
+                    .finished
+                    .split("-")[1] - 1;
+                const day = finishedGames[i]
+                    .finished
+                    .split("-")[2]
+                    .split(" ")[0];
+
+                finishedGames[i].finished = (month + 1) + "/" + day + "/" + year
+
                 const started = new Date(finishedGames[i].started)
-                const finished = new Date(finishedGames[i].finished)
                 finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
-                finishedGames[i].finished = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + finished.getDay()).slice(-2) + "/" + (finished.getUTCFullYear().toString().substr(-2))
-                finishedGames[i].finishedGameOpp = true
+                 finishedGames[i].finishedGameOpp = true
                 finishedGames[i].showResult = navToResult
                 i++;
             }
@@ -170,7 +195,6 @@ const GameHistory = (props) => {
         // updated with release of react navigation V5
         const navFocusListener = navigation.addListener('didFocus', () => {
             // do some API calls here
-
             _fetchData()
         });
 
@@ -225,7 +249,7 @@ const GameHistory = (props) => {
             );
         } else if (finished) {
             return (
-                <HistoryEntryFinishedGameOpp
+                <HistoryEntryFinishedGame
                     userId={userId}
                     started={started}
                     userId2={userId2}
@@ -236,7 +260,7 @@ const GameHistory = (props) => {
                     games_played={games_played}
                     games_playedUser2={games_playedUser2}
                     showResult={showResult}
-                    playedGameDocId={playedGameDocId}></HistoryEntryFinishedGameOpp>
+                    playedGameDocId={playedGameDocId}></HistoryEntryFinishedGame>
             );
         } else if (startedGame) {
             return (

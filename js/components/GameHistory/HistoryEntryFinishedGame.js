@@ -10,7 +10,6 @@ import {
 import {withNavigation} from 'react-navigation'; //navigation won't be provided to childs automatically, therefore wrap it into with navigation before exporting it
 import {material} from 'react-native-typography';
 import {StackActions} from 'react-navigation';
-import {Ionicons} from '@expo/vector-icons';
 
 const CategoryComponent = function Category(props) {
 
@@ -55,7 +54,9 @@ const CategoryComponent = function Category(props) {
     const NavigateToResult = () => {
 
         const navBack = () => {
-            props.navigation.navigate("Stats")
+            props
+                .navigation
+                .navigate("Stats")
         }
 
         const navigationParams = { //Get round and playstyle from last screen
@@ -76,13 +77,17 @@ const CategoryComponent = function Category(props) {
 
     const PlayAgain = async() => {
 
+        const playstyle = "competetive"
+
         const navigationProperties = { //Get round and playstyle from last screen
-            Game: props.games_played,
+            round: 1,
+            playStyle: 'competetive',
             userId: props.userId,
             userId2: props.userId2,
             username: props.username,
             username2: props.username2,
-            round: 1
+            eloUser2: props.eloUser2,
+            eloUser: props.eloUser
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;
@@ -121,7 +126,9 @@ const CategoryComponent = function Category(props) {
 
     }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
 
-    const screenToNavigate = props.showResult ? NavigateToResult : PlayAgain
+    const screenToNavigate = props.showResult
+        ? NavigateToResult
+        : PlayAgain
 
     return (
         <View style={styles.container}>
@@ -131,7 +138,7 @@ const CategoryComponent = function Category(props) {
                         <Text style={[material.button, styles.buttonText]}>{props.username}</Text>
                     </View>
                     <View style={styles.Date}>
-                        <Text style={[material.button, styles.buttonText]}>{props.started}</Text>
+                        <Text style={[material.button, styles.buttonText]}>{props.finished}</Text>
                     </View>
                     <View style={styles.result}>
                         <Text style={[material.button, styles.buttonText]}>{pointsUser1}
@@ -147,8 +154,8 @@ const CategoryComponent = function Category(props) {
 
 }
 
-export
-default withNavigation(CategoryComponent);
+export default withNavigation(CategoryComponent);
+
 const styles = StyleSheet.create({
     container: {
         margin: 10,

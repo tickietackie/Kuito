@@ -1,11 +1,5 @@
 import React, {useState, useRef, useEffect} from 'react';
-import {
-    StyleSheet,
-    View,
-    Text,
-    Dimensions,
-    ActivityIndicator
-} from 'react-native';
+import {StyleSheet, View, Text, Dimensions, ActivityIndicator} from 'react-native';
 
 import Dragable from "../../components/Games/Dragable"
 import {StackActions} from 'react-navigation';
@@ -26,16 +20,16 @@ export default function Drag(props) {
     const [dropZone2,
         setDropZone2] = useState({})
 
+    const [bgColor,
+        setBgColor] = React.useState('slategrey');
+    const [bgColorRight,
+        setBgColorRight] = React.useState('slategrey');
+
     const [showNextButton, //contains pressed button numbers of user, all pressed: [2,3,4,5]
         setShowNextButton] = useState(false);
 
     const [isLoading,
         setIsLoading] = useState(true);
-
-    /*const [bgColor,
-        setBgColor] = React.useState('#2c3e50');*/
-    /*const [bgColorRight,
-        setBgColorRight] = React.useState('#2c3e50');*/
 
     const setDropZoneValuesLeft = React.useCallback((event) => {
         dropZoneValues.current = event.nativeEvent.layout;
@@ -44,9 +38,6 @@ export default function Drag(props) {
     const setDropZoneValuesRight = React.useCallback((event) => {
         dropZoneValues.current = event.nativeEvent.layout;
     });
-
-    let bgColor = 0;
-    let bgColorRight = 0;
 
     let explanation = ""
 
@@ -60,7 +51,7 @@ export default function Drag(props) {
             }
         });
 
-    const CheckShowNext = () => {       //Check if all items are in dropzones
+    const CheckShowNext = () => { //Check if all items are in dropzones
         let fetchedItemCount = 0
 
         data
@@ -69,36 +60,41 @@ export default function Drag(props) {
                 fetchedItemCount++;
             });
 
-        let setItemCount = 0
+        let setItemCount1 = 0
         let values = Object.values(dropZone)
         for (const value of values) {
             if (value.set === 1) 
-                setItemCount++
+                setItemCount1++
             }
         
+        if (setItemCount1 > 0) {
+            setBgColor('#2c3e50')
+        }
+        else {
+            setBgColor('slategrey')
+        }
+
+        let setItemCount2 = 0
         values = Object.values(dropZone2)
         for (const value of values) {
-            if (value.set === 1) 
-                setItemCount++
+            if (value.set === 1) {
+                setItemCount2++;
             }
+        }
+        if (setItemCount2 > 0) {
+            setBgColorRight('#2c3e50')
+        }
+        else {
+            setBgColorRight('slategrey')
+        }
+
         let showNextButton = false;
-        if (setItemCount === fetchedItemCount) {
+        if ((setItemCount1 + setItemCount2) === fetchedItemCount) {
             setShowNextButton(true);
         } else {
             setShowNextButton(false);
         }
-    }
 
-    if (dropZone === 1) {
-        bgColor = "red"
-    } else {
-        bgColor = "#2c3e50"
-    }
-
-    if (dropZone2 === 1) {
-        bgColorRight = "blue"
-    } else {
-        bgColorRight = "#2c3e50"
     }
 
     const headerColor = {

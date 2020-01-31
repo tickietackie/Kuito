@@ -143,7 +143,7 @@ export default function App(props) {
                             keyExtractor={item => item.username}/>
                     </SafeAreaView>
                 </View>
-                <Button title="Link" onPress={() => props.navigation.navigate('LinkingGame')}></Button>
+                
             </SafeAreaView>
         </BackgroundContainer>
     );
@@ -152,7 +152,7 @@ export default function App(props) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        maxHeight: "55%",
+        maxHeight: "100%",
         alignItems: 'center',
     },
     lbContainer: {

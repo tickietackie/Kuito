@@ -211,22 +211,49 @@ export default function App(props) {
 
         }
 
-        async function UpdateUser1Data(db, NewElo) { //Update existing properties of the played game
+        async function UpdateUser1Data(db, NewElo,user1Wins, user2Wins) { //Update user elo and KDA
 
             let userRef = db
                 .collection('users')
                 .doc(userId)
             const newElo = NewElo.NewEloUser1
-            let savedGame = await userRef.update({elo: newElo});
+
+            let incKDA = ""
+            if (user1Wins) {
+                incKDA= "wins"
+            }
+            else if (user2Wins) {
+                incKDA= "losses"
+            }
+            else {
+                incKDA= "draws"
+            }
+
+            const increment = firebase.firestore.FieldValue.increment(1);
+
+            let savedGame = await userRef.update({elo: newElo,incKDA: increment});
         }
 
-        async function UpdateUser2Data(db, NewElo) { //Update existing properties of the played game
+        async function UpdateUser2Data(db, NewElo,user1Wins, user2Wins) { //Update user elo and KDA
 
             let userRef = db
                 .collection('users')
                 .doc(userId2)
             const newElo2 = NewElo.NewEloUser2
-            let savedGame = await userRef.update({elo: newElo2});
+
+            let incKDA = ""
+            if (user1Wins) {
+                incKDA= "losses"
+            }
+            else if (user2Wins) {
+                incKDA= "wins"
+            }
+            else {
+                incKDA= "draws"
+            }
+
+            const increment = firebase.firestore.FieldValue.increment(1);
+            let savedGame = await userRef.update({elo: newElo2, incKDA: increment});
         }
 
         async function AddGameUser2DataToDb(db, NewElo) {
@@ -250,8 +277,8 @@ export default function App(props) {
             await GetUser2Data()
             const NewElo = await CalculateNewElo(eloUser, eloUser2, user1Wins, user2Wins);
             await UpdateGameDataInDb(db, NewElo);
-            await UpdateUser1Data(db, NewElo)
-            await UpdateUser2Data(db, NewElo)
+            await UpdateUser1Data(db, NewElo,user1Wins, user2Wins)
+            await UpdateUser2Data(db, NewElo,user1Wins, user2Wins)
             await AddGameUser2DataToDb(db, NewElo, user1Wins, user2Wins);
 
             navigationParams.NewElo = NewElo;

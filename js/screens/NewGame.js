@@ -133,7 +133,6 @@ export default function App(props) {
             return;
         }
 
-
         const navigationProperties = {
             round: 1,
             playStyle: 'competetive',

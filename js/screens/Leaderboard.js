@@ -1,103 +1,231 @@
-import React, {Component, useState} from 'react';
+import React, {useState, useEffect} from 'react';
 import {
-    Platform,
     StyleSheet,
+    Text,
+    View,
+    ScrollView,
     SafeAreaView,
-    Button,
-    View
+    FlatList,
+    AsyncStorage,
+    ActivityIndicator
 } from 'react-native';
 
-import BackgroundContainer from '../components/BackgroundContainer';
-import HeaderText from '../components/HeaderText';
+import BackgroundContainer from "../components/BackgroundContainer"
+import {material} from 'react-native-typography';
+import LeaderBoardEntry from '../components/LeaderBoardEntry';
+import firebase from "../../config/firebase";
 
-import GameHistory from '../components/GameHistory/GameHistoryComponent'
+export default function App(props) {
+    if (props.visible === false) {
+        //return null;
+    }
 
-export default function Leaderboard(props) {
+    const [isLoading,
+        setIsLoading] = useState(false);
 
-    const [random,
-        setRandom] = useState(Math.floor(Math.random() * 100000) + 1);
+    const [userId,
+        setUserId] = useState(0);
 
-    //var random = Math.floor(Math.random() * 100000) + 1;
+    const [userData,
+        setUserData] = useState([]);
 
-    const navigationProperties = {
-        round: 1,
-        playStyle: 'competetive',
-        randomId: random,
-        userId: "abc"
-    };
+    const _fetchData = async() => {
+        //Rewrite with onsnapshot --> just fetch changes
+        setIsLoading(true);
+        const db = firebase.firestore();
 
-    const game = [
-        {1: 1, UserWins: 1, userId: "abc", gameId: "OJjrseCfzKXo77BdDKVg"},
-        {2: 0, UserWins: 0, userId: "abc", gameId: "HSiwNxBCMSmS0kRgR7LD"},
-        {3: 1, UserWins: 1, userId: "abc", gameId: "O4qZ90l3qIbEvlebuev3"}
-    ]
+        async function GetUserData() {
+            let fetchedUserData= [];
+            let campaignsRef = db.collection('users')
+            let activeRef = await campaignsRef
+                .orderBy("elo", "desc")
+                .limit(50)
+                .get();
+            var i = 1;
+            for (doc of activeRef.docs) {
+                const data = doc.data()
+                data.rank = i
+                let wins= data.wins;
+                let losses = data.losses;
+                let draws = data.draws;
+                let sum = wins + losses + draws;
+                if (sum === 0) { //do not divide by zeo
+                    sum = 1
+                }
+                const KDA = {
+                    wins: Math.ceil(wins / sum),
+                    draws: Math.ceil(draws / sum),
+                    losses: Math.ceil(losses / sum),
+                }
+                data.KDA = KDA
+                fetchedUserData.push(data);
+                i++;
+            }
+            return fetchedUserData;
+        }
 
+        try {
+            const fetchedUserData = await GetUserData()
+            setUserData(fetchedUserData)
+            setIsLoading(false)
+        } catch (error) {
+            console.log(error)
+        }
+    }
 
-    const navigationPropertiesResult = {
-        round: 3,
-        playStyle: 'competetive',
-        randomId: random,
-        Game: game,
-        userId: "abc",
-    };
+    useEffect(() => { // code to run on component mount
 
-    const navigate = () => {
-        setRandom(Math.floor(Math.random() * 100000) + 1);
-        props
-            .navigation
-            .navigate("MultipleChoice", navigationProperties)
+        _fetchData()
+
+    }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
+
+    const round = props
+        .navigation
+        .getParam('round', '');
+    const roundLength = 3; //Rounds after the game ends
+
+    const showHomeButton = true;
+    const homeButtonStyle = {
+        justifyContent: "center",
+        alignItems: "center",
+        flex: 1
+    }
+
+    const KDA = {
+        wins:0,
+        losses: 0,
+        remis: 1,
+    }
+
+    function Item({username, elo, KDA, rank}) { //Each item in the list will be render like this item
+        return (
+            <LeaderBoardEntry username={username} elo={elo} KDA={KDA} rank={rank}></LeaderBoardEntry>
+        );
+    }
+
+    if (isLoading === true) { //return loading screen, if data is loading
+        return (
+            <BackgroundContainer>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="darkorange"></ActivityIndicator>
+                </View>
+            </BackgroundContainer>
+        )
     }
 
     return (
+
         <BackgroundContainer>
-            <SafeAreaView style={styles.container}>
-                <HeaderText text="Leaderboard"></HeaderText>
-                <Button
-                    title="Linking"
-                    onPress={() => props.navigation.navigate("LinkingGame", navigationProperties)}/>
-                <Button
-                    title="Guess"
-                    onPress={() => props.navigation.navigate("GuessPicture", navigationProperties)}/>
-                <Button title="Multiple" onPress={() => navigate()}/>
-                <Button
-                    title="Solution"
-                    onPress={() => props.navigation.navigate("Solution", navigationPropertiesResult)}/>
-                <Button
-                    title="Result"
-                    onPress={() => props.navigation.navigate("Result", navigationPropertiesResult)}/>
+
+            <SafeAreaView style={styles.container1}>
+                <View style={styles.lbContainer}>
+                    <View style={styles.HeadingContainer}>
+                    <View style={styles.rankHeadingContainer}>
+                            <Text style={[styles.roundText, material.title]}>R</Text>
+                        </View>
+                        <View style={styles.usernameHeadingContainer}>
+                            <Text style={[styles.roundText, material.title]}>Username</Text>
+                        </View>
+                        <View style={styles.eloHeadingContainer}>
+                            <Text style={[styles.resultText, material.title]}>Elo</Text>
+                        </View>
+                        <View style={styles.KDAHeadingContainer}>
+                            <Text style={[styles.resultText, material.title]}>WDL</Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.hr}/>
+                    <SafeAreaView style={styles.lbItemsContainer}>
+                        <FlatList
+                            data={userData}
+                            renderItem={({item}) => <Item username={item.username} elo={item.elo} KDA={item.KDA} rank={item.rank}/>}
+                            keyExtractor={item => item.username}/>
+                    </SafeAreaView>
+                </View>
             </SafeAreaView>
+
         </BackgroundContainer>
-
     );
-
 }
 
 const styles = StyleSheet.create({
+    container1: {
+        alignItems: 'center',
+        flex: 1
+    },
     container: {
-        paddingTop: "0%"
-    },
-    button: {
-        marginBottom: 30,
-        width: 260,
+        //flex: 1,
         alignItems: 'center',
-        backgroundColor: '#2196F3'
+        //justifyContent: 'center', paddingBottom: 40
     },
-    buttonText: {
-        textAlign: 'center',
-        padding: 20,
-        color: 'white'
+    lbContainer: {
+        //paddingTop: 10,
+        alignItems: 'center',
+
     },
-    container2: {
+    hr: {
+        borderBottomColor: 'black',
+        //shadowOffset: 1,
+        borderBottomWidth: StyleSheet.hairlineWidth,
+        alignSelf: 'stretch'
+    },
+    HeadingContainer: {
+        minWidth: "90%",
+        minHeight: "5%",
+        flexDirection: "row"
+    },
+    rankHeadingContainer: {
+        //marginBottom: 30,
+        alignItems: 'center',
+        //  flexDirection: 'row',
         flex: 1,
-        backgroundColor: '#EFFBEF',
-        alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: "center",
+        //borderRightWidth:1,
+        borderColor: "white",
+        overflow: "scroll"
     },
-    text: {
-        fontSize: 42,
-        color: "black",
-        padding: 5,
-        margin: 10,
-        backgroundColor: "red"
+    usernameHeadingContainer: {
+        //marginBottom: 30,
+        alignItems: 'center',
+        //  flexDirection: 'row',
+        flex: 5,
+        justifyContent: "center",
+        //borderRightWidth:1,
+        borderColor: "white",
+        overflow: "scroll"
+    },
+    eloHeadingContainer: {
+        alignItems: 'center',
+        //minWidth: 40,
+        justifyContent: "center",
+        flex: 2,
+        overflow: "scroll"
+    },
+    KDAHeadingContainer: {
+        alignItems: 'center',
+        //minWidth: 40,
+        justifyContent: "center",
+        flex: 3,
+        overflow: "scroll"
+    },
+    lbItemsContainer: {
+        marginTop: "1.5%",
+        width: "90%",
+        alignItems: "center",
+        flex: 1
+    },
+    roundText: {
+        color: 'black',
+        textAlign: "center"
+    },
+    eloText: {
+        marginTop: "3%",
+        color: '#006666',
+        textAlign: "center"
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        minWidth: "85%",
     }
 });

@@ -49,7 +49,7 @@ const CategoryComponent = function Category(props) {
         resultBGColor = {
             backgroundColor: "gold"
         }
-        resultAbbr = "R";
+        resultAbbr = "D";
     } else {
         resultBGColor = {
             backgroundColor: "blue"

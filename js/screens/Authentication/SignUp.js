@@ -49,6 +49,9 @@ const SignInScreen = function SignInScreen(props) {
                 userId: userData.user.uid,
                 username: username,
                 random: userRandom,
+                wins: 0,
+                losses: 0,
+                draws: 0,
                 elo: 500
             }
             let usersRef = db

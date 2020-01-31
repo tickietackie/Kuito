@@ -20,14 +20,11 @@ const ResultEntryComponent = function Category(props) {
         resultBGColor = {
             backgroundColor: "red"
         }
-    } else if (result == "remi") {
-        resultBGColor = {
-            backgroundColor: "gold"
-        }
     } else {
         resultBGColor = {
             backgroundColor: "blue"
         }
+        result = "-"
     }
 
     const result2 = props.result2

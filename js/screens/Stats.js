@@ -62,8 +62,6 @@ export default function Leaderboard(props) {
                 const data= doc.data();
                 return data.elo
             }
-
-            return startedGames;
         }
 
         let KDA = {

@@ -1,25 +1,105 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useRef, useEffect} from 'react';
 import {
-    Button,
     StyleSheet,
-    Text,
     View,
-    ScrollView,
-    SafeAreaView,
-    PanResponder,
-    Animated
+    Text,
+    Dimensions,
+    ActivityIndicator
 } from 'react-native';
 
+import Dragable from "../../components/Games/Dragable"
 import {StackActions} from 'react-navigation';
-import HomeButton from '../../components/Buttons/HomeButton';
 import NextButton from '../../components/Buttons/NextButton';
-import DragableLink from '../../components/Games/DragableLink';
 import HeaderText from '../../components/HeaderText';
 import BackgroundContainer from "../../components/BackgroundContainer"
 import firebase from "../../../config/firebase";
-//import component safe data : 2 * 3 * 4 * 5, standing for the 4 fields
 
-export default function App(props) {
+export default function Drag(props) {
+    const dropZoneValues = React.useRef(null);
+
+    const [data, //contains pressed button numbers of user, all pressed: [2,3,4,5]
+        setData] = useState({Category1: "", Category2: "", Dragables: [], explanation: "", info: ""});
+
+    const [dropZone,
+        setDropZone] = useState({})
+
+    const [dropZone2,
+        setDropZone2] = useState({})
+
+    const [showNextButton, //contains pressed button numbers of user, all pressed: [2,3,4,5]
+        setShowNextButton] = useState(false);
+
+    const [isLoading,
+        setIsLoading] = useState(true);
+
+    /*const [bgColor,
+        setBgColor] = React.useState('#2c3e50');*/
+    /*const [bgColorRight,
+        setBgColorRight] = React.useState('#2c3e50');*/
+
+    const setDropZoneValuesLeft = React.useCallback((event) => {
+        dropZoneValues.current = event.nativeEvent.layout;
+    });
+
+    const setDropZoneValuesRight = React.useCallback((event) => {
+        dropZoneValues.current = event.nativeEvent.layout;
+    });
+
+    let bgColor = 0;
+    let bgColorRight = 0;
+
+    let explanation = ""
+
+    data
+        .Dragables
+        .forEach(dragable => {
+            if (dragable.Category === 1) {
+                explanation = explanation + data.Category1 + ": " + dragable.Name + "\n"
+            } else if (dragable.Category === 2) {
+                explanation = explanation + data.Category2 + ": " + dragable.Name + "\n"
+            }
+        });
+
+    const CheckShowNext = () => {       //Check if all items are in dropzones
+        let fetchedItemCount = 0
+
+        data
+            .Dragables
+            .forEach(dragable => {
+                fetchedItemCount++;
+            });
+
+        let setItemCount = 0
+        let values = Object.values(dropZone)
+        for (const value of values) {
+            if (value.set === 1) 
+                setItemCount++
+            }
+        
+        values = Object.values(dropZone2)
+        for (const value of values) {
+            if (value.set === 1) 
+                setItemCount++
+            }
+        let showNextButton = false;
+        if (setItemCount === fetchedItemCount) {
+            setShowNextButton(true);
+        } else {
+            setShowNextButton(false);
+        }
+    }
+
+    if (dropZone === 1) {
+        bgColor = "red"
+    } else {
+        bgColor = "#2c3e50"
+    }
+
+    if (dropZone2 === 1) {
+        bgColorRight = "blue"
+    } else {
+        bgColorRight = "#2c3e50"
+    }
 
     const headerColor = {
         color: 'green'
@@ -50,11 +130,11 @@ export default function App(props) {
         .getParam("GameUser2", '')
 
     let username = props
-    .navigation
-    .getParam('username', 0);
+        .navigation
+        .getParam('username', 0);
     let username2 = props
-    .navigation
-    .getParam('username2', 0);
+        .navigation
+        .getParam('username2', 0);
 
     if (!props.navigation.getParam("playAfterOpponent", 0)) { //set played games for the first player
         if (!game[round - 1]) {
@@ -66,7 +146,8 @@ export default function App(props) {
                         gameType: gameType,
                         UserWins: 0,
                         userId: userId,
-                        username, username
+                        username,
+                        username
                     }
                 ]; //if round is not, set set it to 0
             }
@@ -96,8 +177,8 @@ export default function App(props) {
             .navigation
             .getParam('playStyle', 'competitive'),
         userWins: 0,
-        explanation: "empty",
-        info: "yep",
+        explanation: explanation,
+        info: data.info,
         Game: game,
         GameUser2: gameUser2,
         userId: userId,
@@ -120,8 +201,8 @@ export default function App(props) {
         const random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets')
 
-        /*async function GetMultipleChoiceSet(db) {
-            let campaignsRef = db.collection('MultipleChoiceSets')
+        async function GetLinkingGameSet(db) {
+            let campaignsRef = db.collection('LinkingGameSets')
             let activeRef = await campaignsRef
                 .where('random', '>=', random)
                 .orderBy('random')
@@ -133,17 +214,18 @@ export default function App(props) {
             }
         }
         try {
-            data1 = await GetMultipleChoiceSet(db);
+            const data1 = await GetLinkingGameSet(db);
             setData(data1);
-            setIsLoading(false);
+            setIsLoading(false)
 
         } catch (err) {
             console.log('Error getting documents', err)
-            setIsLoading(false);
-        }*/
-
-        setGameId(1);
+            setIsLoading(false)
+        }
     }
+
+    console.log(dropZone)
+    console.log(dropZone2)
 
     useEffect(() => { // code to run on component mount
 
@@ -153,7 +235,28 @@ export default function App(props) {
 
     const evaluateAnswer = () => {
 
-        const n = 0;
+        let n = 0
+        data
+            .Dragables
+            .some(dragable => {
+                const name = dragable.Name
+                if (dragable.Category === 1) {
+                    if (dropZone[name].set === 1) {
+                        n = 1;
+                    } else {
+                        n = 0;
+                        return 1 === 1
+                    }
+                } else if (dragable.Category === 2) {
+                    if (dropZone2[name].set === 1) {
+                        n = 1;
+                    } else {
+                        n = 0;
+                        return 1 === 1
+                    }
+                }
+            });
+
         if (n === 1) { // if solution given by the user is right
             if (!props.navigation.getParam("playAfterOpponent", 0)) {
                 navigationParams.Game[round - 1].UserWins = 1
@@ -181,37 +284,141 @@ export default function App(props) {
             .dispatch(pushSolutionScreen);
     }
 
-    const showNextButton = true;
+    function renderDragables() {
+        let window = Dimensions.get('window');
+        let itemWidth = 36;
+        const width = window.width - (itemWidth * 4 + 3)
+        const itemHeight = 36 * 2
+        let positions = [];
+
+        for (let index = 0; index < data.Dragables.length; index++) { //items should have a unique index, generate it here
+            data.Dragables[index].id = index
+        }
+
+        return data
+            .Dragables
+            .map((item) => {
+                let samePos = true
+
+                let posXFactor = 0
+                let posYFactor = 0
+                let x = 0
+                while (samePos) { //get a position which differs from the other items
+                    posXFactor = Math.floor(Math.random() * width) + 1;
+                    posYFactor = (window.height - window.height / 6.3) - (Math.floor(Math.random() * (window.height / 10 * 6 - window.height / 8))) + 1;
+
+                    if (positions.length === 0) {
+                        samePos = false;
+                    }
+
+                    let checkPos = true;
+                    for (const val of positions) { //check if any item is in same height => try random again until all items are in a differnt height
+                        if (posYFactor === val.posYFactor) {
+                            checkPos = true
+                            break;
+                        } else if ((posYFactor > val.posYFactor && posYFactor < (val.posYFactor + itemHeight)) || (posYFactor < val.posYFactor && posYFactor > (val.posYFactor - itemHeight))) {
+                            checkPos = true
+                            break;
+                        } else {
+                            checkPos = false
+                        }
+                    }
+
+                    if (!checkPos) {
+                        samePos = false;
+                    }
+
+                    x++;
+                    if (x > 200) {
+                        break;
+                    }
+                }
+
+                positions.push({posXFactor, posYFactor})
+                return (
+                    <Dragable
+                        key={item.id}
+                        id={item.id}
+                        text={item.Name}
+                        posXFactor={posXFactor}
+                        posYFactor={posYFactor}
+                        dropZoneValues={dropZoneValues}
+                        setDropZone={setDropZone}
+                        setDropZone2={setDropZone2}
+                        dropZone={dropZone}
+                        dropZone2={dropZone2}
+                        CheckShowNext={CheckShowNext}></Dragable>
+                );
+            });
+    }
+
+    if (isLoading === true) { //return loading screen, if data is loading
+        return (
+            <BackgroundContainer>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="darkorange"></ActivityIndicator>
+                </View>
+            </BackgroundContainer>
+        )
+    }
 
     return (
         <BackgroundContainer >
-            <SafeAreaView style={styles.container}>
-                <View style={styles.container}>
-                    <HeaderText style={headerColor} text="Linking Game"></HeaderText>
-                    <DragableLink text="text"></DragableLink>
+            <View style={styles.mainContainer}>
+                <View
+                    onLayout={setDropZoneValuesLeft}
+                    style={[
+                    styles.dropZone, {
+                        backgroundColor: bgColor,
+                        borderRightWidth: 1
+                    }
+                ]}>
+
+                    <Text style={styles.text}>{data.Category1}</Text>
                 </View>
+                <View
+                    onLayout={setDropZoneValuesRight}
+                    style={[
+                    styles.dropZone, {
+                        backgroundColor: bgColorRight,
+                        borderLeftWidth: 1
+                    }
+                ]}>
+
+                    <Text style={styles.text}>{data.Category2}</Text>
+                </View>
+
+                {renderDragables()}
                 <NextButton
                     navigateFunction={evaluateAnswer}
                     nextButtonTitle={"Next"}
                     visible={showNextButton}></NextButton>
-           </SafeAreaView>
+            </View>
         </BackgroundContainer>
     );
 }
 
-const styles = StyleSheet.create({
-    container: {
-        alignItems: 'center',
-        flex: 1
+let CIRCLE_RADIUS = 36;
+let Window = Dimensions.get('window');
+let styles = StyleSheet.create({
+    mainContainer: {
+        flex: 1,
+        flexDirection: "row"
     },
-    backContainer: {
-        position: "absolute",
-        bottom: 10,
-        left: 3
+    dropZone: {
+        backgroundColor: '#2c3e50',
+        justifyContent: "center",
+        flex: 1,
+        height: "40%",
+        borderColor: "white"
     },
-    nextContainer: {
-        position: "absolute",
-        bottom: 10,
-        right: 3
+    text: {
+        textAlign: 'center',
+        color: '#fff',
+        fontSize: 20
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center"
     }
 });

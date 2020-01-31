@@ -3,17 +3,17 @@ import {
     StyleSheet,
     Text,
     View,
-    ScrollView,
     SafeAreaView,
     FlatList,
-    AsyncStorage,
-    ActivityIndicator
+    ActivityIndicator,
+    Button
 } from 'react-native';
 
 import BackgroundContainer from "../components/BackgroundContainer"
 import {material} from 'react-native-typography';
 import LeaderBoardEntry from '../components/LeaderBoardEntry';
 import firebase from "../../config/firebase";
+import Offline from "../components/Offline"
 
 export default function App(props) {
     if (props.visible === false) {
@@ -117,7 +117,8 @@ export default function App(props) {
 
         <BackgroundContainer>
 
-            <SafeAreaView style={styles.container1}>
+            <SafeAreaView style={styles.container}>
+                <Offline></Offline>
                 <View style={styles.lbContainer}>
                     <View style={styles.HeadingContainer}>
                     <View style={styles.rankHeadingContainer}>
@@ -142,21 +143,17 @@ export default function App(props) {
                             keyExtractor={item => item.username}/>
                     </SafeAreaView>
                 </View>
+                <Button title="Link" onPress={() => props.navigation.navigate('LinkingGame')}></Button>
             </SafeAreaView>
-
         </BackgroundContainer>
     );
 }
 
 const styles = StyleSheet.create({
-    container1: {
-        alignItems: 'center',
-        flex: 1
-    },
     container: {
-        //flex: 1,
+        flex: 1,
+        maxHeight: "55%",
         alignItems: 'center',
-        //justifyContent: 'center', paddingBottom: 40
     },
     lbContainer: {
         //paddingTop: 10,
@@ -175,12 +172,9 @@ const styles = StyleSheet.create({
         flexDirection: "row"
     },
     rankHeadingContainer: {
-        //marginBottom: 30,
         alignItems: 'center',
-        //  flexDirection: 'row',
         flex: 1,
         justifyContent: "center",
-        //borderRightWidth:1,
         borderColor: "white",
         overflow: "scroll"
     },
@@ -210,7 +204,7 @@ const styles = StyleSheet.create({
     },
     lbItemsContainer: {
         marginTop: "1.5%",
-        width: "90%",
+        width: "92%",
         alignItems: "center",
         flex: 1
     },
@@ -220,7 +214,7 @@ const styles = StyleSheet.create({
     },
     eloText: {
         marginTop: "3%",
-        color: '#006666',
+        color: 'black',
         textAlign: "center"
     },
     loadingContainer: {

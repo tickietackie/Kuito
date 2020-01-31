@@ -185,9 +185,11 @@ const GameHistory = (props) => {
             .navigation
             .isFocused();
 
+        let fetched = 0;
         // manually judge if the screen is focused if did, fire api call
         if (isFocused) {
             // do the same API calls here
+            fetched = 1;
             _fetchData()
         }
 

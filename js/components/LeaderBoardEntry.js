@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         borderWidth: 2,
         borderColor: "dodgerblue",
-        minWidth: "98%",
+        minWidth: "100%",
         flex: 1,
         marginBottom: 20
     },
@@ -88,7 +88,8 @@ const styles = StyleSheet.create({
         flex: 3,
         justifyContent: "center",
         //borderRightWidth:1,
-        borderColor: "white"
+        borderColor: "white",
+
     },
     fakeContainer: {    //Didn#t find other solution for % padding, because padding in the containers itself would hinder justify content center 
         paddingBottom: "7%",
@@ -117,6 +118,7 @@ const styles = StyleSheet.create({
     resultBorder: {
         //borderRadius: 5,
         //minWidth: "1%"
+        paddingVertical:"8%",
     },
     resultText: {
         //borderRadius: 5,

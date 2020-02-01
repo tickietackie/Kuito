@@ -1,13 +1,13 @@
 import React, {useEffect, useState} from 'react';
-import {View, Text, Dimensions, StyleSheet} from 'react-native';
+import {View, Text, StyleSheet, ActivityIndicator} from 'react-native';
 import * as NetInfo from "@react-native-community/netinfo";
 
-const {width} = Dimensions.get('window');
+
 const OfflineNotice = () => {
 
     const [connected, setConnected] = useState(true);
 
-    useEffect(() => { // code to run on component mount
+    useEffect(() => { 
         
         // Subscribe
         const unsubscribe = NetInfo.addEventListener(state => {
@@ -25,7 +25,9 @@ const OfflineNotice = () => {
     if (!connected) {
         return (
             <View style={styles.offlineContainer}>
+                <ActivityIndicator size="large" color="darkorange"></ActivityIndicator>
                 <Text style={styles.offlineText}>No Internet Connection</Text>
+                <Text style={styles.offlineText}>Trying to reconnect ...</Text>
             </View>
         );
     }
@@ -35,13 +37,22 @@ const OfflineNotice = () => {
 
 const styles = StyleSheet.create({
     offlineContainer: {
-        flex: 1,
         alignItems: "center",
-        justifyContent: "center"
+        justifyContent: "center",
+        position: 'absolute',
+        position: 'absolute',
+        left: 0,
+        top: 0,
+        opacity: 0.85,
+        backgroundColor: 'black',
+        width: "100%",
+        height:"100%",
+        zIndex: 10,
     },
     offlineText: {
-        color: '#fff'
-    }
+        color: '#fff',
+        marginTop: '3%'
+    },
 });
 
 export default OfflineNotice;

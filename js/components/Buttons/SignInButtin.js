@@ -14,8 +14,8 @@ const SettingsButton = function SettingsButton(props) {
     
     if (visible === false) return null; //Not visible if param visible is false
     return (
-        <FontAwesome.Button onPress={() => props.navigation.navigate('Settings')} name="cogs" backgroundColor="rgb(80,80,80)">
-        Settings
+        <FontAwesome.Button onPress={() => props.navigation.navigate('Settings')} name="sign-in-alt" backgroundColor="rgb(80,80,80)">
+        Sign In!
       </FontAwesome.Button>
     );
 }

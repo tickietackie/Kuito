@@ -1,4 +1,4 @@
-import React, {Component, useState, useLayoutEffect} from 'react';
+import React, {Component, useState, useLayoutEffect, useEffect} from 'react';
 import {
     Platform,
     StyleSheet,
@@ -124,7 +124,41 @@ export default function Leaderboard(props) {
         }
     }
 
+    useEffect(() => { // code to run on component mount
+
+        const GetUserId = async() => {
+            //return await AsyncStorage.getItem('username');
+            return await AsyncStorage.getItem('userId');
+        };
+
+        const userId = "empty"
+        
+
+        //_fetchData()
+        const db = firebase.firestore();
+        const ref = db
+            .collection('users')
+            .where('userId', '==', userId)
+                    
+        /*return ref.onSnapshot(querySnapshot => {
+            let fetchedUserData = [];
+            let i = 0;
+            querySnapshot.forEach(doc => {
+                const data = doc.data()
+                fetchedUserData.push(data.elo);
+            });
+            setElo(fetchedUserData)
+
+            if (isLoading) {
+                setIsLoading(false)
+            }
+        });*/
+
+    }, []) //pass an empty array to call it just with the first call --> }, [])
+
     useLayoutEffect(() => {     //useLayoutEffect to trigger every time the screen is navigated towards
+
+        
         const isFocused = props
             .navigation
             .isFocused();

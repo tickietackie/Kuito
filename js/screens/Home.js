@@ -2,6 +2,8 @@ import React, {useState, useEffect} from 'react';
 import {Button, StyleSheet, Text, View, AsyncStorage} from 'react-native';
 import BackgroundContainer from "../components/BackgroundContainer";
 import {StackActions, NavigationActions} from 'react-navigation';
+import SettingsButton from "../components/Buttons/SettingsButton"
+import StartGame from "../components/Buttons/StartGame"
 //import Settings from './Settings'
 
 export default function App(props) {
@@ -20,13 +22,12 @@ export default function App(props) {
         <BackgroundContainer >
             <View style={styles.container}>
                 <View style={styles.startButton}>
-                    <Button
-                        title="Start Game"
-                        onPress={() => props.navigation.navigate('NewGame', {showResult: 0})}/>
+                    <StartGame/>
                 </View>
                 {/*<Settings visible={showSettingsScreen}></Settings>*/}
+                
                 <View style={styles.settingsButton}>
-                    <Button title="Settings" onPress={() => props.navigation.navigate('Settings')}/>
+                    <SettingsButton></SettingsButton>
                 </View>
             </View>
         </BackgroundContainer>

@@ -93,7 +93,8 @@ export default function App(props) {
             }
         }
 
-        const random = 88926;//Math.floor(Math.random() * 100000) + 1;
+        const random = Math.floor(Math.random() * 100000) + 1;
+        console.log(random);
 
         let randomUserId = 0;
         let userId = 0
@@ -132,6 +133,8 @@ export default function App(props) {
             setIsLoading(false);
             return;
         }
+
+        console.log(username2);
 
         const navigationProperties = {
             round: 1,

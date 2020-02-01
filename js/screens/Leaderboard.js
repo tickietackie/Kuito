@@ -14,6 +14,7 @@ import {material} from 'react-native-typography';
 import LeaderBoardEntry from '../components/LeaderBoardEntry';
 import firebase from "../../config/firebase";
 import Offline from "../components/Offline"
+import OfflineFullScreen from "../components/OfflineFullScreen"
 
 export default function App(props) {
     if (props.visible === false) {
@@ -21,7 +22,7 @@ export default function App(props) {
     }
 
     const [isLoading,
-        setIsLoading] = useState(false);
+        setIsLoading] = useState(true);
 
     const [userId,
         setUserId] = useState(0);
@@ -29,23 +30,22 @@ export default function App(props) {
     const [userData,
         setUserData] = useState([]);
 
-    const _fetchData = async() => {
-        //Rewrite with onsnapshot --> just fetch changes
-        setIsLoading(true);
-        const db = firebase.firestore();
+    useEffect(() => { // code to run on component mount
 
-        async function GetUserData() {
-            let fetchedUserData= [];
-            let campaignsRef = db.collection('users')
-            let activeRef = await campaignsRef
-                .orderBy("elo", "desc")
-                .limit(50)
-                .get();
-            var i = 1;
-            for (doc of activeRef.docs) {
+        //_fetchData()
+        const db = firebase.firestore();
+        const ref = db
+            .collection('users')
+            .orderBy("elo", "desc")
+            .limit(50)
+
+        return ref.onSnapshot(querySnapshot => {
+            let fetchedUserData = [];
+            let i = 0;
+            querySnapshot.forEach(doc => {
                 const data = doc.data()
                 data.rank = i
-                let wins= data.wins;
+                let wins = data.wins;
                 let losses = data.losses;
                 let draws = data.draws;
                 let sum = wins + losses + draws;
@@ -55,29 +55,20 @@ export default function App(props) {
                 const KDA = {
                     wins: Math.ceil(wins / sum),
                     draws: Math.ceil(draws / sum),
-                    losses: Math.ceil(losses / sum),
+                    losses: Math.ceil(losses / sum)
                 }
                 data.KDA = KDA
                 fetchedUserData.push(data);
                 i++;
-            }
-            return fetchedUserData;
-        }
-
-        try {
-            const fetchedUserData = await GetUserData()
+            });
             setUserData(fetchedUserData)
-            setIsLoading(false)
-        } catch (error) {
-            console.log(error)
-        }
-    }
 
-    useEffect(() => { // code to run on component mount
+            if (isLoading) {
+                setIsLoading(false)
+            }
+        });
 
-        _fetchData()
-
-    }, [props.navigation]) //pass an empty array to call it just with the first call --> }, [])
+    }, []) //pass an empty array to call it just with the first call --> }, [])
 
     const round = props
         .navigation
@@ -92,9 +83,9 @@ export default function App(props) {
     }
 
     const KDA = {
-        wins:0,
+        wins: 0,
         losses: 0,
-        remis: 1,
+        remis: 1
     }
 
     function Item({username, elo, KDA, rank}) { //Each item in the list will be render like this item
@@ -116,12 +107,10 @@ export default function App(props) {
     return (
 
         <BackgroundContainer>
-
             <SafeAreaView style={styles.container}>
-                <Offline></Offline>
                 <View style={styles.lbContainer}>
                     <View style={styles.HeadingContainer}>
-                    <View style={styles.rankHeadingContainer}>
+                        <View style={styles.rankHeadingContainer}>
                             <Text style={[styles.roundText, material.title]}>R</Text>
                         </View>
                         <View style={styles.usernameHeadingContainer}>
@@ -143,7 +132,7 @@ export default function App(props) {
                             keyExtractor={item => item.username}/>
                     </SafeAreaView>
                 </View>
-                
+
             </SafeAreaView>
         </BackgroundContainer>
     );
@@ -157,8 +146,7 @@ const styles = StyleSheet.create({
     },
     lbContainer: {
         //paddingTop: 10,
-        alignItems: 'center',
-
+        alignItems: 'center'
     },
     hr: {
         borderBottomColor: 'black',
@@ -220,6 +208,6 @@ const styles = StyleSheet.create({
     loadingContainer: {
         flex: 1,
         justifyContent: "center",
-        minWidth: "85%",
+        minWidth: "85%"
     }
 });

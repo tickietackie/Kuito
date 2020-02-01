@@ -9,6 +9,7 @@ import {
     AsyncStorage
 } from 'react-native';
 import {SettingsScreen} from "react-native-settings-screen"
+import BackgroundContainer from '../components/BackgroundContainer';
 //import component
 
 export default function App(props) {
@@ -58,17 +59,19 @@ export default function App(props) {
     };
 
     return (
-        <View style={styles.container}>
-            <SafeAreaView style={styles.settingsContainer}>
-                <ScrollView >
-                    <Text style={styles.ScrollView}>Username: {username}</Text>
-                    <Text style={styles.ScrollView}>User id: {id}</Text>
-                    <View style={styles.startButton}>
-                        <Button title="Sign Out" onPress={() => _signOutAsync()}/>
-                    </View>
-                </ScrollView>
-            </SafeAreaView>
-        </View>
+        <BackgroundContainer>
+            <View style={styles.container}>
+                <SafeAreaView style={styles.settingsContainer}>
+                    <ScrollView >
+                        <Text style={styles.ScrollView}>Username: {username}</Text>
+                        <Text style={styles.ScrollView}>User id: {id}</Text>
+                        <View style={styles.startButton}>
+                            <Button title="Sign Out" onPress={() => _signOutAsync()}/>
+                        </View>
+                    </ScrollView>
+                </SafeAreaView>
+            </View>
+        </BackgroundContainer>
     );
 }
 

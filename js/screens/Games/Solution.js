@@ -16,21 +16,6 @@ export default function App(props) {
         //return null;
     }
 
-    const [data, //contains pressed button numbers of user, all pressed: [2,3,4,5]
-        setData] = useState({
-        question: "",
-        answer_1: "",
-        answer_2: "",
-        answer_3: "",
-        answer_4: "",
-        solution: 3,
-        explanation: "",
-        info: ""
-    });
-
-    const [gameId,
-        setGameId] = useState(0);
-
     const [isLoading,
         setIsLoading] = useState(true);
 

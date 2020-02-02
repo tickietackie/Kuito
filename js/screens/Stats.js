@@ -4,6 +4,7 @@ import {
     StyleSheet,
     SafeAreaView,
     Button,
+    StatusBar,
     View,
     Text,
     AsyncStorage
@@ -198,6 +199,7 @@ export default function Leaderboard(props) {
 
     return (
         <BackgroundContainer>
+            <StatusBar hidden />
             <SafeAreaView style={styles.container}>
                 <View style={styles.eloContainer}>
                     <Text style={[material.display2, styles.eloText]}>Current rtgØ: {elo}</Text>

@@ -21,11 +21,6 @@ import {withNavigation} from 'react-navigation';
 
 const GameHistory = (props) => {
 
-    const navigation = props.navigation
-
-    const [games, //contains pressed button numbers of user, all pressed: [2,3,4,5]
-        setGames] = useState({started: 0, finished: 0, userId: "", games_played: []});
-
     const [isLoading,
         setIsLoading] = useState(true);
 
@@ -37,6 +32,8 @@ const GameHistory = (props) => {
         setFinishedGames] = useState([]);
     const [finishedGamesOpp,
         setFinishedGamesOpp] = useState([]);
+
+    //add array sort for merges finished games
 
     const fetchedGames = startedGamesByOpp.concat(startedGames, finishedGames, finishedGamesOpp);
 
@@ -58,8 +55,12 @@ const GameHistory = (props) => {
             .limit(20)
 
         return ref.onSnapshot(querySnapshot => {
+
+            setStartedGames([])
             let fetchedfinishedGames = [];
             let i = 0;
+            setStartedGames([])
+            setStartedGamesByOpp([])
 
             querySnapshot.forEach(doc => { //Set up listener to query new data evrytime it is changed in the backend
 
@@ -91,6 +92,8 @@ const GameHistory = (props) => {
                 i++;
             });
             setFinishedGames(fetchedfinishedGames)
+            _fetchData4()
+            _fetchData5()
 
             if (isLoading) {
                 setIsLoading(false)
@@ -111,6 +114,9 @@ const GameHistory = (props) => {
             .limit(20)
 
         return ref.onSnapshot(querySnapshot => {
+            setStartedGames([])
+            setStartedGamesByOpp([])
+
             let fetchedfinishedGames = [];
             let i = 0;
 
@@ -143,7 +149,10 @@ const GameHistory = (props) => {
                 fetchedfinishedGames[i].showResult = navToResult
                 i++;
             });
+
             setFinishedGamesOpp(fetchedfinishedGames)
+            _fetchData4()
+            _fetchData5()
 
             if (isLoading) {
                 setIsLoading(false)
@@ -221,8 +230,14 @@ const GameHistory = (props) => {
 
     useEffect(() => { // code to run on component mount
         _fetchData2()
+    }, []) //pass an empty array to call it just with the first call --> }, [])
+    useEffect(() => { // code to run on component mount
         _fetchData3()
+    }, []) //pass an empty array to call it just with the first call --> }, [])
+    useEffect(() => { // code to run on component mount
         _fetchData4()
+    }, []) //pass an empty array to call it just with the first call --> }, [])
+    useEffect(() => { // code to run on component mount
         _fetchData5()
     }, []) //pass an empty array to call it just with the first call --> }, [])
 
@@ -239,127 +254,6 @@ const GameHistory = (props) => {
         )
     }
 
-    function FinishedGamesOpp({ //return different History Items
-        started,
-        userId,
-        userId2,
-        username,
-        username2,
-        result,
-        finished,
-        startedGame,
-        games_played,
-        playedGameDocId,
-        games_playedUser2,
-        finishedGameOpp,
-        showResult
-    }) { //Each item in the list will be render like this item
-        return (
-            <HistoryEntryFinishedGameOpp
-                started={started}
-                userId={userId}
-                userId2={userId2}
-                username={username}
-                username2={username2}
-                result={result}
-                finished={finished}
-                games_played={games_played}
-                games_playedUser2={games_playedUser2}
-                showResult={showResult}
-                playedGameDocId={playedGameDocId}></HistoryEntryFinishedGameOpp>
-        );
-    }
-
-    function FinishedGames({ //return different History Items
-        started,
-        userId,
-        userId2,
-        username,
-        username2,
-        result,
-        finished,
-        startedGame,
-        games_played,
-        playedGameDocId,
-        games_playedUser2,
-        finishedGameOpp,
-        showResult
-    }) { //Each item in the list will be render like this item
-        return (
-            <HistoryEntryFinishedGame
-                started={started}
-                userId={userId}
-                userId2={userId2}
-                username={username}
-                username2={username2}
-                result={result}
-                finished={finished}
-                games_played={games_played}
-                games_playedUser2={games_playedUser2}
-                showResult={showResult}
-                playedGameDocId={playedGameDocId}></HistoryEntryFinishedGame>
-        );
-    }
-
-    function StartedGames({ //return different History Items
-        started,
-        userId,
-        userId2,
-        username,
-        username2,
-        result,
-        finished,
-        startedGame,
-        games_played,
-        playedGameDocId,
-        games_playedUser2,
-        finishedGameOpp,
-        showResult
-    }) { //Each item in the list will be render like this item
-        return (
-            <HistoryEntryStartedGame
-                userId={userId}
-                started={started}
-                userId2={userId2}
-                username={username}
-                username2={username2}
-                result={result}
-                finished={finished}
-                games_played={games_played}
-                showResult={showResult}
-                playedGameDocId={playedGameDocId}></HistoryEntryStartedGame>
-        );
-    }
-
-    function StartedGamesByOpp({ //return different History Items
-        started,
-        userId,
-        userId2,
-        username,
-        username2,
-        result,
-        finished,
-        startedGame,
-        games_played,
-        playedGameDocId,
-        games_playedUser2,
-        finishedGameOpp,
-        showResult
-    }) { //Each item in the list will be render like this item
-        return (
-            <HistoryEntryAfterOpp
-                started={started}
-                userId={userId}
-                userId2={userId2}
-                username={username}
-                username2={username2}
-                result={result}
-                finished={finished}
-                games_played={games_played}
-                playedGameDocId={playedGameDocId}></HistoryEntryAfterOpp>
-        );
-    }
-
     function Item({ //return different History Items
         started,
         userId,
@@ -373,7 +267,9 @@ const GameHistory = (props) => {
         playedGameDocId,
         games_playedUser2,
         finishedGameOpp,
-        showResult
+        showResult,
+        eloGainUser1,
+        eloGainUser2
     }) { //Each item in the list will be render like this item
         if (finishedGameOpp) {
             return (
@@ -388,6 +284,8 @@ const GameHistory = (props) => {
                     games_played={games_played}
                     games_playedUser2={games_playedUser2}
                     showResult={showResult}
+                    eloGainUser1={eloGainUser1}
+                    eloGainUser2={eloGainUser2}
                     playedGameDocId={playedGameDocId}></HistoryEntryFinishedGameOpp>
             );
         } else if (finished) {
@@ -403,6 +301,8 @@ const GameHistory = (props) => {
                     games_played={games_played}
                     games_playedUser2={games_playedUser2}
                     showResult={showResult}
+                    eloGainUser1={eloGainUser1}
+                    eloGainUser2={eloGainUser2}
                     playedGameDocId={playedGameDocId}></HistoryEntryFinishedGame>
             );
         } else if (startedGame) {
@@ -453,6 +353,8 @@ const GameHistory = (props) => {
                     games_played={item.games_played}
                     games_playedUser2={item.games_playedUser2}
                     finishedGameOpp={item.finishedGameOpp}
+                    eloGainUser1={item.eloGainUser1}
+                    eloGainUser2={item.eloGainUser2}
                     showResult={item.showResult}
                     playedGameDocId
                     ={item.id}

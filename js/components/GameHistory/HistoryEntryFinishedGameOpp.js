@@ -65,13 +65,14 @@ const CategoryComponent = function Category(props) {
                 .navigate("Stats")
         }
 
-        const navigationParams = { //Get round and playstyle from last screen
+        const navigationParams = { 
             Game: props.games_played,
             GameUser2: props.games_playedUser2,
-            userId: userId,
-            userId2: props.userId2,
-            username: props.username,
-            username2: props.username2,
+            userId: props.userId2,
+            userId2: props.userId,  //Swap userId and username
+            username: props.username2,
+            username2: props.username,
+            EloGainUser1: props.eloGainUser2,
             nav: navBack
         };
 
@@ -83,17 +84,13 @@ const CategoryComponent = function Category(props) {
 
     const PlayAgain = async() => {
 
-        const playstyle = "competetive"
-
-        const navigationProperties = { //Get round and playstyle from last screen
+        const navigationProperties = { 
             round: 1,
             playStyle: 'competetive',
             userId: props.userId2,
             userId2: props.userId,
-            username: props.username2,
-            username2: props.username1,
-            eloUser2: props.eloUser2,
-            eloUser: props.eloUser
+            username: props.username2, //Swap userId and username and elo
+            username2: props.username,
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;

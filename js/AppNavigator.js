@@ -86,7 +86,7 @@ const AppStackModal = createStackNavigator({
 
 }, {headerMode: 'none'})
 
-AppStackModal.navigationOptions = ({navigation}) => {
+AppStackModal.navigationOptions = ({navigation}) => {       //Disable Tabbar and enable Fullscreen in Games
     let tabBarVisible = true;
     for (let i = 0; i < navigation.state.routes.length; i++) {
         if (navigation.state.routes[i].routeName == "Solution") {

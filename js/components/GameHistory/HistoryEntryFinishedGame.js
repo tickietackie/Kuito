@@ -66,6 +66,7 @@ const CategoryComponent = function Category(props) {
             userId2: props.userId2,
             username: props.username,
             username2: props.username2,
+            EloGainUser1: props.eloGainUser1,
             nav: navBack
         };
 

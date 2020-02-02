@@ -101,7 +101,7 @@ export default function App(props) {
 
     let pointsGained = "-";
     let newElo = "-";
-    if (props.navigation.getParam(userId,0) === userId) {
+    if (props.navigation.getParam("userId",0) === userId) {
         pointsGained = props.navigation.getParam("EloGainUser1","-")
         newElo = props.navigation.getParam("NewEloUser1","-")
     }

@@ -98,7 +98,7 @@ export default function App(props) {
             }
         }
 
-        const random = Math.floor(Math.random() * 100000) + 1;
+        const random = 50000; //Math.floor(Math.random() * 100000) + 1;
         console.log(random);
 
         let randomUserId = 0;
@@ -115,6 +115,7 @@ export default function App(props) {
                 //If user id is the same perform another query, to complete the "not same user id" logic
                 const fetchedRandomUserId2 = await GetRandomUser2(db, userIdRandom)
                 if (fetchedRandomUserId !== userId && fetchedRandomUserId) {
+                    console.log("test")
                     randomUserId = fetchedRandomUserId;
                     username2 = fetchedUsername2_1;
                     eloUser2= fetcheUserElo_1;
@@ -132,6 +133,7 @@ export default function App(props) {
             }
             await GetUser1Data()
 
+            console.log("username: " + username);
             console.log(username2);
 
             const navigationProperties = {

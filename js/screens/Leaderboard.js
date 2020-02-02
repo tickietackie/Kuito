@@ -13,7 +13,6 @@ import BackgroundContainer from "../components/BackgroundContainer"
 import {material} from 'react-native-typography';
 import LeaderBoardEntry from '../components/LeaderBoardEntry';
 import firebase from "../../config/firebase";
-import Offline from "../components/Offline"
 import OfflineFullScreen from "../components/OfflineFullScreen"
 
 export default function App(props) {
@@ -42,7 +41,7 @@ export default function App(props) {
         return ref.onSnapshot(querySnapshot => {
             let fetchedUserData = [];
             let i = 0;
-            querySnapshot.forEach(doc => {
+            querySnapshot.forEach(doc => {      //Set up listener to query new data evrytime it is changed in the backend
                 const data = doc.data()
                 data.rank = i
                 let wins = data.wins;

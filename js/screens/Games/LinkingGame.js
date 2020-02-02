@@ -4,7 +4,7 @@ import {StyleSheet, View, Text, Dimensions, ActivityIndicator} from 'react-nativ
 import Dragable from "../../components/Games/Dragable"
 import {StackActions} from 'react-navigation';
 import NextButton from '../../components/Buttons/NextButton';
-import HeaderText from '../../components/HeaderText';
+import HomeButton from '../../components/Buttons/HomeButton';
 import BackgroundContainer from "../../components/BackgroundContainer"
 import firebase from "../../../config/firebase";
 
@@ -220,9 +220,6 @@ export default function Drag(props) {
         }
     }
 
-    console.log(dropZone)
-    console.log(dropZone2)
-
     useEffect(() => { // code to run on component mount
 
         _fetchData()
@@ -348,6 +345,12 @@ export default function Drag(props) {
             });
     }
 
+    const showHomeButton = props
+        .navigation
+        .getParam('playStyle', 'competitive') === "training"
+        ? true
+        : false; //Show Home button in traing view
+
     if (isLoading === true) { //return loading screen, if data is loading
         return (
             <BackgroundContainer>
@@ -385,6 +388,7 @@ export default function Drag(props) {
                 </View>
 
                 {renderDragables()}
+                <HomeButton visible={showHomeButton}></HomeButton>
                 <NextButton
                     navigateFunction={evaluateAnswer}
                     nextButtonTitle={"Next"}

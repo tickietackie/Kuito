@@ -8,6 +8,8 @@ import {material} from 'react-native-typography';
 import HeaderText from '../../components/HeaderText';
 
 import firebase from "../../../config/firebase";
+import * as firebaseMod from 'firebase';
+
 
 export default function App(props) {
     if (props.visible === false) {
@@ -229,8 +231,8 @@ export default function App(props) {
                 incKDA= "draws"
             }
 
-            const increment = firebase.firestore.FieldValue.increment(1);
-
+            const increment = firebaseMod.firestore.FieldValue.increment(1);
+            
             let savedGame = await userRef.update({elo: newElo,incKDA: increment});
         }
 
@@ -252,7 +254,7 @@ export default function App(props) {
                 incKDA= "draws"
             }
 
-            const increment = firebase.firestore.FieldValue.increment(1);
+            const increment = firebaseMod.firestore.FieldValue.increment(1);
             let savedGame = await userRef.update({elo: newElo2, incKDA: increment});
         }
 
@@ -412,11 +414,16 @@ export default function App(props) {
         nextButtonTitle
         homeButtonStyle = {
             justifyContent: "center",
-            left: "auto"
+            left: "3%",
         }
 
     };
-    const showHomeButton = false;
+
+    const showHomeButton = props
+        .navigation
+        .getParam('playStyle', 'competitive') === "training"
+        ? true
+        : false; //Show Home button in traing view
 
     const solutionContainerColor = props
         .navigation

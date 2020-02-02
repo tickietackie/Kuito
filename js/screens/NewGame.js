@@ -35,7 +35,6 @@ export default function App(props) {
         };
 
         const username = await GetUsername()
-        let username2 = "";
 
         let eloUser = 0;
         //let username = "";
@@ -51,7 +50,7 @@ export default function App(props) {
             }
         }
 
-        let eloUser2 = 0;
+        
 
         async function GetUser2Data () {
             let campaignsRef = db.collection('users')
@@ -64,6 +63,12 @@ export default function App(props) {
             }
         }
 
+        let eloUser2 = 0;
+        let fetcheUserElo_1 = 0;
+        let fetcheUserElo_2 = 0;
+        let fetchedUsername2_1 = "";
+        let fetchedUsername2_2 = "";
+
         const GetRandomUser = async(db, userIdRandom) => { //Get a random opponent => get random second user id, but ignore own userid
             let campaignsRef = db.collection('users')
             let activeRef = await campaignsRef
@@ -71,8 +76,8 @@ export default function App(props) {
                 .get();
             for (doc of activeRef.docs) {
                 const data = doc.data()
-                username2 = data.username
-                eloUser2 = data.elo
+                fetchedUsername2_1 = data.username
+                fetcheUserElo_1 = data.elo
                 return doc.id;
             }
         }
@@ -87,8 +92,8 @@ export default function App(props) {
                 .get();
             for (doc of activeRef.docs) {
                 const data = doc.data()
-                username2 = data.username
-                eloUser2 = data.elo
+                fetchedUsername2_2 = data.username
+                fetcheUserElo_2 = data.elo
                 return doc.id;
             }
         }
@@ -98,6 +103,7 @@ export default function App(props) {
 
         let randomUserId = 0;
         let userId = 0
+        let username2 = "";
         const userIdRandom = await AsyncStorage.getItem('userRandom'); 
         console.log("userId2: " + userIdRandom)
         try {
@@ -109,9 +115,13 @@ export default function App(props) {
                 //If user id is the same perform another query, to complete the "not same user id" logic
                 const fetchedRandomUserId2 = await GetRandomUser2(db, userIdRandom)
                 if (fetchedRandomUserId !== userId && fetchedRandomUserId) {
-                    randomUserId = fetchedRandomUserId
+                    randomUserId = fetchedRandomUserId;
+                    username2 = fetchedUsername2_1;
+                    eloUser2= fetcheUserElo_1;
                 } else if (fetchedRandomUserId2 !== userId && fetchedRandomUserId2) {
-                    randomUserId = fetchedRandomUserId2
+                    randomUserId = fetchedRandomUserId2;
+                    username2 = fetchedUsername2_2;
+                    eloUser2= fetcheUserElo_2;
                 } else {
                     randomUserId = 0;
                 }
@@ -121,6 +131,37 @@ export default function App(props) {
                 x++;
             }
             await GetUser1Data()
+
+            console.log(username2);
+
+            const navigationProperties = {
+                round: 1,
+                playStyle: 'competetive',
+                userId: userId,
+                userId2: randomUserId,
+                username: username,
+                username2: username2,
+                eloUser2: eloUser2,
+                eloUser: eloUser
+            };
+    
+            var RandomNumber = Math.floor(Math.random() * 3) + 1;
+    
+            let RandomScreen = "";
+            if (RandomNumber === 1) {
+                RandomScreen = "GuessPicture";
+            } else if (RandomNumber === 2) {
+                RandomScreen = "LinkingGame"
+            } else {
+                RandomScreen = "MultipleChoice"
+            }
+    
+            //setRand(RandomNumber); //change random state for next render
+            setIsLoading(false);
+            props
+                .navigation
+                .navigate(RandomScreen, navigationProperties); //naviaget to random game
+
         } catch (err) {
             console.log('Error getting userIds', err)
             alert("Failed to get your data. Please check your internet connection and retry!")
@@ -133,36 +174,6 @@ export default function App(props) {
             setIsLoading(false);
             return;
         }
-
-        console.log(username2);
-
-        const navigationProperties = {
-            round: 1,
-            playStyle: 'competetive',
-            userId: userId,
-            userId2: randomUserId,
-            username: username,
-            username2: username2,
-            eloUser2: eloUser2,
-            eloUser: eloUser
-        };
-
-        var RandomNumber = Math.floor(Math.random() * 3) + 1;
-
-        let RandomScreen = "";
-        if (RandomNumber === 1) {
-            RandomScreen = "GuessPicture";
-        } else if (RandomNumber === 2) {
-            RandomScreen = "LinkingGame"
-        } else {
-            RandomScreen = "MultipleChoice"
-        }
-
-        //setRand(RandomNumber); //change random state for next render
-        setIsLoading(false);
-        props
-            .navigation
-            .navigate(RandomScreen, navigationProperties); //naviaget to random game
     }
 
     //const [rand,

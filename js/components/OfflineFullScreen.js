@@ -13,7 +13,6 @@ const OfflineNotice = () => {
         const unsubscribe = NetInfo.addEventListener(state => {
             if (state.isConnected) {
                 setConnected(true)
-                console.log("connected")
             }
             else {
                 setConnected(false)

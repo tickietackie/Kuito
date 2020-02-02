@@ -29,6 +29,13 @@ const GameHistory = (props) => {
     const [isLoading,
         setIsLoading] = useState(true);
 
+    /*const [] 
+        const startedGamesByOpp = await GetStartedGamesByOpp(db);
+            const startedGames = await GetStartedGames(db);
+            const finishedGames = await GetFinishedGames(db);
+            const finishedGamesOpp = await GetFinishedGamesOpp(db);
+            const fetchedGames = startedGamesByOpp.concat(startedGames, finishedGames, finishedGamesOpp);*/
+
     const _fetchData = async() => {
 
         //setIsLoading(true)
@@ -54,7 +61,7 @@ const GameHistory = (props) => {
             let activeRef = await campaignsRef
                 .where('userId', '==', userId)
                 .where('finished', '==', 0)
-                .orderBy('started')
+                .orderBy('started', 'desc')
                 .get();
             var i = 0;
             for (doc of activeRef.docs) {
@@ -76,7 +83,7 @@ const GameHistory = (props) => {
             let activeRef = await campaignsRef
                 .where('userId2', '==', userId)
                 .where('finished', '==', 0)
-                .orderBy('started')
+                .orderBy('started', 'desc')
                 .get();
             var i = 0;
             for (doc of activeRef.docs) {
@@ -96,7 +103,7 @@ const GameHistory = (props) => {
             let activeRef = await campaignsRef
                 .where('userId', '==', userId)
                 .where('finished', '>', '0')
-                .orderBy('finished')
+                .orderBy('finished', 'desc')
                 .limit(20)
                 .get();
             var i = 0;
@@ -119,7 +126,7 @@ const GameHistory = (props) => {
                 finishedGames[i].finished = (month + 1) + "/" + day + "/" + year
 
                 finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
-            
+
                 finishedGames[i].showResult = navToResult
                 i++;
             }
@@ -132,7 +139,7 @@ const GameHistory = (props) => {
             let activeRef = await campaignsRef
                 .where('userId2', '==', userId)
                 .where('finished', '>', '0')
-                .orderBy('finished')
+                .orderBy('finished', 'desc')
                 .limit(20)
                 .get();
             var i = 0;
@@ -155,7 +162,7 @@ const GameHistory = (props) => {
 
                 const started = new Date(finishedGames[i].started)
                 finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
-                 finishedGames[i].finishedGameOpp = true
+                finishedGames[i].finishedGameOpp = true
                 finishedGames[i].showResult = navToResult
                 i++;
             }
@@ -180,7 +187,7 @@ const GameHistory = (props) => {
 
     //const isFocused = props.navigation.isFocused();
 
-    useLayoutEffect(() => {
+    useLayoutEffect(() => { //4 onsnapshot --> 4 items
         const isFocused = props
             .navigation
             .isFocused();
@@ -217,6 +224,127 @@ const GameHistory = (props) => {
                 </View>
             </BackgroundContainer>
         )
+    }
+
+    function FinishedGamesOpp({ //return different History Items
+        started,
+        userId,
+        userId2,
+        username,
+        username2,
+        result,
+        finished,
+        startedGame,
+        games_played,
+        playedGameDocId,
+        games_playedUser2,
+        finishedGameOpp,
+        showResult
+    }) { //Each item in the list will be render like this item
+        return (
+            <HistoryEntryFinishedGameOpp
+                started={started}
+                userId={userId}
+                userId2={userId2}
+                username={username}
+                username2={username2}
+                result={result}
+                finished={finished}
+                games_played={games_played}
+                games_playedUser2={games_playedUser2}
+                showResult={showResult}
+                playedGameDocId={playedGameDocId}></HistoryEntryFinishedGameOpp>
+        );
+    }
+
+    function FinishedGames({ //return different History Items
+        started,
+        userId,
+        userId2,
+        username,
+        username2,
+        result,
+        finished,
+        startedGame,
+        games_played,
+        playedGameDocId,
+        games_playedUser2,
+        finishedGameOpp,
+        showResult
+    }) { //Each item in the list will be render like this item
+        return (
+            <HistoryEntryFinishedGame
+                started={started}
+                userId={userId}
+                userId2={userId2}
+                username={username}
+                username2={username2}
+                result={result}
+                finished={finished}
+                games_played={games_played}
+                games_playedUser2={games_playedUser2}
+                showResult={showResult}
+                playedGameDocId={playedGameDocId}></HistoryEntryFinishedGame>
+        );
+    }
+
+    function StartedGames({ //return different History Items
+        started,
+        userId,
+        userId2,
+        username,
+        username2,
+        result,
+        finished,
+        startedGame,
+        games_played,
+        playedGameDocId,
+        games_playedUser2,
+        finishedGameOpp,
+        showResult
+    }) { //Each item in the list will be render like this item
+        return (
+            <HistoryEntryStartedGame
+                    userId={userId}
+                    started={started}
+                    userId2={userId2}
+                    username={username}
+                    username2={username2}
+                    result={result}
+                    finished={finished}
+                    games_played={games_played}
+                    showResult={showResult}
+                    playedGameDocId={playedGameDocId}></HistoryEntryStartedGame>
+        );
+    }
+
+    function StartedGamesByOpp({ //return different History Items
+        started,
+        userId,
+        userId2,
+        username,
+        username2,
+        result,
+        finished,
+        startedGame,
+        games_played,
+        playedGameDocId,
+        games_playedUser2,
+        finishedGameOpp,
+        showResult
+    }) { //Each item in the list will be render like this item
+        return (
+            <HistoryEntryAfterOpp
+                    started={started}
+                    userId={userId}
+                    userId2={userId2}
+                    username={username}
+                    username2={username2}
+                    result={result}
+                    finished={finished}
+                    games_played={games_played}
+                    playedGameDocId={playedGameDocId}></HistoryEntryAfterOpp>
+        );
     }
 
     function Item({ //return different History Items

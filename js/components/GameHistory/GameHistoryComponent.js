@@ -29,189 +29,202 @@ const GameHistory = (props) => {
     const [isLoading,
         setIsLoading] = useState(true);
 
-    /*const [] 
-        const startedGamesByOpp = await GetStartedGamesByOpp(db);
-            const startedGames = await GetStartedGames(db);
-            const finishedGames = await GetFinishedGames(db);
-            const finishedGamesOpp = await GetFinishedGamesOpp(db);
-            const fetchedGames = startedGamesByOpp.concat(startedGames, finishedGames, finishedGamesOpp);*/
+    const [startedGames,
+        setStartedGames] = useState([]);
+    const [startedGamesByOpp,
+        setStartedGamesByOpp] = useState([]);
+    const [finishedGames,
+        setFinishedGames] = useState([]);
+    const [finishedGamesOpp,
+        setFinishedGamesOpp] = useState([]);
 
-    const _fetchData = async() => {
+    const fetchedGames = startedGamesByOpp.concat(startedGames, finishedGames, finishedGamesOpp);
 
-        //setIsLoading(true)
-        const db = firebase.firestore()
+    const GetUserId = async() => {
+        //return await AsyncStorage.getItem('username');
+        return await AsyncStorage.getItem('userId');
+    };
 
-        var random = Math.floor(Math.random() * 100000) + 1;
-        //const ref = db.collection('MultipleChoiceSets')
+    const _fetchData2 = async() => {
+        const db = firebase.firestore();
 
-        const GetUserId = async() => {
-            //return await AsyncStorage.getItem('username');
-            return await AsyncStorage.getItem('userId');
-        };
         const userId = await GetUserId()
 
-        const navToResult = props
-            .navigation
-            .getParam("showResult", 0)
+        const ref = db
+            .collection('PlayedGames')
+            .where('userId', '==', userId)
+            .where('finished', '>', '0')
+            .orderBy('finished', 'desc')
+            .limit(20)
 
-        //Rewrite with onsnapshot --> just fetch changes
-        async function GetStartedGames(db) {
-            let startedGames = [];
-            let campaignsRef = db.collection('PlayedGames')
-            let activeRef = await campaignsRef
-                .where('userId', '==', userId)
-                .where('finished', '==', 0)
-                .orderBy('started', 'desc')
-                .get();
-            var i = 0;
-            for (doc of activeRef.docs) {
-                startedGames.push(doc.data())
-                startedGames[i].id = doc.id
-                const started = new Date(startedGames[i].started)
-                startedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
-                startedGames[i].startedGame = 1
-                startedGames[i].showResult = navToResult
-                i++;
-            }
+        return ref.onSnapshot(querySnapshot => {
+            let fetchedfinishedGames = [];
+            let i = 0;
 
-            return startedGames;
-        }
+            querySnapshot.forEach(doc => { //Set up listener to query new data evrytime it is changed in the backend
 
-        async function GetStartedGamesByOpp(db) {
-            let startedGames = [];
-            let campaignsRef = db.collection('PlayedGames')
-            let activeRef = await campaignsRef
-                .where('userId2', '==', userId)
-                .where('finished', '==', 0)
-                .orderBy('started', 'desc')
-                .get();
-            var i = 0;
-            for (doc of activeRef.docs) {
-                startedGames.push(doc.data())
-                startedGames[i].id = doc.id
-                const started = new Date(startedGames[i].started)
-                startedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
-                i++;
-            }
+                const navToResult = props
+                    .navigation
+                    .getParam("showResult", 0)
 
-            return startedGames;
-        }
+                fetchedfinishedGames.push(doc.data())
 
-        async function GetFinishedGames(db) {
-            let finishedGames = [];
-            let campaignsRef = db.collection('PlayedGames')
-            let activeRef = await campaignsRef
-                .where('userId', '==', userId)
-                .where('finished', '>', '0')
-                .orderBy('finished', 'desc')
-                .limit(20)
-                .get();
-            var i = 0;
-            for (doc of activeRef.docs) {
-                finishedGames.push(doc.data())
-                finishedGames[i].id = doc.id
+                fetchedfinishedGames[i].id = doc.id
 
-                const started = new Date(finishedGames[i].started);
-                const year = finishedGames[i]
+                const started = new Date(fetchedfinishedGames[i].started);
+                const year = fetchedfinishedGames[i]
                     .finished
                     .split("-")[0];
-                const month = finishedGames[i]
+                const month = fetchedfinishedGames[i]
                     .finished
                     .split("-")[1] - 1;
-                const day = finishedGames[i]
+                const day = fetchedfinishedGames[i]
                     .finished
                     .split("-")[2]
                     .split(" ")[0];
 
-                finishedGames[i].finished = (month + 1) + "/" + day + "/" + year
+                fetchedfinishedGames[i].finished = (month + 1) + "/" + day + "/" + year
 
-                finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
+                fetchedfinishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
 
-                finishedGames[i].showResult = navToResult
+                fetchedfinishedGames[i].showResult = navToResult
                 i++;
+            });
+            setFinishedGames(fetchedfinishedGames)
+
+            if (isLoading) {
+                setIsLoading(false)
             }
-            return finishedGames;
-        }
-
-        async function GetFinishedGamesOpp(db) {
-            let finishedGames = [];
-            let campaignsRef = db.collection('PlayedGames')
-            let activeRef = await campaignsRef
-                .where('userId2', '==', userId)
-                .where('finished', '>', '0')
-                .orderBy('finished', 'desc')
-                .limit(20)
-                .get();
-            var i = 0;
-            for (doc of activeRef.docs) {
-                finishedGames.push(doc.data())
-                finishedGames[i].id = doc.id
-
-                const year = finishedGames[i]
-                    .finished
-                    .split("-")[0];
-                const month = finishedGames[i]
-                    .finished
-                    .split("-")[1] - 1;
-                const day = finishedGames[i]
-                    .finished
-                    .split("-")[2]
-                    .split(" ")[0];
-
-                finishedGames[i].finished = (month + 1) + "/" + day + "/" + year
-
-                const started = new Date(finishedGames[i].started)
-                finishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
-                finishedGames[i].finishedGameOpp = true
-                finishedGames[i].showResult = navToResult
-                i++;
-            }
-            return finishedGames;
-        }
-
-        try {
-            const startedGamesByOpp = await GetStartedGamesByOpp(db);
-            const startedGames = await GetStartedGames(db);
-            const finishedGames = await GetFinishedGames(db);
-            const finishedGamesOpp = await GetFinishedGamesOpp(db);
-            const fetchedGames = startedGamesByOpp.concat(startedGames, finishedGames, finishedGamesOpp);
-            setGames(fetchedGames);
-            setIsLoading(false);
-            //let i = 100000* 1000000/3 /9/8;
-
-        } catch (err) {
-            console.log('Error getting game data', err)
-            //setIsLoading(false);
-        }
+        });
     }
 
-    //const isFocused = props.navigation.isFocused();
+    const _fetchData3 = async() => {
+        const db = firebase.firestore();
 
-    useLayoutEffect(() => { //4 onsnapshot --> 4 items
-        const isFocused = props
-            .navigation
-            .isFocused();
+        const userId = await GetUserId()
 
-        let fetched = 0;
-        // manually judge if the screen is focused if did, fire api call
-        if (isFocused) {
-            // do the same API calls here
-            fetched = 1;
-            _fetchData()
-        }
+        const ref = db
+            .collection('PlayedGames')
+            .where('userId2', '==', userId)
+            .where('finished', '>', '0')
+            .orderBy('finished', 'desc')
+            .limit(20)
 
-        // Workaround because react navigation doesn't support hooks yet, this should be
-        // updated with release of react navigation V5
-        const navFocusListener = navigation.addListener('didFocus', () => {
-            // do some API calls here
-            _fetchData()
+        return ref.onSnapshot(querySnapshot => {
+            let fetchedfinishedGames = [];
+            let i = 0;
+
+            querySnapshot.forEach(doc => { //Set up listener to query new data evrytime it is changed in the backend
+
+                const navToResult = props
+                    .navigation
+                    .getParam("showResult", 0)
+
+                fetchedfinishedGames.push(doc.data())
+
+                fetchedfinishedGames[i].id = doc.id
+
+                const started = new Date(fetchedfinishedGames[i].started);
+                const year = fetchedfinishedGames[i]
+                    .finished
+                    .split("-")[0];
+                const month = fetchedfinishedGames[i]
+                    .finished
+                    .split("-")[1] - 1;
+                const day = fetchedfinishedGames[i]
+                    .finished
+                    .split("-")[2]
+                    .split(" ")[0];
+
+                fetchedfinishedGames[i].finished = (month + 1) + "/" + day + "/" + year
+
+                fetchedfinishedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
+                fetchedfinishedGames[i].finishedGameOpp = true
+                fetchedfinishedGames[i].showResult = navToResult
+                i++;
+            });
+            setFinishedGamesOpp(fetchedfinishedGames)
+
+            if (isLoading) {
+                setIsLoading(false)
+            }
         });
+    }
 
-        return () => {
-            navFocusListener.remove();
-        };
-    }, []);
-    //pass an empty array to call it just with the first call --> }, [])
+    const _fetchData4 = async() => {
+        const db = firebase.firestore();
+
+        const userId = await GetUserId()
+
+        const ref = db
+            .collection('PlayedGames')
+            .where('userId2', '==', userId)
+            .where('finished', '==', 0)
+            .orderBy('started', 'desc')
+
+        return ref.onSnapshot(querySnapshot => {
+            let fetchedStartedGames = [];
+            let i = 0;
+
+            querySnapshot.forEach(doc => { //Set up listener to query new data evrytime it is changed in the backend
+
+                fetchedStartedGames.push(doc.data())
+                fetchedStartedGames[i].id = doc.id
+                const started = new Date(fetchedStartedGames[i].started)
+                fetchedStartedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
+                i++;
+            });
+            setStartedGamesByOpp(fetchedStartedGames)
+
+            if (isLoading) {
+                setIsLoading(false)
+            }
+        });
+    }
+
+    const _fetchData5 = async() => {
+        const db = firebase.firestore();
+
+        const userId = await GetUserId()
+
+        const ref = db
+            .collection('PlayedGames')
+            .where('userId', '==', userId)
+            .where('finished', '==', 0)
+            .orderBy('started', 'desc')
+
+        return ref.onSnapshot(querySnapshot => {
+            let fetchedStartedGames = [];
+            let i = 0;
+
+            querySnapshot.forEach(doc => { //Set up listener to query new data evrytime it is changed in the backend
+
+                const navToResult = props
+                    .navigation
+                    .getParam("showResult", 0)
+
+                fetchedStartedGames.push(doc.data())
+                fetchedStartedGames[i].id = doc.id
+                const started = new Date(fetchedStartedGames[i].started)
+                fetchedStartedGames[i].started = ("0" + (started.getMonth() + 1)).slice(-2) + "/" + ("0" + started.getDay()).slice(-2) + "/" + (started.getUTCFullYear().toString().substr(-2))
+                fetchedStartedGames[i].startedGame = 1
+                fetchedStartedGames[i].showResult = navToResult
+                i++;
+            });
+            setStartedGames(fetchedStartedGames)
+
+            if (isLoading) {
+                setIsLoading(false)
+            }
+        });
+    }
+
+    useEffect(() => { // code to run on component mount
+        _fetchData2()
+        _fetchData3()
+        _fetchData4()
+        _fetchData5()
+    }, []) //pass an empty array to call it just with the first call --> }, [])
 
     if (isLoading === true) { //return loading screen, if data is loading
         return (
@@ -305,16 +318,16 @@ const GameHistory = (props) => {
     }) { //Each item in the list will be render like this item
         return (
             <HistoryEntryStartedGame
-                    userId={userId}
-                    started={started}
-                    userId2={userId2}
-                    username={username}
-                    username2={username2}
-                    result={result}
-                    finished={finished}
-                    games_played={games_played}
-                    showResult={showResult}
-                    playedGameDocId={playedGameDocId}></HistoryEntryStartedGame>
+                userId={userId}
+                started={started}
+                userId2={userId2}
+                username={username}
+                username2={username2}
+                result={result}
+                finished={finished}
+                games_played={games_played}
+                showResult={showResult}
+                playedGameDocId={playedGameDocId}></HistoryEntryStartedGame>
         );
     }
 
@@ -335,15 +348,15 @@ const GameHistory = (props) => {
     }) { //Each item in the list will be render like this item
         return (
             <HistoryEntryAfterOpp
-                    started={started}
-                    userId={userId}
-                    userId2={userId2}
-                    username={username}
-                    username2={username2}
-                    result={result}
-                    finished={finished}
-                    games_played={games_played}
-                    playedGameDocId={playedGameDocId}></HistoryEntryAfterOpp>
+                started={started}
+                userId={userId}
+                userId2={userId2}
+                username={username}
+                username2={username2}
+                result={result}
+                finished={finished}
+                games_played={games_played}
+                playedGameDocId={playedGameDocId}></HistoryEntryAfterOpp>
         );
     }
 
@@ -427,7 +440,7 @@ const GameHistory = (props) => {
             <SafeAreaView style={styles.container}>
                 <Text style={[human.title1, styles.titel]}>Game History</Text>
                 <FlatList
-                    data={games}
+                    data={fetchedGames}
                     renderItem={({item}) => <Item
                     started={item.started}
                     userId={item.userId}

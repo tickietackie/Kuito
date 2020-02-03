@@ -175,13 +175,13 @@ export default function App(props) {
     let gameUser2 = props //set the played game (MultipleChoice = 0) in the array with the round
         .navigation
         .getParam("GameUser2", '')
-    
+
     let username = props
-    .navigation
-    .getParam('username', 0);
+        .navigation
+        .getParam('username', 0);
     let username2 = props
-    .navigation
-    .getParam('username2', 0);
+        .navigation
+        .getParam('username2', 0);
 
     if (!props.navigation.getParam("playAfterOpponent", 0)) { //set played games for the first player
         if (!game[round - 1]) {
@@ -236,7 +236,13 @@ export default function App(props) {
             .getParam("playAfterOpponent", 0),
         playedGameDocId: props
             .navigation
-            .getParam("playedGameDocId", 0)
+            .getParam("playedGameDocId", 0),
+        tokenUser2: props
+            .navigation
+            .getParam("tokenUser2", ''),
+        tokenUser: props
+            .navigation
+            .getParam("tokenUser", '')
     }
 
     const headerColor = {
@@ -296,7 +302,7 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         paddingTop: "8%",
-        flex: 1,
+        flex: 1
     },
     backContainer: {
         position: "absolute",

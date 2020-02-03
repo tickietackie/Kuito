@@ -278,7 +278,14 @@ export default function App(props) {
             .getParam('playAfterOpponent', 0),
         playedGameDocId: props
             .navigation
-            .getParam("playedGameDocId", 0)
+            .getParam("playedGameDocId", 0),
+        tokenUser2: props
+            .navigation
+            .getParam("tokenUser2", ''),
+        tokenUser: props
+            .navigation
+            .getParam("tokenUser", '')
+
     }
 
     const showHomeButton = props
@@ -339,7 +346,7 @@ const styles = StyleSheet.create({
     container: {
         alignItems: 'center',
         paddingTop: 0,
-        flex: 1,
+        flex: 1
     },
     backContainer: {
         position: "absolute",

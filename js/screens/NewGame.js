@@ -37,6 +37,8 @@ export default function App(props) {
         const username = await GetUsername()
 
         let eloUser = 0;
+        let tokenUser ="";
+        let tokenUser2 = "";
         //let username = "";
         async function GetUser1Data () {
             let campaignsRef = db.collection('users')
@@ -45,21 +47,9 @@ export default function App(props) {
                 .get();
             for (doc of activeRef.docs) {
                 const data = doc.data()
+                tokenUser = data.token
                 eloUser = data.elo
                //username = data.username
-            }
-        }
-
-        
-
-        async function GetUser2Data () {
-            let campaignsRef = db.collection('users')
-            let activeRef = await campaignsRef
-                .where('userId', '==', userId2)
-                .get();
-            for (doc of activeRef.docs) {
-                const data = doc.data()
-                eloUser2 = data.elo
             }
         }
 
@@ -68,6 +58,8 @@ export default function App(props) {
         let fetcheUserElo_2 = 0;
         let fetchedUsername2_1 = "";
         let fetchedUsername2_2 = "";
+        let fetchedUserToken1 = "";
+        let fetchedUserToken2 = "";
 
         const GetRandomUser = async(db, userIdRandom) => { //Get a random opponent => get random second user id, but ignore own userid
             let campaignsRef = db.collection('users')
@@ -77,6 +69,7 @@ export default function App(props) {
             for (doc of activeRef.docs) {
                 const data = doc.data()
                 fetchedUsername2_1 = data.username
+                fetchedUserToken1 = data.token
                 fetcheUserElo_1 = data.elo
                 return doc.id;
             }
@@ -93,12 +86,13 @@ export default function App(props) {
             for (doc of activeRef.docs) {
                 const data = doc.data()
                 fetchedUsername2_2 = data.username
+                fetchedUserToken2 = data.token
                 fetcheUserElo_2 = data.elo
                 return doc.id;
             }
         }
 
-        const random = 50000; //Math.floor(Math.random() * 100000) + 1;
+        const random = Math.floor(Math.random() * 100000) + 1;
         console.log(random);
 
         let randomUserId = 0;
@@ -118,11 +112,13 @@ export default function App(props) {
                     console.log("test")
                     randomUserId = fetchedRandomUserId;
                     username2 = fetchedUsername2_1;
+                    tokenUser2 =fetchedUserToken1
                     eloUser2= fetcheUserElo_1;
                 } else if (fetchedRandomUserId2 !== userId && fetchedRandomUserId2) {
                     randomUserId = fetchedRandomUserId2;
                     username2 = fetchedUsername2_2;
                     eloUser2= fetcheUserElo_2;
+                    tokenUser2 =fetchedUserToken2;
                 } else {
                     randomUserId = 0;
                 }
@@ -144,7 +140,9 @@ export default function App(props) {
                 username: username,
                 username2: username2,
                 eloUser2: eloUser2,
-                eloUser: eloUser
+                eloUser: eloUser,
+                tokenUser2: tokenUser2,
+                tokenUser: tokenUser
             };
     
             var RandomNumber = Math.floor(Math.random() * 3) + 1;

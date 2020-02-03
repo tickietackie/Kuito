@@ -10,6 +10,10 @@ import {
 } from 'react-native';
 import {SettingsScreen} from "react-native-settings-screen"
 import BackgroundContainer from '../components/BackgroundContainer';
+import {Notifications} from 'expo';
+import * as Permissions from 'expo-permissions';
+import firebase from "../../config/firebase";
+import Loading from "../components/Loading";
 //import component
 
 export default function App(props) {
@@ -58,6 +62,53 @@ export default function App(props) {
             .navigate('Auth');
     };
 
+    async function GetPushNotificationToken() {
+        const {status} = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+        // only asks if permissions have not already been determined, because iOS won't
+        // necessarily prompt the user a second time. On Android, permissions are
+        // granted on app installation, so `askAsync` will never prompt the user Stop
+        // here if the user did not grant permissions
+        if (status !== 'granted') {
+            alert('No notification permissions!');
+            return;
+        }
+
+        // Get the token that identifies this device
+        let token = await Notifications.getExpoPushTokenAsync();
+        await AsyncStorage.setItem('token', token);
+
+        return token;
+    }
+
+    const GetUserId = async() => {
+        return await AsyncStorage.getItem('userId');
+    };
+
+    async function UpdateUser(db, token) { //Update user elo and KDA
+
+        const userId = await GetUserId()
+
+        let userRef = db
+            .collection('users')
+            .doc(userId)
+
+        let updateduser = await userRef.set({
+            token: token
+        }, {merge: true});
+
+    }
+
+    async function SetUpPushNotficications() {
+        token = await GetPushNotificationToken()
+        try {
+            const db = firebase.firestore()
+            await UpdateUser(db, token)
+            alert("Success!")
+        } catch (error) {
+            alert(error + "Could not set up push notifications!")
+        }
+    }
+
     return (
         <BackgroundContainer>
             <View style={styles.container}>
@@ -66,7 +117,11 @@ export default function App(props) {
                         <Text style={styles.ScrollView}>Username: {username}</Text>
                         <Text style={styles.ScrollView}>User id: {id}</Text>
                         <View style={styles.startButton}>
+                            <Button
+                                title="Reconfigure push notifications"
+                                onPress={() => SetUpPushNotficications()}/>
                             <Button title="Sign Out" onPress={() => _signOutAsync()}/>
+                            <Button title="Send Push" onPress={() => SendPush()}/>
                         </View>
                     </ScrollView>
                 </SafeAreaView>

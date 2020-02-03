@@ -67,7 +67,7 @@ const CategoryComponent = function Category(props) {
             username: props.username,
             username2: props.username2,
             EloGainUser1: props.eloGainUser1,
-            nav: navBack
+            nav: navBack,
         };
 
         const resultScreen = StackActions.push({routeName: 'Result', params: navigationParams});
@@ -76,9 +76,15 @@ const CategoryComponent = function Category(props) {
             .dispatch(resultScreen); //navigate to result screen
     }
 
+    const GetUser1Token = async() => {
+        //return await AsyncStorage.getItem('username');
+        return await AsyncStorage.getItem('token');
+    };
+
     const PlayAgain = async() => {
 
         const playstyle = "competetive"
+        const token = await GetUser1Token
 
         const navigationProperties = { //Get round and playstyle from last screen
             round: 1,
@@ -88,7 +94,8 @@ const CategoryComponent = function Category(props) {
             username: props.username,
             username2: props.username2,
             eloUser2: props.eloUser2,
-            eloUser: props.eloUser
+            eloUser: props.eloUser,
+            tokenUser1: token
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;

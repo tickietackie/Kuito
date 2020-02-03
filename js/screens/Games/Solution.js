@@ -47,11 +47,37 @@ export default function App(props) {
 
     let navigationParams = "";
 
+    async function SendPush(title, message, token) {
+        const response = await fetch('https://exp.host/--/api/v2/push/send', {
+            method: 'POST',
+            headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                to: token, title: title, body: message, priority: 'high', //to make sure notification is delivered as fast as possible. see documentation for more details
+                sound: "default", //for iOS devices and android below 8.0
+            })
+        });
+    }
+
     async function PersistGameData() { //fetch()
         const db = firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets') console.log(random)
+
+
+        async function GetUser2Token() {
+            let campaignsRef = db.collection('users')
+            let activeRef = await campaignsRef
+                .where('userId', '==', userId2)
+                .get();
+            for (doc of activeRef.docs) {
+                const data = doc.data()
+                return data.token
+            }
+        }
 
         async function AddGameDataToDb(db) {
             // Add a new document with a generated id.
@@ -82,6 +108,8 @@ export default function App(props) {
         }
         try {
             await AddGameDataToDb(db);
+            const tokenUser2 = await GetUser2Token()
+            await SendPush("New challenger", username + " played against you. Fight him back!", tokenUser2)
             setIsLoading(false);
 
         } catch (err) {
@@ -105,6 +133,8 @@ export default function App(props) {
 
         let eloUser = 0;
 
+        let fetchedUserTokenUser1 = ""
+
         async function GetUser1Data() {
             let campaignsRef = db.collection('users')
             let activeRef = await campaignsRef
@@ -113,6 +143,7 @@ export default function App(props) {
             for (doc of activeRef.docs) {
                 const data = doc.data()
                 eloUser = data.elo
+                fetchedUserTokenUser1 = data.token
             }
         }
 
@@ -267,6 +298,7 @@ export default function App(props) {
             await UpdateUser1Data(db, NewElo,user1Wins, user2Wins)
             await UpdateUser2Data(db, NewElo,user1Wins, user2Wins)
             await AddGameUser2DataToDb(db, NewElo, user1Wins, user2Wins);
+            await SendPush("Game finished", username + " finished his round. Take a look at the result!", fetchedUserTokenUser1)
 
             navigationParams.NewElo = NewElo;
             setIsLoading(false);
@@ -300,7 +332,13 @@ export default function App(props) {
                 .getParam('playAfterOpponent', 0),
             playedGameDocId: props
                 .navigation
-                .getParam("playedGameDocId", 0)
+                .getParam("playedGameDocId", 0),
+            tokenUser2: props
+                .navigation
+                .getParam("tokenUser2", ''),
+            tokenUser: props
+            .navigation
+            .getParam("tokenUser", '')
         };
 
         let RandomScreen = "";

@@ -82,7 +82,14 @@ const CategoryComponent = function Category(props) {
             .dispatch(resultScreen); //navigate to result screen
     }
 
+    const GetUser1Token = async() => {
+        //return await AsyncStorage.getItem('username');
+        return await AsyncStorage.getItem('token');
+    };
+
     const PlayAgain = async() => {
+
+        const token = await GetUser1Token;
 
         const navigationProperties = { 
             round: 1,
@@ -91,6 +98,7 @@ const CategoryComponent = function Category(props) {
             userId2: props.userId,
             username: props.username2, //Swap userId and username and elo
             username2: props.username,
+            tokenUser1: token
         };
 
         var RandomNumber = Math.floor(Math.random() * 3) + 1;

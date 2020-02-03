@@ -69,8 +69,7 @@ export default function Drag(props) {
         
         if (setItemCount1 > 0) {
             setBgColor('#2c3e50')
-        }
-        else {
+        } else {
             setBgColor('slategrey')
         }
 
@@ -83,8 +82,7 @@ export default function Drag(props) {
         }
         if (setItemCount2 > 0) {
             setBgColorRight('#2c3e50')
-        }
-        else {
+        } else {
             setBgColorRight('slategrey')
         }
 
@@ -186,7 +184,14 @@ export default function Drag(props) {
             .getParam('playAfterOpponent', 0),
         playedGameDocId: props
             .navigation
-            .getParam("playedGameDocId", 0)
+            .getParam("playedGameDocId", 0),
+        tokenUser2: props
+            .navigation
+            .getParam("tokenUser2", ''),
+        tokenUser: props
+            .navigation
+            .getParam("tokenUser", '')
+
     }
 
     const _fetchData = async() => {

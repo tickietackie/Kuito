@@ -125,7 +125,7 @@ export default function Leaderboard(props) {
         }
     }
 
-    useEffect(() => { // code to run on component mount
+    useEffect(() => { // reqrite here with onsnapshot
 
         const GetUserId = async() => {
             //return await AsyncStorage.getItem('username');
@@ -136,10 +136,10 @@ export default function Leaderboard(props) {
         
 
         //_fetchData()
-        const db = firebase.firestore();
-        const ref = db
-            .collection('users')
-            .where('userId', '==', userId)
+        //const db = firebase.firestore();
+        //const ref = db
+          //  .collection('users')
+           // .where('userId', '==', userId)
                     
         /*return ref.onSnapshot(querySnapshot => {
             let fetchedUserData = [];

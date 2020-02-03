@@ -21,7 +21,7 @@ const OfflineNotice = () => {
 
     }, []) 
 
-    if (!connected) {
+    if (!connected) {   //if not connected return an fulll sized overlay
         return (
             <View style={styles.offlineContainer}>
                 <ActivityIndicator size="large" color="darkorange"></ActivityIndicator>
@@ -46,7 +46,7 @@ const styles = StyleSheet.create({
         backgroundColor: 'black',
         width: "100%",
         height:"100%",
-        zIndex: 10,
+        zIndex: 100,
     },
     offlineText: {
         color: '#fff',

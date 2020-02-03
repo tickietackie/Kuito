@@ -542,11 +542,6 @@ const styles = StyleSheet.create({
         width: 300,
         //shadowOpacity: 0.75, shadowRadius: 2,
         shadowColor: 'black',
-        /*shadowOffset: {
-            width: 0.2,
-            height: 0.2,
-        },
-        elevation: 2,*/
         paddingBottom: 15
     },
     scrollViewText: {

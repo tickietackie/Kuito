@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import {SafeAreaView, View, FlatList, StyleSheet, Text} from 'react-native';
 import Constants from 'expo-constants';
 import Category from "../components/Category"
+import { ceil } from 'react-native-reanimated';
 
 const DATA = [
     {
@@ -31,6 +32,7 @@ export default function App() {
 
     return (
         <SafeAreaView style={styles.container}>
+            <Text style={styles.text}>Press any button. Category filter not yet functional!</Text>
             <FlatList
                 data={DATA}
                 renderItem={({item}) => <Item title={item.title} id={item.id}/>}
@@ -45,7 +47,8 @@ const styles = StyleSheet.create({
         flex: 1,
         paddingLeft: 5,
         paddingRight: 5,
-        paddingTop: 5
+        paddingTop: 5,
+        alignItems: "center"
     },
     friendsList: {
         flex: 5,
@@ -55,10 +58,13 @@ const styles = StyleSheet.create({
     },
     scrollView: {
         backgroundColor: 'pink',
-        marginHorizontal: 20
+        marginHorizontal: 20,
+        
     },
     text: {
-        fontSize: 42
+        fontSize: 15,
+        color: "red",
+        marginTop: "3%"
     },
     startButton: {
         borderWidth: 1,

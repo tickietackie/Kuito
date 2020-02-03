@@ -143,18 +143,7 @@ const styles = StyleSheet.create({
         flex: 3,
         marginBottom: "20%"
     },
-    /*questionContainer: {
-        flex: 2,
-        justifyContent: "center",
-        alignItems: "center",
-        backgroundColor: "#A9E2F3",
-        marginBottom: 40,
-        margin: 5,
-        borderRadius: 5,
-    },
-    question: {
-        alignItems: 'center'
-    },*/
+
     answerContainer: {
         flex: 3,
         //width: 320,

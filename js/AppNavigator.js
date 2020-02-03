@@ -3,11 +3,8 @@ import {createAppContainer, createSwitchNavigator, NavigationActions} from 'reac
 import {createBottomTabNavigator} from 'react-navigation-tabs';
 import {createStackNavigator} from 'react-navigation-stack';
 import {StackActions} from 'react-navigation';
-// import { createAnimatedSwitchNavigator } from
-// 'react-navigation-animated-switch';
 
 import * as Icon from '@expo/vector-icons';
-//import { createStackNavigator } from 'react-navigation-stack';
 
 import AuthLoading from './screens/Authentication/AuthLoading';
 import SignInScreen from './screens/Authentication/SignIn';

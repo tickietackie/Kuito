@@ -23,9 +23,7 @@ export default function App(props) {
             <View style={styles.container}>
                 <View style={styles.startButton}>
                     <StartGame/>
-                </View>
-                {/*<Settings visible={showSettingsScreen}></Settings>*/}
-                
+                </View>                
                 <View style={styles.settingsButton}>
                     <SettingsButton></SettingsButton>
                 </View>

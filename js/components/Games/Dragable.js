@@ -15,9 +15,9 @@ export default function Dragable(props) {
     const [shadow,
         setShadow] = React.useState({});
 
-    const pan = React.useRef(new Animated.ValueXY({x: props.posXFactor, y: props.posYFactor}));
+    const pan = React.useRef(new Animated.ValueXY({x: props.posXFactor, y: props.posYFactor})); //Create new animated value with offset of last drag
 
-    const isDropZone = React.useCallback((gesture) => {
+    const isDropZone = React.useCallback((gesture) => {     //Cchek if in dropZone
         const dz = props.dropZoneValues.current;
         return gesture.moveY > dz.y && gesture.moveY < dz.y + dz.height && gesture.moveX < dz.width;
     }, []);
@@ -27,17 +27,12 @@ export default function Dragable(props) {
         return gesture.moveY > dz.y && gesture.moveY < dz.y + dz.height && gesture.moveX > dz.width;
     }, []);
 
-    const onMove = React.useCallback((_, gesture) => {
-        //console.log(gesture);
+    /*const onMove = React.useCallback((_, gesture) => {
         if (isDropZone(gesture)) {
-            // Color('red'); setBgColorRight('#2c3e50'); props.setDropZone({item:1, text:
-            // props.text})
         } else if (isDropZone2(gesture)) {
-            //setBgColorRight('blue'); setBgColor('#2c3e50'); !("key" in obj)
-
         } else {}
 
-    }, [isDropZone, isDropZone2]);
+    }, [isDropZone, isDropZone2]);*/
 
     const panResponder = React.useMemo(() => PanResponder.create({
         // Ask to be the responder: onStartShouldSetPanResponder: () => true,
@@ -135,27 +130,17 @@ export default function Dragable(props) {
             }
             props.CheckShowNext()
 
-            
-
         },
         onPanResponderTerminate: (evt, gestureState) => {
             // Another component has become the responder, so this gesture should be
-            console.log("terminated")
+            //console.log("terminated")
         }
     }), []);
-
-    /*const randPos = {
-        top: pan.current.y._value === 0 ? props.posYFactor: pan.current.y,
-        left: pan.current.x._value=== 0 ? props.posXFactor: pan.current.x
-    }*/
 
     const randPos = {
         top: props.posYFactor,
         left: props.posXFactor
     }
-
-    // if (pan.current.y._value === 0 && pan.current.x._value === 0)
-    // {pan.current.setValue({x: props.posXFactor,y: props.posYFactor})}
 
     return (
         <View style={[styles.draggableContainer]}>

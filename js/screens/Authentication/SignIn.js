@@ -40,7 +40,6 @@ const SignInScreen = function SignInScreen(props) {
                 .where('userId', '==', userId)
                 .get();
             for (doc of activeRef.docs) { //return false if username exists
-                console.log(doc)
                 return doc.data();
             }
             return false;

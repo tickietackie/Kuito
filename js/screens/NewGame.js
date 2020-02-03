@@ -109,7 +109,6 @@ export default function App(props) {
                 //If user id is the same perform another query, to complete the "not same user id" logic
                 const fetchedRandomUserId2 = await GetRandomUser2(db, userIdRandom)
                 if (fetchedRandomUserId !== userId && fetchedRandomUserId) {
-                    console.log("test")
                     randomUserId = fetchedRandomUserId;
                     username2 = fetchedUsername2_1;
                     tokenUser2 =fetchedUserToken1

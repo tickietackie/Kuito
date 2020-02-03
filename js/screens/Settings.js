@@ -37,7 +37,6 @@ export default function App(props) {
             return await AsyncStorage.getItem('username');
         };
         const username = await GetUsername()
-        console.log("test")
         setUsername(username)
         const id = await GetUserId()
         setId(id)
@@ -48,7 +47,7 @@ export default function App(props) {
 
         _fetchData()
 
-    },) //pass an empty array to call it just with the first call --> }, [])
+    }, []) //pass an empty array to call it just with the first call --> }, [])
 
     const _signOutAsync = async() => {
         try {

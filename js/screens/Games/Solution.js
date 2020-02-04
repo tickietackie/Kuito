@@ -1,5 +1,5 @@
 import React, {useState} from 'react';
-import {StyleSheet, Text, View, ScrollView, SafeAreaView} from 'react-native';
+import {StyleSheet, Text, View, ScrollView, SafeAreaView, ActivityIndicator} from 'react-native';
 import {StackActions, NavigationActions} from 'react-navigation';
 import NextButton from '../../components/Buttons/NextButton';
 import HomeButton from '../../components/Buttons/HomeButton';
@@ -10,14 +10,13 @@ import HeaderText from '../../components/HeaderText';
 import firebase from "../../../config/firebase";
 import * as firebaseMod from 'firebase';
 
-
 export default function App(props) {
     if (props.visible === false) {
         //return null;
     }
 
     const [isLoading,
-        setIsLoading] = useState(true);
+        setIsLoading] = useState(false);
 
     const round = props
         .navigation
@@ -62,11 +61,11 @@ export default function App(props) {
     }
 
     async function PersistGameData() { //fetch()
+        setIsLoading(true)
         const db = firebase.firestore()
 
         var random = Math.floor(Math.random() * 100000) + 1;
         //const ref = db.collection('MultipleChoiceSets') console.log(random)
-
 
         async function GetUser2Token() {
             let campaignsRef = db.collection('users')
@@ -119,6 +118,7 @@ export default function App(props) {
     }
 
     async function UpdateGameData() {
+        setIsLoading(true)
         const db = firebase.firestore()
 
         const navigation = props.navigation
@@ -229,7 +229,7 @@ export default function App(props) {
 
         }
 
-        async function UpdateUser1Data(db, NewElo,user1Wins, user2Wins) { //Update user elo and KDA
+        async function UpdateUser1Data(db, NewElo, user1Wins, user2Wins) { //Update user elo and KDA
 
             let userRef = db
                 .collection('users')
@@ -238,21 +238,22 @@ export default function App(props) {
 
             let incKDA = ""
             if (user1Wins) {
-                incKDA= "wins"
-            }
-            else if (user2Wins) {
-                incKDA= "losses"
-            }
-            else {
-                incKDA= "draws"
+                incKDA = "wins"
+            } else if (user2Wins) {
+                incKDA = "losses"
+            } else {
+                incKDA = "draws"
             }
 
-            const increment = firebaseMod.firestore.FieldValue.increment(1);
-            
-            let savedGame = await userRef.update({elo: newElo,incKDA: increment});
+            const increment = firebaseMod
+                .firestore
+                .FieldValue
+                .increment(1);
+
+            let savedGame = await userRef.update({elo: newElo, incKDA: increment});
         }
 
-        async function UpdateUser2Data(db, NewElo,user1Wins, user2Wins) { //Update user elo and KDA
+        async function UpdateUser2Data(db, NewElo, user1Wins, user2Wins) { //Update user elo and KDA
 
             let userRef = db
                 .collection('users')
@@ -261,16 +262,17 @@ export default function App(props) {
 
             let incKDA = ""
             if (user1Wins) {
-                incKDA= "losses"
-            }
-            else if (user2Wins) {
-                incKDA= "wins"
-            }
-            else {
-                incKDA= "draws"
+                incKDA = "losses"
+            } else if (user2Wins) {
+                incKDA = "wins"
+            } else {
+                incKDA = "draws"
             }
 
-            const increment = firebaseMod.firestore.FieldValue.increment(1);
+            const increment = firebaseMod
+                .firestore
+                .FieldValue
+                .increment(1);
             let savedGame = await userRef.update({elo: newElo2, incKDA: increment});
         }
 
@@ -295,8 +297,8 @@ export default function App(props) {
             await GetUser2Data()
             const NewElo = await CalculateNewElo(eloUser, eloUser2, user1Wins, user2Wins);
             await UpdateGameDataInDb(db, NewElo);
-            await UpdateUser1Data(db, NewElo,user1Wins, user2Wins)
-            await UpdateUser2Data(db, NewElo,user1Wins, user2Wins)
+            await UpdateUser1Data(db, NewElo, user1Wins, user2Wins)
+            await UpdateUser2Data(db, NewElo, user1Wins, user2Wins)
             await AddGameUser2DataToDb(db, NewElo, user1Wins, user2Wins);
             await SendPush("Game finished", username + " finished his round. Take a look at the result!", fetchedUserTokenUser1)
 
@@ -337,8 +339,8 @@ export default function App(props) {
                 .navigation
                 .getParam("tokenUser2", ''),
             tokenUser: props
-            .navigation
-            .getParam("tokenUser", '')
+                .navigation
+                .getParam("tokenUser", '')
         };
 
         let RandomScreen = "";
@@ -437,7 +439,7 @@ export default function App(props) {
         nextButtonTitle
         homeButtonStyle = {
             justifyContent: "center",
-            left: "3%",
+            left: "3%"
         }
 
     };
@@ -466,6 +468,16 @@ export default function App(props) {
     const info = props
         .navigation
         .getParam('info', '-')
+
+    if (isLoading === true) { //return loading screen, if data is loading
+        return (
+            <BackgroundContainer>
+                <View style={styles.loadingContainer}>
+                    <ActivityIndicator size="large" color="darkorange"></ActivityIndicator>
+                </View>
+            </BackgroundContainer>
+        )
+    }
 
     return (
         <BackgroundContainer>
@@ -546,5 +558,9 @@ const styles = StyleSheet.create({
     },
     scrollViewText: {
         marginBottom: 20
+    },
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center"
     }
 });

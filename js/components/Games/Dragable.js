@@ -67,7 +67,7 @@ export default function Dragable(props) {
                 dx: pan.current.x,
                 dy: pan.current.y
             }
-        ], {listener: onMove}),
+        ]),
         // The user has released all touches while this view is the responder. This
         // typically means a gesture has succeeded
         onPanResponderRelease: (e, gesture) => {

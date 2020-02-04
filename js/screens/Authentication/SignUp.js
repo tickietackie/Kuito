@@ -12,7 +12,7 @@ import {
 import BackgroundContainer from '../../components/BackgroundContainer';
 import firebase from "../../../config/firebase";
 import Loading from "../../components/Loading";
-import { Notifications } from 'expo';
+import {Notifications} from 'expo';
 import * as Permissions from 'expo-permissions';
 
 const SignInScreen = function SignInScreen(props) {
@@ -45,23 +45,21 @@ const SignInScreen = function SignInScreen(props) {
         }
 
         async function GetPushNotificationToken() {
-            const { status } = await Permissions.askAsync(Permissions.NOTIFICATIONS);
-            // only asks if permissions have not already been determined, because
-            // iOS won't necessarily prompt the user a second time.
-            // On Android, permissions are granted on app installation, so
-            // `askAsync` will never prompt the user
-          
-            // Stop here if the user did not grant permissions
+            const {status} = await Permissions.askAsync(Permissions.NOTIFICATIONS);
+            // only asks if permissions have not already been determined, because iOS won't
+            // necessarily prompt the user a second time. On Android, permissions are
+            // granted on app installation, so `askAsync` will never prompt the user Stop
+            // here if the user did not grant permissions
             if (status !== 'granted') {
-              alert('No notification permissions!');
-              return 0;
+                console.log('No notification permissions!')
+                return 0;
             }
-          
+
             // Get the token that identifies this device
             let token = await Notifications.getExpoPushTokenAsync();
 
             return token;
-          }
+        }
 
         const userRandom = Math.floor(Math.random() * 100000) + 1;
 
@@ -87,12 +85,13 @@ const SignInScreen = function SignInScreen(props) {
             return await auth.createUserWithEmailAndPassword(email, password)
         }
 
+        let token = "0";
         let userData = "";
         try {
             const usernameFree = await CheckUserName()
             if (usernameFree) {
                 userData = await SignUpInFb()
-                const token = await GetPushNotificationToken()
+                token = await GetPushNotificationToken()
                 await SetUsername(userData, token)
             } else {
                 setError("Username already taken.")
@@ -118,10 +117,11 @@ const SignInScreen = function SignInScreen(props) {
             await AsyncStorage.setItem('userId', userData.user.uid); //LoAfTCync6YsRoSWGTSd
             await AsyncStorage.setItem('username', username);
             await AsyncStorage.setItem('userRandom', userRandom.toString());
-            await AsyncStorage.setItem('token', token);
+            await AsyncStorage.setItem('token', token.toString());
         } catch (error) {
             setError(error.message)
             console.log(error)
+            setIsLoading(false);
             return;
         }
 

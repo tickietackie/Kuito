@@ -2,7 +2,7 @@ import React, {useState, useRef, useEffect} from 'react';
 import {StyleSheet, View, Text, Dimensions, ActivityIndicator} from 'react-native';
 
 import Dragable from "../../components/Games/Dragable"
-import {StackActions} from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
 import NextButton from '../../components/Buttons/NextButton';
 import HomeButton from '../../components/Buttons/HomeButton';
 import BackgroundContainer from "../../components/BackgroundContainer"
@@ -275,11 +275,13 @@ export default function Drag(props) {
             }
         }
 
-        const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
+        const resetAction = StackActions.reset({index: 0,
+            actions: [NavigationActions.navigate({routeName: 'Solution', params: navigationParams})],
+        });
 
         props
             .navigation
-            .dispatch(pushSolutionScreen);
+            .dispatch(resetAction);
     }
 
     function renderDragables() {

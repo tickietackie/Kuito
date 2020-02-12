@@ -396,7 +396,7 @@ export default function App(props) {
             }
 
         } else { //Replace last route with the solution screen, to avoid endless stacking in traing mode
-            RandomScreen = StackActions.replace({
+            RandomScreen = StackActions.reset({
                 index: 0,
                 params: navigationParams,
                 routeName: "",

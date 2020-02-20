@@ -23,7 +23,7 @@ const StartButton = function StartButton(props) {
             width: 1,
             height: 2
         },
-        elevation: 2,
+        elevation: 3,
         flexDirection: 'row',
     }
 

@@ -11,7 +11,7 @@ import {
 
 import firebase from "../../../config/firebase";
 
-import {StackActions} from 'react-navigation';
+import { NavigationActions, StackActions } from 'react-navigation';
 import HomeButton from '../../components/Buttons/HomeButton';
 import NextButton from '../../components/Buttons/NextButton';
 import HeaderText from '../../components/HeaderText';
@@ -150,13 +150,15 @@ export default function App(props) {
             }
         }
 
-        const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
+        const resetAction = StackActions.reset({index: 0,
+            actions: [NavigationActions.navigate({routeName: 'Solution', params: navigationParams})],
+        });
 
         props
             .navigation
-            .dispatch(pushSolutionScreen);
+            .dispatch(resetAction);
 
-        setIsLoading(true)
+        //setIsLoading(true)
     }
 
     const userId = props

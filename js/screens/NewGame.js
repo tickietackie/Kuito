@@ -13,6 +13,7 @@ import {
 
 import {material} from 'react-native-typography';
 
+import {StackActions, NavigationActions} from 'react-navigation';
 import firebase from "../../config/firebase";
 import GameHistory from "../components/GameHistory/GameHistoryComponent"
 import BackgroundContainer from '../components/BackgroundContainer';
@@ -157,9 +158,13 @@ export default function App(props) {
     
             //setRand(RandomNumber); //change random state for next render
             setIsLoading(false);
+            RandomScreen = StackActions.reset({
+                index: 0,
+                actions: [NavigationActions.navigate({routeName: RandomScreen, params: navigationProperties})]
+            });
             props
                 .navigation
-                .navigate(RandomScreen, navigationProperties); //naviaget to random game
+                .dispatch(RandomScreen); //navigate to random screen
 
         } catch (err) {
             console.log('Error getting userIds', err)
@@ -252,7 +257,7 @@ const styles = StyleSheet.create({
             width: 1,
             height: 2
         },
-        elevation: 2
+        elevation: 3
     },
     loadingContainer: {
         flex: 1,

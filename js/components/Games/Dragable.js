@@ -56,7 +56,7 @@ export default function Dragable(props) {
                     width: 1,
                     height: 2
                 },
-                elevation: 2
+                elevation: 3
             })
         },
 

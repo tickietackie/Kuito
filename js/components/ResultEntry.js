@@ -85,7 +85,7 @@ const styles = StyleSheet.create({
             width: 1,
             height: 2
         },
-        elevation: 2,
+        elevation: 3,
         flexDirection: 'row',
 
         borderRadius: 5,

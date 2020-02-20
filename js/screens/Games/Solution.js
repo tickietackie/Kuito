@@ -359,7 +359,10 @@ export default function App(props) {
                     navigationParams.EloGainUser2 = NewElo.EloGainUser2
                     navigationParams.NewEloUser1 = NewElo.NewEloUser1
                     navigationParams.NewEloUser2 = NewElo.NewEloUser2
-                    RandomScreen = StackActions.push({routeName: 'Result', params: navigationParams});
+                    RandomScreen = StackActions.reset({
+                        index: 0,
+                        actions: [NavigationActions.navigate({routeName: 'Result', params: navigationParams})]
+                    });
                 } else {
 
                     const game = props //Set playStyle again to the last playstyle for next screen
@@ -377,30 +380,42 @@ export default function App(props) {
                         screen = "LinkingGame"
                     }
 
-                    RandomScreen = StackActions.push({routeName: screen, params: navigationParams});
-
+                    RandomScreen = StackActions.reset({
+                        index: 0,
+                        actions: [NavigationActions.navigate({routeName: screen, params: navigationParams})]
+                    });
                 }
             } else {
                 if (round >= roundLength) { //if round is finished -> navigate to result screen and set game data in database
                     await PersistGameData()
-                    RandomScreen = StackActions.push({routeName: 'Result', params: navigationParams});
+                    RandomScreen = StackActions.reset({
+                        index: 0,
+                        actions: [NavigationActions.navigate({routeName: "Result", params: navigationParams})]
+                    });
                 } else {
                     if (rand === 1) { //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
-                        RandomScreen = StackActions.push({routeName: 'LinkingGame', params: navigationParams});
+                        RandomScreen = StackActions.reset({
+                            index: 0,
+                            actions: [NavigationActions.navigate({routeName: 'LinkingGame', params: navigationParams})]
+                        });
                     } else if (rand === 2) {
-                        RandomScreen = StackActions.push({routeName: 'MultipleChoice', params: navigationParams});
+                        RandomScreen = StackActions.reset({
+                            index: 0,
+                            actions: [NavigationActions.navigate({routeName: 'MultipleChoice', params: navigationParams})]
+                        });
                     } else {
-                        RandomScreen = StackActions.push({routeName: 'GuessPicture', params: navigationParams});
+                        RandomScreen = StackActions.reset({
+                            index: 0,
+                            actions: [NavigationActions.navigate({routeName: 'GuessPicture', params: navigationParams})]
+                        });
                     }
                 }
             }
 
         } else { //Replace last route with the solution screen, to avoid endless stacking in traing mode
-            RandomScreen = StackActions.replace({
+            RandomScreen = StackActions.reset({
                 index: 0,
-                params: navigationParams,
-                routeName: "",
-                actions: [NavigationActions.navigate({routeName: ''})]
+                actions: [NavigationActions.navigate({routeName: '', params: navigationParams})]
             });
             if (rand === 1) { //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
                 //RandomScreen = StackActions.push({routeName: 'LinkingGame', params: navigationParams});

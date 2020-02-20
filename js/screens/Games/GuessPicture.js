@@ -10,13 +10,13 @@ import {
 } from 'react-native';
 
 import firebase from "../../../config/firebase";
-import {StackActions} from 'react-navigation';
 import HomeButton from '../../components/Buttons/HomeButton';
 import NextButton from '../../components/Buttons/NextButton';
 import HeaderText from '../../components/HeaderText';
 import ImageQuestionCard from '../../components/Games/ImageQuestionCard';
 import Block from '../../components/Games/Block';
-import BackgroundContainer from "../../components/BackgroundContainer"
+import BackgroundContainer from "../../components/BackgroundContainer";
+import { NavigationActions, StackActions } from 'react-navigation';
 //import component safe data : 2 * 3 * 4 * 5, standing for the 4 fields
 
 export default function App(props) {
@@ -192,13 +192,15 @@ export default function App(props) {
             }
         }
 
-        const pushSolutionScreen = StackActions.push({routeName: 'Solution', params: navigationParams}); //Create stack push actions for screens so the navigation will always be stacked on top of the stack tree
+        const resetAction = StackActions.reset({index: 0,
+            actions: [NavigationActions.navigate({routeName: 'Solution', params: navigationParams})],
+        });
 
         //setIsLoading(true)
 
         props
             .navigation
-            .dispatch(pushSolutionScreen);
+            .dispatch(resetAction);
     }
 
     const userId = props
